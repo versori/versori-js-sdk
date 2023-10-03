@@ -1,0 +1,51 @@
+{
+  "name": "root",
+  "private": true,
+  "engines": {
+    "node": ">=16.16.0",
+    "npm": ">=8.11.0"
+  },
+  "scripts": {
+    "generate": "run-p generate:*",
+    "generate:switchboard": "openapi-typescript src/sdk/switchboard/v1alpha1/openapi.yaml --output src/sdk/switchboard/v1alpha1/generated/api.ts",
+    "build": "lerna run build",
+    "build:watch": "lerna run watch --stream",
+    "build:sdk": "lerna run build --stream --scope=@versori/sdk",
+    "fmt": "run-s fmt:eslint fmt:prettier",
+    "fmt:eslint": "eslint . --ext .tsx --ext .ts --fix",
+    "fmt:prettier": "prettier --write '**/*'",
+    "check": "run-p check:*",
+    "check:eslint": "eslint . --ext .tsx --ext .ts",
+    "check:prettier": "prettier --check '**/*'"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "fets": "^0.4.13",
+    "lerna": "^7.3.0",
+    "npm-run-all": "^4.1.5",
+    "openapi-typescript": "^6.7.0",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.6.0"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.7.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ]
+}
