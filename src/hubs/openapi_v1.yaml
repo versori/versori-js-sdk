@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Switchboard API
-  description: The Switchboard API provides users the ability to manage their Apps, Integrations and Workflows
+  title: Hubs API
+  description: The Hubs API provides the endpoints for users to use the hubs SDK.
   version: 0.0.1-alpha.0
 servers:
   - url: "https://platform.versori.com/apis"
