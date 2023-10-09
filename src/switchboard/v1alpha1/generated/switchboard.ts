@@ -5,23 +5,23 @@
 
 
 export interface paths {
-  "/switchboard/organisations/{organisationId}/boards/{boardId}/variables": {
+  "/organisations/{organisationId}/boards/{boardId}/variables": {
     /** @description Get the JSON schema for the variables of a board. */
     get: operations["GetBoardVariablesSchema"];
   };
-  "/switchboard/organisations/{organisationId}/hubs/{hubId}/boards": {
+  "/organisations/{organisationId}/hubs/{hubId}/boards": {
     /** @description Retrieves the boards belonging to a given hub and organisation. */
     get: operations["ListHubBoards"];
   };
-  "/switchboard/organisations/{organisationId}/hubs/{hubId}/users/{userId}": {
+  "/organisations/{organisationId}/hubs/{hubId}/users/{userId}": {
     /** @description Retrieves a pagniated list of boards belonging to a given user and hub. */
     get: operations["GetUserHubBoards"];
   };
-  "/switchboard/organisations/{organisationId}/connected-apps": {
+  "/organisations/{organisationId}/connected-apps": {
     /** @description Retrieves a page of Apps which have connections for an organisation. */
     get: operations["GetConnectedApps"];
   };
-  "/switchboard/organisations/{organisationId}/connections": {
+  "/organisations/{organisationId}/connections": {
     /**
      * @description Retrieves connections for an organisation, potentially filtering by appId. The response is structured as a page
      * but currently the response returns all items. Consumers wishing to be backwards compatible should not assume
@@ -35,11 +35,11 @@ export interface paths {
      */
     post: operations["CreateConnection"];
   };
-  "/switchboard/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info": {
+  "/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info": {
     /** @description Retrieves all the information needed that a user needs to fill out to use a Hub integration. */
     get: operations["IntegrationInfo"];
   };
-  "/switchboard/organisations/{organisationId}/connection-init": {
+  "/organisations/{organisationId}/connection-init": {
     /**
      * @description InitialiseConnection is used to initiate a connection of an App to a user's organisation. Different connections
      * require different auth methods (or even no auth method at all), this endpoint returns the necessary
@@ -47,24 +47,14 @@ export interface paths {
      */
     post: operations["InitialiseConnection"];
   };
-  "/switchboard/organisations/{organisationId}/credentials": {
+  "/organisations/{organisationId}/credentials": {
     /**
      * @description CreateCredential allows users to create new Credentials. Valid requests which return a credential marked as
      * "invalid" is normal behaviour, but the credential won't be usable until it's updated to become valid.
      */
     post: operations["CreateCredential"];
   };
-  "/hubs-sdk/organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}": {
-    /** @description Returns the user specified by the userId. */
-    get: operations["GetUser"];
-    /** @description Updates the given user. */
-    put: operations["PutUser"];
-    /** @description Create a new User. */
-    post: operations["PostUser"];
-    /** @description Delete a user. */
-    delete: operations["DeleteUser"];
-  };
-  "/switchboard/connections/oauth2/callback": {
+  "/connections/oauth2/callback": {
     /**
      * @description FinaliseConnectionCallback is the redirect URL to exchange an authorization code for an access token in an
      * OAuth2.0 authorization code grant. It must be noted that the real callback URL configured with the
@@ -168,29 +158,6 @@ export interface components {
        */
       requiresUserAuth?: boolean;
       authConfig?: components["schemas"]["AppAuthConfig"][];
-    };
-    Users: {
-      users?: string[];
-    };
-    User: {
-      /**
-       * @description The id of the user.
-       * This needs to be provided when creating a user and must be unique for the board.
-       * It must follow thw following regex \A[-/_=\.a-zA-Z0-9]+\z
-       */
-      id: string;
-      environments?: components["schemas"]["Environments"][];
-      variables?: {
-        [key: string]: unknown;
-      };
-    };
-    Environments: {
-      /** @description Human identifier for the environment. Must be unique for the user. */
-      key: string;
-      credentialId: string;
-      connectionId: string;
-      /** @description The variables that will be used by the connection for this environment. */
-      variables: Record<string, never>;
     };
     Error: {
       code: string;
@@ -768,12 +735,6 @@ export interface components {
         "application/json": components["schemas"]["Error"];
       };
     };
-    /** @description Responses for a User. */
-    UserResponse: {
-      content: {
-        "application/json": components["schemas"]["User"];
-      };
-    };
   };
   parameters: {
     /**
@@ -784,15 +745,6 @@ export interface components {
     SortParam?: string;
   };
   requestBodies: {
-    /**
-     * @description Payload for creating and updating a user.
-     * On update the provided User overwrite the existing one.
-     */
-    CreateUser?: {
-      content: {
-        "application/json": components["schemas"]["User"];
-      };
-    };
     /** @description CreateConnectionRequest is the payload for creating a new Connection. */
     CreateConnectionRequest?: {
       content: {
@@ -991,68 +943,6 @@ export interface operations {
     requestBody: components["requestBodies"]["CreateCredentialRequest"];
     responses: {
       201: components["responses"]["CreateCredentialResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Returns the user specified by the userId. */
-  GetUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["UserResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Updates the given user. */
-  PutUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateUser"];
-    responses: {
-      200: components["responses"]["UserResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new User. */
-  PostUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateUser"];
-    responses: {
-      200: components["responses"]["UserResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete a user. */
-  DeleteUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["UserResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };

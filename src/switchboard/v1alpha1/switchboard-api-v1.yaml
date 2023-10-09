@@ -4,10 +4,10 @@ info:
   description: The Hubs API provides the endpoints for users to use the hubs SDK.
   version: 0.0.1-alpha.0
 servers:
-  - url: 'https://platform.versori.com/apis'
+  - url: 'https://platform.versori.com/apis/switchboard'
     description: Production server
 paths:
-  /switchboard/organisations/{organisationId}/boards/{boardId}/variables:
+  /organisations/{organisationId}/boards/{boardId}/variables:
     get:
       description: |
         Get the JSON schema for the variables of a board.
@@ -31,7 +31,7 @@ paths:
           $ref: '#/components/responses/GetVariablesSchemaResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /switchboard/organisations/{organisationId}/hubs/{hubId}/boards:
+  /organisations/{organisationId}/hubs/{hubId}/boards:
     get:
       operationId: ListHubBoards
       description: |
@@ -92,7 +92,7 @@ paths:
           $ref: '#/components/responses/GetBoardsResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /switchboard/organisations/{organisationId}/hubs/{hubId}/users/{userId}:
+  /organisations/{organisationId}/hubs/{hubId}/users/{userId}:
     get:
       operationId: GetUserHubBoards
       description: |
@@ -159,7 +159,7 @@ paths:
           $ref: '#/components/responses/GetBoardsResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /switchboard/organisations/{organisationId}/connected-apps:
+  /organisations/{organisationId}/connected-apps:
     get:
       operationId: GetConnectedApps
       description: |
@@ -195,7 +195,7 @@ paths:
           $ref: '#/components/responses/GetConnectedAppsResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /switchboard/organisations/{organisationId}/connections:
+  /organisations/{organisationId}/connections:
     post:
       operationId: CreateConnection
       description: |
@@ -262,7 +262,7 @@ paths:
           $ref: '#/components/responses/GetConnectionsResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /switchboard/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info:
+  /organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info:
     get:
       operationId: IntegrationInfo # not sure on this operation name
       description: |
@@ -290,7 +290,7 @@ paths:
           $ref: '#/components/responses/ConnectIntegrationResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /switchboard/organisations/{organisationId}/connection-init:
+  /organisations/{organisationId}/connection-init:
     post:
       operationId: InitialiseConnection
       description: |
@@ -313,7 +313,7 @@ paths:
           $ref: '#/components/responses/InitConnectionResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /switchboard/organisations/{organisationId}/credentials:
+  /organisations/{organisationId}/credentials:
     post:
       operationId: CreateCredential
       description: |
@@ -335,140 +335,7 @@ paths:
           $ref: '#/components/responses/CreateCredentialResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /hubs-sdk/organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}:
-    get:
-      operationId: GetUser
-      description: |
-        Returns the user specified by the userId.
-      tags:
-        - users
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: hubId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: boardId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/UserResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    post:
-      operationId: PostUser
-      description: |
-        Create a new User.
-      tags:
-        - users
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: hubId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: boardId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: '#/components/requestBodies/CreateUser'
-      responses:
-        200:
-          $ref: '#/components/responses/UserResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    put:
-      operationId: PutUser
-      description: |
-        Updates the given user.
-      tags:
-        - users
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: hubId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: boardId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: '#/components/requestBodies/CreateUser'
-      responses:
-        200:
-          $ref: '#/components/responses/UserResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    delete:
-      operationId: DeleteUser
-      description: |
-        Delete a user.
-      tags:
-        - users
-      parameters:
-        - name: orgId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: hubId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: boardId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          $ref: '#/components/responses/UserResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /switchboard/connections/oauth2/callback:
+  /connections/oauth2/callback:
     get:
       # We have two options for implementing this URL:
       # 1. The UI forwards the request to the API
@@ -646,56 +513,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AppAuthConfig'
-    Users:
-      type: object
-      properties:
-        users:
-          type: array
-          x-go-type-skip-optional-pointer: true
-          items:
-            type: string
-      required:
-        - items
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          description: |
-            The id of the user.
-            This needs to be provided when creating a user and must be unique for the board.
-            It must follow thw following regex \A[-/_=\.a-zA-Z0-9]+\z
-        environments:
-          additionalProperties: true
-          type: array
-          x-go-type-skip-optional-pointer: true
-          items:
-            $ref: '#/components/schemas/Environments'
-        variables:
-          additionalProperties: true
-          type: object
-          x-go-type-skip-optional-pointer: true
-      required:
-        - id
-    Environments:
-      type: object
-      properties:
-        key:
-          type: string
-          description: Human identifier for the environment. Must be unique for the user.
-        credentialId:
-          type: string
-        connectionId:
-          type: string
-        variables:
-          type: object
-          description: The variables that will be used by the connection for this environment.
-          x-go-type-skip-optional-pointer: true
-      required:
-        - key
-        - credentialId
-        - connectionId
-        - variables
     Error:
       type: object
       properties:
@@ -1653,14 +1470,6 @@ components:
         type: string
         pattern: '^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$'
   requestBodies:
-    CreateUser:
-      description: |
-        Payload for creating and updating a user.
-        On update the provided User overwrite the existing one.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
     CreateConnectionRequest:
       description: CreateConnectionRequest is the payload for creating a new Connection.
       content:
@@ -1746,13 +1555,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    UserResponse:
-      description: |
-        Responses for a User.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/User'
   securitySchemes:
     apiKey:
       type: apiKey
