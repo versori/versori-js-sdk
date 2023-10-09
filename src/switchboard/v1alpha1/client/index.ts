@@ -1,2 +1,2 @@
-export * from './Client.ts';
-// export * from './loadHubs.ts';
+export * from './HubsClient.ts';
+export * from './UsersClient.ts';

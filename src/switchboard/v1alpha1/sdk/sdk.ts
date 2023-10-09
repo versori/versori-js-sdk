@@ -1,4 +1,4 @@
-import { Client } from '../client';
+import { HubsClient, UsersClient } from '../client';
 import type { Connection } from '../schemas';
 import '../styles/styles.css';
 import { mock } from './mockIntegrationResponse';
@@ -37,15 +37,20 @@ class Versori {
     }
 
     initialise = () => {
-        console.log('init');
+        console.log('init-sdk');
         this.attachEventListeners();
 
-        const client = new Client({
+        const usersclient = new UsersClient({
+            baseUrl: BASE_PATH,
+        });
+
+        const hubsClient = new HubsClient({
             baseUrl: BASE_PATH,
         });
 
         (window as any)['Versori'] = {
-            client: client.hubs,
+            client: hubsClient.hubs,
+            users: usersclient.users,
             userId: this.userId,
             orgId: this.orgId,
             onSuccess: this.onSuccess,
@@ -54,10 +59,8 @@ class Versori {
     };
 
     attachEventListeners = () => {
-        console.log(document);
         const buttons = document.querySelectorAll('button[data-vhubsboardid]');
         buttons.forEach((button) => {
-            console.log('button');
             button.addEventListener('click', this.getAppAndOpenModal);
         });
     };
@@ -74,7 +77,6 @@ class Versori {
         this.#currentlyConnectingApp = integration.id;
         const currentConnectionType = integration?.authConfig.authType;
         if (currentConnectionType === 'apikey') {
-            console.log('modal');
             this.renderVersoriSDKModal(el.dataset.vhubsboardid!);
         } else {
             // render oauth modal
@@ -94,10 +96,8 @@ class Versori {
             },
         };
         try {
-            const connectResponse = formBody;
-            // const connectResponse = await window.Versori.client.connect(window.Versori.orgId, formBody);
-            console.log(connectResponse);
-            this.onSuccess('connectResponse');
+            const connectResponse = await window.Versori.client.connect(window.Versori.orgId, formBody);
+            this.onSuccess(connectResponse);
         } catch (e) {
             this.onError();
         }

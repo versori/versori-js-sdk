@@ -4,16 +4,16 @@ import { Hubs } from './hubs/Hubs.ts';
 import { RawClient } from './types.ts';
 
 // ClientOptions is a type that is used to configure the client
-export type ClientOptions = Parameters<typeof createClient>[0] & {
+export type HubsClientOptions = Parameters<typeof createClient>[0] & {
     baseUrl: string;
 };
 
-export class Client {
+export class HubsClient {
     private readonly client: RawClient;
 
     #hubs?: Hubs;
 
-    constructor(opts: ClientOptions) {
+    constructor(opts: HubsClientOptions) {
         this.client = createClient<paths>(opts);
     }
 

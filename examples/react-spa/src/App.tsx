@@ -1,5 +1,5 @@
 import { VersoriSDK } from '@versori/sdk';
-// import type { Connection } from '@versori/sdk';
+import type { Connection } from '@versori/sdk';
 import '@versori/sdk/dist/style.css';
 // import { IntegrationCard } from '@versori/sdk-react';
 import { useEffect } from 'react';
@@ -12,7 +12,7 @@ function App() {
         VersoriSDK.initHubs({
             userId: 'switchboard-demo',
             orgId: ORG_ID,
-            onSuccess: (connection: any) => console.log(connection, 'opop'),
+            onSuccess: (connection: Connection) => console.log(connection),
             onError: () => () => console.log('error'),
         });
     });

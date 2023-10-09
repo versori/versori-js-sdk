@@ -6,6 +6,8 @@ info:
 servers:
   - url: 'https://platform.versori.com/apis/switchboard'
     description: Production server
+  - url: 'http://localhost:8080/v1alpha1/'
+    description: Localhost
 paths:
   /organisations/{organisationId}/boards/{boardId}/variables:
     get:
@@ -80,12 +82,12 @@ paths:
               value: name:asc,id:desc
           schema:
             type: string
-            pattern: "^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$"
+            pattern: '^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$'
       responses:
         200:
-          $ref: "#/components/responses/GetHubsResponse"
+          $ref: '#/components/responses/GetHubsResponse'
         default:
-          $ref: "#/components/responses/ErrorResponse"  
+          $ref: '#/components/responses/ErrorResponse'
   /organisations/{organisationId}/hubs/{hubId}/boards:
     get:
       operationId: ListHubBoards
@@ -1609,7 +1611,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/HubsPage"
+            $ref: '#/components/schemas/HubsPage'
     ErrorResponse:
       description: The default error response
       content:
