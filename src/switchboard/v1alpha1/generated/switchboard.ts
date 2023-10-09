@@ -5,23 +5,27 @@
 
 
 export interface paths {
-  "/switchboard/organisations/{organisationId}/boards/{boardId}/variables": {
+  "/organisations/{organisationId}/boards/{boardId}/variables": {
     /** @description Get the JSON schema for the variables of a board. */
     get: operations["GetBoardVariablesSchema"];
   };
-  "/switchboard/organisations/{organisationId}/hubs/{hubId}/boards": {
+  "/organisations/{organisationId}/hubs": {
+    /** @description Retrieves the hubs belonging to a given organisation. */
+    get: operations["GetHubs"];
+  };
+  "/organisations/{organisationId}/hubs/{hubId}/boards": {
     /** @description Retrieves the boards belonging to a given hub and organisation. */
     get: operations["ListHubBoards"];
   };
-  "/switchboard/organisations/{organisationId}/hubs/{hubId}/users/{userId}": {
+  "/organisations/{organisationId}/hubs/{hubId}/users/{userId}": {
     /** @description Retrieves a pagniated list of boards belonging to a given user and hub. */
     get: operations["GetUserHubBoards"];
   };
-  "/switchboard/organisations/{organisationId}/connected-apps": {
+  "/organisations/{organisationId}/connected-apps": {
     /** @description Retrieves a page of Apps which have connections for an organisation. */
     get: operations["GetConnectedApps"];
   };
-  "/switchboard/organisations/{organisationId}/connections": {
+  "/organisations/{organisationId}/connections": {
     /**
      * @description Retrieves connections for an organisation, potentially filtering by appId. The response is structured as a page
      * but currently the response returns all items. Consumers wishing to be backwards compatible should not assume
@@ -35,11 +39,11 @@ export interface paths {
      */
     post: operations["CreateConnection"];
   };
-  "/switchboard/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info": {
+  "/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info": {
     /** @description Retrieves all the information needed that a user needs to fill out to use a Hub integration. */
     get: operations["IntegrationInfo"];
   };
-  "/switchboard/organisations/{organisationId}/connection-init": {
+  "/organisations/{organisationId}/connection-init": {
     /**
      * @description InitialiseConnection is used to initiate a connection of an App to a user's organisation. Different connections
      * require different auth methods (or even no auth method at all), this endpoint returns the necessary
@@ -47,24 +51,14 @@ export interface paths {
      */
     post: operations["InitialiseConnection"];
   };
-  "/switchboard/organisations/{organisationId}/credentials": {
+  "/organisations/{organisationId}/credentials": {
     /**
      * @description CreateCredential allows users to create new Credentials. Valid requests which return a credential marked as
      * "invalid" is normal behaviour, but the credential won't be usable until it's updated to become valid.
      */
     post: operations["CreateCredential"];
   };
-  "/hubs-sdk/organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}": {
-    /** @description Returns the user specified by the userId. */
-    get: operations["GetUser"];
-    /** @description Updates the given user. */
-    put: operations["PutUser"];
-    /** @description Create a new User. */
-    post: operations["PostUser"];
-    /** @description Delete a user. */
-    delete: operations["DeleteUser"];
-  };
-  "/switchboard/connections/oauth2/callback": {
+  "/connections/oauth2/callback": {
     /**
      * @description FinaliseConnectionCallback is the redirect URL to exchange an authorization code for an access token in an
      * OAuth2.0 authorization code grant. It must be noted that the real callback URL configured with the
@@ -78,6 +72,75 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    /**
+     * @description Credential holds sensitive data not owned by Versori. Users can create credentials so that Versori systems can
+     * authenticate to external services on behalf of the user.
+     */
+    Credential: {
+      /** @description ID is the identifier for the credential. */
+      id: string;
+      /** @description OrganisationID is the ID of the organisation which owns this credential. */
+      organisationID: unknown;
+      /** @description Name is the credential name. */
+      name: string;
+      /** @description Data is a map of string keys to string base64 encoded values for the actual credential data. */
+      data: Record<string, never>;
+      type: components["schemas"]["CredentialType"];
+      /**
+       * @description RedactFields is a list of fields within data which once created should not be returned to the user. This
+       * property is only applicable for "Default" credential types. Credentials of other types have their own
+       * redaction list internally and this field will be ignored.
+       */
+      redactFields?: string[];
+      /**
+       * Format: date-time
+       * @description ExpiresAt allows the user to specify when Switchboard should automatically delete the credential.
+       */
+      expiresAt?: string;
+    };
+    SchemaMetadata: {
+      /**
+       * @description Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+       * "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+       */
+      type: string;
+      /**
+       * @description Version denotes the version of the schema specification. This property is contextual based on the schema
+       * type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+       * supported), but `grpc` APIs could be "proto2" or "proto3".
+       */
+      version: string;
+      /**
+       * @description URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+       * could be a non-HTTP protocol (i.e. gs:// or s3://)
+       */
+      url: string;
+    };
+    Schema: {
+      id: string;
+      /**
+       * @description Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+       * "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+       */
+      type: string;
+      /**
+       * @description Version denotes the version of the schema specification. This property is contextual based on the schema
+       * type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+       * supported), but `grpc` APIs could be "proto2" or "proto3".
+       */
+      version: string;
+      /**
+       * @description URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+       * could be a non-HTTP protocol (i.e. gs:// or s3://)
+       */
+      sourceUrl: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      /** Format: date-time */
+      deletedAt?: string;
+    };
     ConnectIntegration: {
       connections?: components["schemas"]["HubApp"][];
       variables?: Record<string, never>;
@@ -99,29 +162,6 @@ export interface components {
        */
       requiresUserAuth?: boolean;
       authConfig?: components["schemas"]["AppAuthConfig"][];
-    };
-    Users: {
-      users?: string[];
-    };
-    User: {
-      /**
-       * @description The id of the user.
-       * This needs to be provided when creating a user and must be unique for the board.
-       * It must follow thw following regex \A[-/_=\.a-zA-Z0-9]+\z
-       */
-      id: string;
-      environments?: components["schemas"]["Environments"][];
-      variables?: {
-        [key: string]: unknown;
-      };
-    };
-    Environments: {
-      /** @description Human identifier for the environment. Must be unique for the user. */
-      key: string;
-      credentialId: string;
-      connectionId: string;
-      /** @description The variables that will be used by the connection for this environment. */
-      variables: Record<string, never>;
     };
     Error: {
       code: string;
@@ -693,16 +733,16 @@ export interface components {
         "application/json": components["schemas"]["BoardVariablesSchema"];
       };
     };
+    /** @description A paginated set of Hubs */
+    GetHubsResponse: {
+      content: {
+        "application/json": components["schemas"]["HubsPage"];
+      };
+    };
     /** @description The default error response */
     ErrorResponse: {
       content: {
         "application/json": components["schemas"]["Error"];
-      };
-    };
-    /** @description Responses for a User. */
-    UserResponse: {
-      content: {
-        "application/json": components["schemas"]["User"];
       };
     };
   };
@@ -715,15 +755,6 @@ export interface components {
     SortParam?: string;
   };
   requestBodies: {
-    /**
-     * @description Payload for creating and updating a user.
-     * On update the provided User overwrite the existing one.
-     */
-    CreateUser?: {
-      content: {
-        "application/json": components["schemas"]["User"];
-      };
-    };
     /** @description CreateConnectionRequest is the payload for creating a new Connection. */
     CreateConnectionRequest?: {
       content: {
@@ -764,6 +795,25 @@ export interface operations {
     };
     responses: {
       200: components["responses"]["GetVariablesSchemaResponse"];
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** @description Retrieves the hubs belonging to a given organisation. */
+  GetHubs: {
+    parameters: {
+      query?: {
+        search?: string;
+        first?: number;
+        before?: string;
+        after?: string;
+        sort?: string;
+      };
+      path: {
+        organisationId: string;
+      };
+    };
+    responses: {
+      200: components["responses"]["GetHubsResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
@@ -922,68 +972,6 @@ export interface operations {
     requestBody: components["requestBodies"]["CreateCredentialRequest"];
     responses: {
       201: components["responses"]["CreateCredentialResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Returns the user specified by the userId. */
-  GetUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["UserResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Updates the given user. */
-  PutUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateUser"];
-    responses: {
-      200: components["responses"]["UserResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new User. */
-  PostUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateUser"];
-    responses: {
-      200: components["responses"]["UserResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete a user. */
-  DeleteUser: {
-    parameters: {
-      path: {
-        orgId: string;
-        hubId: string;
-        boardId: string;
-        userId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["UserResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };

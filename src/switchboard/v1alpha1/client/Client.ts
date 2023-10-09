@@ -1,5 +1,5 @@
 import createClient from 'openapi-fetch';
-import { paths } from '../generated/api.ts';
+import { paths } from '../generated/switchboard.ts';
 import { Hubs } from './hubs/Hubs.ts';
 import { RawClient } from './types.ts';
 
