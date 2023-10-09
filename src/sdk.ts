@@ -1,5 +1,5 @@
-import * as switchboard from './switchboard';
+export * from './switchboard';
 
-export {
-    switchboard,
-}
+// export {
+//     switchboard,
+// }

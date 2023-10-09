@@ -9,13 +9,12 @@ export type ClientOptions = Parameters<typeof createClient>[0] & {
 };
 
 export class Client {
-
     private readonly client: RawClient;
 
     #hubs?: Hubs;
 
     constructor(opts: ClientOptions) {
-        this.client = createClient<paths>(opts)
+        this.client = createClient<paths>(opts);
     }
 
     get hubs(): Hubs {

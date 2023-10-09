@@ -5,301 +5,23 @@
 
 
 export interface paths {
-  "/transformer/preview": {
-    /**
-     * Preview the output of a transformer.
-     * @description Preview the output of a transformer. This endpoint is useful for testing a transformer before creating an integration.
-     */
-    post: operations["PreviewTransformer"];
+  "/switchboard/organisations/{organisationId}/boards/{boardId}/variables": {
+    /** @description Get the JSON schema for the variables of a board. */
+    get: operations["GetBoardVariablesSchema"];
   };
-  "/organisations/{organisationId}/boards": {
-    /** @description Retrieves the boards belonging to a given organisation. */
-    get: operations["GetBoards"];
-    /**
-     * @description Create a new Board for the provided organisation. No request body required as all parameters
-     * provided by server.
-     */
-    post: operations["CreateBoard"];
-  };
-  "/organisations/{organisationId}/boards/{boardId}": {
-    /** @description Retrieves an existing board by ID for the given organisation. */
-    get: operations["GetBoard"];
-    /** @description Update an existing board, by ID for the given organisation. */
-    put: operations["UpdateBoard"];
-    /** @description Delete an Board by ID in the current organisation. */
-    delete: operations["DeleteBoard"];
-  };
-  "/organisations/{organisationId}/hubs": {
-    /** @description Retrieves the hubs belonging to a given organisation. */
-    get: operations["GetHubs"];
-    /**
-     * @description Create a new Hub for the provided organisation. No request body required as all parameters
-     * provided by server.
-     */
-    post: operations["CreateHub"];
-  };
-  "/organisations/{organisationId}/hubs/{hubId}": {
-    /** @description Retrieves an existing hub by ID for the given organisation. */
-    get: operations["GetHub"];
-    /** @description Update an existing hub, by ID for the given organisation. */
-    put: operations["UpdateHub"];
-    /** @description Delete a Hub by ID in the current organisation. */
-    delete: operations["DeleteHub"];
-  };
-  "/organisations/{organisationId}/hubs/{hubId}/boards": {
+  "/switchboard/organisations/{organisationId}/hubs/{hubId}/boards": {
     /** @description Retrieves the boards belonging to a given hub and organisation. */
     get: operations["ListHubBoards"];
-    /** @description Creates a board associated with the given Hub ID. */
-    post: operations["CreateHubBoard"];
   };
-  "/organisations/{organisationId}/hubs/{hubId}/users/{userId}": {
+  "/switchboard/organisations/{organisationId}/hubs/{hubId}/users/{userId}": {
     /** @description Retrieves a pagniated list of boards belonging to a given user and hub. */
     get: operations["GetUserHubBoards"];
   };
-  "/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/users": {
-    /** @description Retrieves all users of a hub board. */
-    get: operations["ListHubBoardUsers"];
-  };
-  "/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/users/{userid}": {
-    /** @description Internal endpoint meant to link a dynamic user to a board. */
-    post: operations["CreateBoardUser"];
-    /**
-     * @description Internal endpoint meant to unlink a dynamic user to a board.
-     * This would indicate a user has removed an integration from the hub.
-     */
-    delete: operations["DeleteBoardUser"];
-  };
-  "/organisations/{organisationId}/boards/{boardId}/publish": {
-    /**
-     * @description Publish a board at the revision specified by the provided event ID. This is an asynchronous action, callers
-     * should await for a `BoardPublishedEvent` over the websocket API (recommended) or poll GetBoard until
-     * `publishedEventId` matches the event ID which has been provided to publish.
-     *
-     * If the request has caused a board to schedule then this request will always return 202.
-     *
-     * If this request succeeds but then an error occurs in scheduling, a `BoardPublishFailedEvent` will be produced
-     * over the websocket API; this functionality is not currently available over the REST API.
-     */
-    post: operations["PublishBoard"];
-  };
-  "/organisations/{organisationId}/boards/{boardId}/unpublish": {
-    /**
-     * @description UnpublishBoard stops the board execution. This is an asynchronous request and will respond with a "202 Accepted"
-     * to acknowledge that the board has been scheduled for termination. A `BoardUnpublishedEvent` will be emitted once
-     * the board has actually been terminated which can be listened for over the websocket API.
-     */
-    post: operations["UnpublishBoard"];
-  };
-  "/organisations/{organisationId}/boards/{boardId}/out-of-date-board-nodes": {
-    /**
-     * @description ListOutOfDateNodesForBoard will list for a single board the nodes which are using an operation for a schema which is not
-     * the one currently assigned to the corresponding app.
-     */
-    get: operations["ListOutOfDateNodesForBoard"];
-  };
-  "/organisations/{organisationId}/boards/{boardId}/variables": {
-    /** @description Get the JSON schema for the variables of a board. */
-    get: operations["GetBoardVariablesSchema"];
-    /** @description Update or create the JSON schema for the variables of a board. */
-    put: operations["CreateOrUpdateBoardVariablesSchema"];
-  };
-  "/organisations/{organisationId}/out-of-date-board-nodes": {
-    /**
-     * @description ListOutOfDateBoardNodes will list all of the board nodes which are using an operation for a schema which is not
-     * the one currently assigned to the corresponding app.
-     */
-    get: operations["ListOutOfDateBoardNodes"];
-  };
-  "/organisations/{organisationId}/boards/{boardId}/execution-logs": {
-    /** @description ListExecutionLogsForBoard will list for a single published board the execution logs stored in the Google Cloud logging. */
-    get: operations["ListExecutionLogsForBoard"];
-  };
-  "/organisations/{organisationId}/boards/{boardId}/execution-id/{executionId}/actor-id/{actorId}/execution-logs-msg": {
-    /** @description GetExecutionLogsMessageForBoard will get for a single published board the execution log message for a single action stored in the Google Cloud logging. */
-    get: operations["GetExecutionLogsMessageForBoard"];
-  };
-  "/organisations/{organisationId}/board-instances/{boardId}/incoming-webhooks/{nodeId}": {
-    /** @description Trigger a board webhook execution. */
-    post: operations["IncomingBoardWebhook"];
-  };
-  "/organisations/{organisationId}/board-instances/{boardId}/trigger-execution": {
-    /** @description Trigger a board to execute specific start-nodes. */
-    post: operations["TriggerBoardExecution"];
-  };
-  "/organisations/{organisationId}/data-mappings": {
-    /** @description Retrieves the data mappings belonging to a given organisation. */
-    get: operations["GetDataMappings"];
-    /** @description Create a new DataMapping for the provided organisation. */
-    post: operations["CreateDataMapping"];
-  };
-  "/organisations/{organisationId}/data-mappings/{mappingId}": {
-    /** @description Retrieves an existing data mapping by ID for the given organisation. */
-    get: operations["GetDataMapping"];
-    /** @description Update an existing data mapping, by ID for the given organisation. */
-    put: operations["UpdateDataMapping"];
-    /** @description Delete a DataMapping by ID in the current organisation. */
-    delete: operations["DeleteDataMapping"];
-  };
-  "/organisations/{organisationId}/data-mappings/{mappingId}/entries": {
-    /** @description Retrieves the data mapping entries belonging to a given organisation and mapping. */
-    get: operations["GetDataMappingEntries"];
-    /** @description Create a new DataMappingEntry for the provided organisation and mapping. */
-    post: operations["CreateDataMappingEntry"];
-  };
-  "/organisations/{organisationId}/data-mappings/{mappingId}/entries/{entryId}": {
-    /** @description Retrieves an existing data mapping entry by ID for the given organisation and mapping. */
-    get: operations["GetDataMappingEntry"];
-    /** @description Update an existing data mapping entry by ID for the given organisation and mapping. */
-    put: operations["UpdateDataMappingEntry"];
-    /** @description Delete a DataMappingEntry by ID in the current organisation and mapping. */
-    delete: operations["DeleteDataMappingEntry"];
-  };
-  "/apps": {
-    /** @description Retrieves public Apps not owned by this organisation Apps, as a paginated response. */
-    get: operations["GetPublicApps"];
-  };
-  "/apps/{appId}": {
-    /** @description Retrieves an existing public App by ID. If the app is not public an error will be returned. */
-    get: operations["GetPublicApp"];
-  };
-  "/organisations/{organisationId}/apps": {
-    /** @description Retrieves all Apps owned by this organisation as a paginated response. */
-    get: operations["GetApps"];
-    /** @description Create a new App for the provided organisation */
-    post: operations["CreateApp"];
-  };
-  "/organisations/{organisationId}/apps/{appId}": {
-    /** @description Retrieves an existing App for by ID in the current organisation. */
-    get: operations["GetApp"];
-    /** @description Update an existing App for by ID in the current organisation. */
-    put: operations["UpdateApp"];
-    /** @description Delete an App by ID in the current organisation. */
-    delete: operations["DeleteApp"];
-  };
-  "/organisations/{organisationId}/apps/{appId}/operation-builder": {
-    /** @description BuildSchemaOperationForApp validates and uses the schema builder to fill in any possible fields on a proposed new schema operation for an app. */
-    post: operations["BuildSchemaOperationForApp"];
-  };
-  "/organisations/{organisationId}/apps/{appId}/operations": {
-    /** @description Retrieve the set of all operations available for the App specified by appId. */
-    get: operations["GetAppOperations"];
-    /** @description Create a new operation for the App in the provided organisation */
-    post: operations["CreateAppOperation"];
-  };
-  "/organisations/{organisationId}/apps/{appId}/operations/{operationId}": {
-    /** @description Delete the schema operation belonging to an app. */
-    delete: operations["DeleteAppOperation"];
-  };
-  "/organisations/{organisationId}/apps/{appId}/operations/{operationId}/schema": {
-    /** @description Retrieve the input and output schema for a given operation belonging to an app. */
-    get: operations["GetAppOperationSchema"];
-  };
-  "/organisations/{organisationId}/schemas": {
-    /** @description Retrieves all Schemas owned by this organisation as a paginated response. */
-    get: operations["GetSchemas"];
-    /** @description Create a new schema, which can be used to create an App and in the future be used to reconfigure an existing  App. */
-    post: operations["CreateSchema"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/info": {
-    /** @description GetSchemaInfo returns information about a schema. This replaces the deprecated operation `SchemaInfo`. */
-    get: operations["GetSchemaInfo"];
-  };
-  "/organisations/{organisationId}/schemas/{id}": {
-    /** @description DeleteSchema deletes an unpublished schema. */
-    delete: operations["DeleteSchema"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/clone": {
-    /** @description CloneSchema clones an existing schema. */
-    post: operations["CloneSchema"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/publish": {
-    /** @description PublishSchema publishes an existing schema. */
-    post: operations["PublishSchema"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/operations": {
-    /** @description Retrieve the set of all operations available for the Schema specified by id. */
-    get: operations["GetSchemaOperations"];
-    /** @description Create a new operation for the Schema in the provided organisation */
-    post: operations["CreateSchemaOperation"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/operations/{operationId}": {
-    /** @description Retrieve the input and output schema for a given operation belonging to an schema. */
-    get: operations["GetOperationSchema"];
-    /** @description Updates or creates a schema operation. */
-    put: operations["UpdateSchemaOperation"];
-    /** @description Delete the schema operation belonging to an schema. */
-    delete: operations["DeleteSchemaOperation"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/components": {
-    /** @description Retrieve the set of all schema components available for the Schema specified by id. */
-    get: operations["GetSchemaComponents"];
-    /** @description Create a batch of schema components. */
-    post: operations["CreateSchemaComponents"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/components/{ref}": {
-    /** @description Retrieves definition of an existing schema component by ref for the current schema. */
-    get: operations["GetSchemaComponent"];
-    /** @description Update a schema component. */
-    put: operations["UpdateSchemaComponent"];
-    /** @description Deletes a schema component, along with any other components referencing it. */
-    delete: operations["DeleteSchemaComponent"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/delete-components": {
-    /** @description DeleteSchemaComponents deletes a list of schema components, along with any others depending on them. */
-    post: operations["DeleteSchemaComponents"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/operation-builder": {
-    /** @description BuildSchemaOperation validates and uses the schema builder to fill in any possible fields on a proposed new schema operation. */
-    post: operations["BuildSchemaOperation"];
-  };
-  "/organisations/{organisationId}/schemas/{id}/import": {
-    /**
-     * @deprecated
-     * @description ImportSchemaOperations adds the operations for a schema the database for faster retrieval.
-     *
-     * Deprecated: This endpoint is no longer supported as schemas are automatically imported using the
-     * `CreateSchema` (POST /organisations/{organisationId}/schemas) operation. This endpoint will be replaced with a
-     * reimport endpoint in the future, in the meantime this may be used when the `force` parameter is set to true.
-     */
-    put: operations["ImportSchemaOperations"];
-  };
-  "/organisations/{organisationId}/schema-utils/{schemaType}/import": {
-    /**
-     * @deprecated
-     * @description Create a schema record and import the operations to store locally as DB records.
-     *
-     * Deprecated in favour of CreateSchema (POST /organisations/{organisationId}/schemas)
-     */
-    post: operations["CreateSchemaOperations"];
-  };
-  "/organisations/{organisationId}/schema-utils/{schemaType}/signed-url": {
-    /** @description Retrieve a signed URL for uploading a schema specification */
-    get: operations["GetSchemaSignedURL"];
-  };
-  "/organisations/{organisationId}/schema-utils/{schemaType}/source-url": {
-    /**
-     * @description Upload a schema document based on a source URL. The server will download this URL and upload to object
-     * storage automatically.
-     */
-    post: operations["UploadSchemaFromURL"];
-  };
-  "/organisations/{organisationId}/schema-utils/{schemaType}/info": {
-    /**
-     * @deprecated
-     * @description SchemaInfo processes the schema referenced by the provided URL and returns information to allow a user to create
-     * an App.
-     *
-     * Deprecated: This endpoint is no longer supported, users should create a Schema using the `CreateSchema`
-     * (POST /organisations/{organisationId}/schemas) operation, and use the `GetSchemaInfo` operation to retrieve
-     * this information.
-     */
-    post: operations["SchemaInfo"];
-  };
-  "/organisations/{organisationId}/connected-apps": {
+  "/switchboard/organisations/{organisationId}/connected-apps": {
     /** @description Retrieves a page of Apps which have connections for an organisation. */
     get: operations["GetConnectedApps"];
   };
-  "/organisations/{organisationId}/connections": {
+  "/switchboard/organisations/{organisationId}/connections": {
     /**
      * @description Retrieves connections for an organisation, potentially filtering by appId. The response is structured as a page
      * but currently the response returns all items. Consumers wishing to be backwards compatible should not assume
@@ -313,15 +35,11 @@ export interface paths {
      */
     post: operations["CreateConnection"];
   };
-  "/organisations/{organisationId}/connections/{connectionId}": {
-    /** @description Retrieves an existing Connection by ID in the current organisation. */
-    get: operations["GetConnection"];
-    /** @description Updates an existing Connection by ID in the current organisation. */
-    put: operations["UpdateConnection"];
-    /** @description Deletes a connection, and unpublishes all boards referencing it. */
-    delete: operations["DeleteConnection"];
+  "/switchboard/organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info": {
+    /** @description Retrieves all the information needed that a user needs to fill out to use a Hub integration. */
+    get: operations["IntegrationInfo"];
   };
-  "/organisations/{organisationId}/connection-init": {
+  "/switchboard/organisations/{organisationId}/connection-init": {
     /**
      * @description InitialiseConnection is used to initiate a connection of an App to a user's organisation. Different connections
      * require different auth methods (or even no auth method at all), this endpoint returns the necessary
@@ -329,28 +47,24 @@ export interface paths {
      */
     post: operations["InitialiseConnection"];
   };
-  "/organisations/{organisationId}/credentials": {
-    /** @description Retrieves all Credentials owned by this organisation as a paginated response. */
-    get: operations["GetCredentials"];
+  "/switchboard/organisations/{organisationId}/credentials": {
     /**
      * @description CreateCredential allows users to create new Credentials. Valid requests which return a credential marked as
      * "invalid" is normal behaviour, but the credential won't be usable until it's updated to become valid.
      */
     post: operations["CreateCredential"];
   };
-  "/organisations/{organisationId}/credentials/{credentialId}": {
-    /** @description Retrieves an existing Credential by ID in the current organisation. */
-    get: operations["GetCredential"];
-    /** @description Updates an existing Credential by ID in the current organisation. */
-    put: operations["UpdateCredential"];
-    /** @description Deletes an existing Credential by ID in the current organisation. */
-    delete: operations["DeleteCredential"];
+  "/hubs-sdk/organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}": {
+    /** @description Returns the user specified by the userId. */
+    get: operations["GetUser"];
+    /** @description Updates the given user. */
+    put: operations["PutUser"];
+    /** @description Create a new User. */
+    post: operations["PostUser"];
+    /** @description Delete a user. */
+    delete: operations["DeleteUser"];
   };
-  "/organisations/{organisationId}/signed-url": {
-    /** @description Retrieve a signed URL for uploading assets */
-    get: operations["GetSignedURL"];
-  };
-  "/connections/oauth2/callback": {
+  "/switchboard/connections/oauth2/callback": {
     /**
      * @description FinaliseConnectionCallback is the redirect URL to exchange an authorization code for an access token in an
      * OAuth2.0 authorization code grant. It must be noted that the real callback URL configured with the
@@ -364,15 +78,55 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
-    TransformerPreviewInput: {
-      /** @description The input data to the transformer. */
-      input: string;
-      /** @description The configuration of the transformer. */
-      transform: string;
+    ConnectIntegration: {
+      connections?: components["schemas"]["HubApp"][];
+      variables?: Record<string, never>;
     };
-    TransformerPreviewOutput: {
-      /** @description The output data from the transformer. */
-      output: Record<string, never>;
+    HubApp: {
+      id?: string;
+      name?: string;
+      imageUrl?: string;
+      /**
+       * @description ListenerUrl is the URL which webhooks will send data to Switchboard. This is only populated if the
+       * app has a listener URL configured.
+       */
+      listenerUrl?: string;
+      /**
+       * @description RequiresUserAuth is true if the app requires the user of the integration to authenticate with the app before it can be used.
+       * Apps that have this set to true, should be the only ones shown in the client's UI. The other apps are
+       * only really returned due to the possiblity of them having a listener URL which the user may need to configure
+       * webhooks with.
+       */
+      requiresUserAuth?: boolean;
+      authConfig?: components["schemas"]["AppAuthConfig"][];
+    };
+    Users: {
+      users?: string[];
+    };
+    User: {
+      /**
+       * @description The id of the user.
+       * This needs to be provided when creating a user and must be unique for the board.
+       * It must follow thw following regex \A[-/_=\.a-zA-Z0-9]+\z
+       */
+      id: string;
+      environments?: components["schemas"]["Environments"][];
+      variables?: {
+        [key: string]: unknown;
+      };
+    };
+    Environments: {
+      /** @description Human identifier for the environment. Must be unique for the user. */
+      key: string;
+      credentialId: string;
+      connectionId: string;
+      /** @description The variables that will be used by the connection for this environment. */
+      variables: Record<string, never>;
+    };
+    Error: {
+      code: string;
+      message: string;
+      error: string;
     };
     App: {
       id: string;
@@ -395,112 +149,6 @@ export interface components {
       updatedAt: string;
       /** Format: date-time */
       deletedAt?: string;
-    };
-    SchemaMetadata: {
-      /**
-       * @description Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
-       * "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
-       */
-      type: string;
-      /**
-       * @description Version denotes the version of the schema specification. This property is contextual based on the schema
-       * type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
-       * supported), but `grpc` APIs could be "proto2" or "proto3".
-       */
-      version: string;
-      /**
-       * @description URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
-       * could be a non-HTTP protocol (i.e. gs:// or s3://)
-       */
-      url: string;
-    };
-    Schema: {
-      id: string;
-      /**
-       * @description Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
-       * "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
-       */
-      type: string;
-      /**
-       * @description Version denotes the version of the schema specification. This property is contextual based on the schema
-       * type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
-       * supported), but `grpc` APIs could be "proto2" or "proto3".
-       */
-      version: string;
-      /**
-       * @description URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
-       * could be a non-HTTP protocol (i.e. gs:// or s3://)
-       */
-      sourceUrl: string;
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-      /** Format: date-time */
-      deletedAt?: string;
-    };
-    SchemaComponent: {
-      /** @description The ID of the schema this object belongs to. */
-      schemaId?: string;
-      /** @description The ref of the schema object, for OpenAPI this will be how operations ref to this object with the ref field. */
-      ref: string;
-      /** @description The definition of the schema object following OpenAPI specification. */
-      definition: Record<string, never>;
-    };
-    SchemaComponentsPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["SchemaComponent"][];
-    };
-    CreateSchemaComponentsRequestBody: {
-      replaceExisting?: boolean;
-      components: components["schemas"]["SchemaComponent"][];
-    };
-    DeleteSchemaComponentsRequestBody: {
-      ids: string[];
-    };
-    /** @description SchemaCreate is the request body for creating a new schema. */
-    SchemaCreate: {
-      /** @description URL is the address where the schema file is hosted. This may be an externally accessible http(s):// URL, or a gs:// URL which Switchboard is granted access to. */
-      url: string;
-      /** @description Type is the schema type being created. The only type currently supported is "openapi". */
-      type: string;
-      /** @description Async is a flag to indicate whether the schema should be created asynchronously. This will result in a  201 Accepted response for which the response body will be different to the regular synchronous response. */
-      async?: boolean;
-    };
-    /** @description SchemaImportJob describes a asynchronous job which is importing a new schema. */
-    SchemaImportJob: {
-      /** @description ID is the unique identifier of the job. */
-      id: string;
-      /** @description SchemaID is the ID of the schema being imported. Performing a request to GetSchema with this ID before the  job is completed will result in a 404 response. */
-      schema_id: string;
-      /**
-       * @description Status denotes the current status of the job.
-       * This enum may have values added in minor version increments, which can break backwards compatability in  languages which are implement strongly-typed enums. To overcome this, if a consumer receives a value which  it is not aware of, it should be treated as if it was received as "Unknown".
-       * @enum {string}
-       */
-      status: "Unknown" | "Pending" | "Success" | "Failed";
-      /** @description Messages contains a list of messages to be presented to the user */
-      messages: components["schemas"]["SchemaImportJobMessage"][];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-      /**
-       * Format: date-time
-       * @description CompletedAt is the time at which the job was either marked as status "Success" or "Failure".
-       */
-      completedAt?: string;
-    };
-    /** @description SchemaImportJobMessage represents a message to be presented to the user during a schema import job. */
-    SchemaImportJobMessage: {
-      /** @description Text is the message to be presented to the user. */
-      text: string;
-      /** @description Type denotes the type of message, one of "info", "warning" or "error". */
-      type: string;
-      /**
-       * Format: date-time
-       * @description Timestamp is the time at which the message was created.
-       */
-      timestamp: string;
     };
     /** @description AppAuthConfig describes how an organisation can authenticate with an app. */
     AppAuthConfig: {
@@ -606,135 +254,6 @@ export interface components {
       type: string;
       data: components["schemas"]["AppAuthConfigData"];
     };
-    AppsPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["App"][];
-    };
-    SchemasPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["Schema"][];
-    };
-    AppCreate: {
-      name: string;
-      public: boolean;
-      server: components["schemas"]["Server"];
-      /**
-       * @description AuthConfigs is a list of authentication standards which can be used to connect a user's account to
-       * this app. At least one auth type needs to be valid for the App to be used by a user.
-       */
-      authConfigs: components["schemas"]["AppAuthConfigCreate"][];
-      imageUrl?: string;
-      /** @description The ID of the Schema instance. */
-      schemaId: string;
-    };
-    BoardNode: {
-      boardID: string;
-      nodeId: string;
-      appId: string;
-      app?: components["schemas"]["App"];
-      /** Format: date-time */
-      createdAt: string;
-      /** Format: date-time */
-      updatedAt: string;
-      /** Format: date-time */
-      deletedAt?: string;
-    };
-    BoardNodesPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["BoardNode"][];
-    };
-    ExecutionLogNode: {
-      severity: string;
-      /** Format: date-time */
-      timestamp: string;
-      summary: string;
-      payload: string;
-    };
-    ExecutionLogInfo: {
-      totalCount: number;
-      /** Format: date-time */
-      startTime?: string;
-      /** Format: date-time */
-      endTime?: string;
-    };
-    ExecutionLogNodesPage: components["schemas"]["ExecutionLogInfo"] & {
-      /** @description List of execution logs for a single board. */
-      items?: components["schemas"]["ExecutionLogNode"][];
-    };
-    ExecutionLogMsg: {
-      data?: string;
-    };
-    Operation: {
-      /**
-       * @description The ID of the operation, for OpenAPI this will be the `operationId` field if set, otherwise the request's
-       * type and path.
-       *
-       * @example GET /organisations/{organisationId}/apps/{appId}
-       */
-      id: string;
-      /** @description The endpoint path for use in finding the path in the API spec. */
-      path: string;
-      /** @description Method is the HTTP method of the request. */
-      method: string;
-      /** @description A human-friendly name based on the operation ID. */
-      name: string;
-      /** @description A human-friendly description of what this operation does. */
-      description?: string;
-      /**
-       * @description Type is the type of operation, possible values are "request" and "callback":
-       *   - "request" indicates that the operation is initiated by Switchboard
-       *   - "callback" indicates that the operation is initiated by the application and sends data to Switchboard
-       */
-      type: string;
-    };
-    OperationsPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["Operation"][];
-    };
-    OperationParameter: {
-      /** @description The name of the operation parameter. */
-      name: string;
-      /**
-       * @description The type of the operation parameter.
-       * @enum {string}
-       */
-      type: "string" | "integer" | "number" | "boolean";
-      /**
-       * @description The location of the operation parameter.
-       * @enum {string}
-       */
-      location: "path" | "query" | "header" | "cookie";
-    };
-    OperationRequest: {
-      parameters?: components["schemas"]["OperationParameter"][];
-      /** @description The request body of the operation. */
-      body?: Record<string, never>;
-    };
-    /** @description The response body of the operation. */
-    OperationResponse: Record<string, never>;
-    /** @description The callbacks of the operation. */
-    OperationCallbacks: Record<string, never>;
-    OperationSchema: {
-      /**
-       * @description The ID of the operation, for OpenAPI this will be the `operationId` field if set, otherwise the request's
-       * type and path.
-       */
-      id?: string;
-      /**
-       * @description The http method that the operation uses.
-       * @enum {string}
-       */
-      method?: "GET" | "PUT" | "POST" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH" | "TRACE" | "SQL";
-      /** @description A human-friendly description of what this operation does. */
-      description?: string;
-      /** @description A human-friendly name based on the operation ID. */
-      name?: string;
-      /** @description The ID of the schema this object belongs to. */
-      schemaId: string;
-      /** @description The path used to call the operation. */
-      path?: string;
-      request?: components["schemas"]["OperationRequest"];
-      response?: components["schemas"]["OperationResponse"];
-      callbacks?: components["schemas"]["OperationCallbacks"];
-      /** @description An optional map of components the operation refers to indexed by ref. */
-      components?: Record<string, never>;
-    };
     Hub: {
       id: string;
       orgId: string;
@@ -745,9 +264,6 @@ export interface components {
       updatedAt: string;
       /** Format: date-time */
       deletedAt?: string;
-    };
-    HubCreate: {
-      name: string;
     };
     HubBoardUsers: components["schemas"]["HubBoardUser"][];
     HubBoardUser: {
@@ -895,137 +411,6 @@ export interface components {
     HubsPage: components["schemas"]["PageInfo"] & {
       items?: components["schemas"]["Hub"][];
     };
-    TriggerBoardExecution: {
-      /** @description NodeIDs is a list of Node IDs which should be manually triggered. At least one ID must be provided. */
-      nodeIds: string[];
-    };
-    /**
-     * @description BoardTriggered is used to indicate if the trigger request has been accepted. The actual scheduling is
-     * done in the background and does not indicate the board has finished execution yet.
-     */
-    BoardTriggered: {
-      /**
-       * @description OK denotes whether the request was handled successfully. If this field is true, then all nodeIds from the
-       * request were successfully triggered, otherwise at least one nodeId failed to trigger.
-       */
-      ok: boolean;
-      /** @description Nodes provides info on which nodes were triggered and if any failed. */
-      nodes: components["schemas"]["BoardNodeTriggered"][];
-    };
-    /**
-     * @description BoardNodeTriggered is used to indicate if the trigger request has been accepted for a particular node. Similar
-     * to BoardTriggered, the actual scheduling is done in the background and does not indicate the board has finished
-     * execution yet.
-     */
-    BoardNodeTriggered: {
-      /**
-       * @description OK denotes whether the request was handled successfully. If this field is true, then the node was triggered,
-       * otherwise the node failed to trigger.
-       */
-      ok: boolean;
-      /** @description Message contains a human-friendly message to display to the user in response to their trigger request. */
-      message: string;
-    };
-    /** @description This defines which fields from the source map to fields in the target in a data mapping. */
-    DataMappingDefinition: {
-      sourceField?: string;
-      targetField?: string;
-    };
-    DataMapping: {
-      id: string;
-      orgId: string;
-      sourceApp?: components["schemas"]["App"];
-      sourceSchemaId: string;
-      targetApp?: components["schemas"]["App"];
-      targetSchemaId: string;
-      definition: components["schemas"]["DataMappingDefinition"][];
-      /** Format: date-time */
-      createdAt?: string;
-      /** Format: date-time */
-      updatedAt?: string;
-      /** Format: date-time */
-      deletedAt?: string;
-    };
-    DataMappingsPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["DataMapping"][];
-    };
-    /**
-     * @description DataMappingCreate is the request body to create a new data mapping. The ID is automatically generated and the
-     * organisation ID is defined by the request's path parameter.
-     */
-    DataMappingCreate: {
-      /** @description The ID of the source App instance. */
-      sourceAppId: string;
-      /**
-       * @description The ID of the source app operation, for OpenAPI this will be the `operationId` field if set, otherwise the
-       * request's type and path.
-       */
-      sourceSchemaId: string;
-      /** @description The ID of the target App instance. */
-      targetAppId: string;
-      /**
-       * @description The ID of the target app operation, for OpenAPI this will be the `operationId` field if set, otherwise the
-       * request's type and path.
-       */
-      targetSchemaId: string;
-      definition: components["schemas"]["DataMappingDefinition"][];
-    };
-    /**
-     * @description DataMappingUpdate is the request body to update a credential. The ID and organisation ID fields are taken from
-     * the URL path.
-     */
-    DataMappingUpdate: {
-      /** @description The ID of the source App instance. */
-      sourceAppId: string;
-      /**
-       * @description The ID of the source app operation, for OpenAPI this will be the `operationId` field if set, otherwise the
-       * request's type and path.
-       */
-      sourceSchemaId: string;
-      /** @description The ID of the target App instance. */
-      targetAppId: string;
-      /**
-       * @description The ID of the target app operation, for OpenAPI this will be the `operationId` field if set, otherwise the
-       * request's type and path.
-       */
-      targetSchemaId: string;
-      definition: components["schemas"]["DataMappingDefinition"][];
-    };
-    DataMappingEntry: {
-      id: string;
-      mapping?: components["schemas"]["DataMapping"];
-      sourceValue: string | number | boolean;
-      targetValue: string | number | boolean;
-      /** Format: date-time */
-      createdAt?: string;
-      /** Format: date-time */
-      updatedAt?: string;
-      /** Format: date-time */
-      deletedAt?: string;
-    };
-    DataMappingEntriesPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["DataMappingEntry"][];
-    };
-    /**
-     * @description DataMappingEntryCreate is the request body to create a new data mapping. The ID is automatically generated and
-     * the organisation ID and mapping ID is defined by the request's path parameter.
-     */
-    DataMappingEntryCreate: {
-      /** @description The source value of the mapping entry. */
-      sourceValue: string | number | boolean;
-      /** @description The target value of the mapping entry. */
-      targetValue: string | number | boolean;
-    };
-    /**
-     * @description DataMappingEntryUpdate is the request body to update a credential. The ID and organisation ID and Mapping ID
-     * fields are taken from the URL path.
-     */
-    DataMappingEntryUpdate: {
-      /** @description The source value of the mapping entry. */
-      sourceValue: string | number | boolean;
-      /** @description The target value of the mapping entry. */
-      targetValue: string | number | boolean;
-    };
     Connection: {
       id: string;
       orgId: string;
@@ -1164,92 +549,11 @@ export interface components {
       /** @description The URL to identify the asset. */
       url: string;
     };
-    ImportSchemaFromURLRequestBody: {
-      /** @description The URL which can be used to download the schema document. */
-      url: string;
-    };
-    UploadSchemaFromURLRequestBody: {
-      /** @description SourceURL is the URL which can be used to download the original schema document. */
-      sourceURL: string;
-    };
-    UploadSchemaFromURLResponseBody: {
-      /** @description The URL to identify the schema. This is not publicly accessible and is to be used when creating an App. */
-      url: string;
-    };
-    SchemaInfoRequestBody: {
-      /** @description SourceURL is the URL which can be used to download the original schema document. */
-      sourceURL: string;
-    };
-    SchemaInfo: {
-      /** @description The ID of the Schema record if it is stored. */
-      id?: string;
-      /** @description Title is calculated from the parsed schema. Not all schemas contain this information so may be null. */
-      title?: string;
-      availableServers: components["schemas"]["Server"][];
-      schemaMetadata: components["schemas"]["SchemaMetadata"];
-      /**
-       * @description SupportedAuthConfigs is a list of authentication standards which can be used to connect a user's account to
-       * this app. At least one auth type needs to be valid for the App to be used by a user.
-       */
-      supportedAuthConfigs: components["schemas"]["AppAuthConfig"][];
-    };
     /**
      * @description CreateCredentialRequestBody is the request body to create a new credential. The ID is automatically generated
      * and the organisation ID is defined by the request's path parameter.
      */
     CreateCredentialRequestBody: {
-      /** @description Name is the credential name. */
-      name: string;
-      /** @description Data is a map of string keys to string base64 encoded values for the actual credential data. */
-      data: Record<string, never>;
-      type: components["schemas"]["CredentialType"];
-      /**
-       * @description RedactFields is a list of fields within data which once created should not be returned to the user. This
-       * property is only applicable for "Default" credential types. Credentials of other types have their own
-       * redaction list internally and this field will be ignored.
-       */
-      redactFields?: string[];
-      /**
-       * Format: date-time
-       * @description ExpiresAt allows the user to specify when Switchboard should automatically delete the credential.
-       */
-      expiresAt?: string;
-    };
-    /**
-     * @description UpdateCredentialRequestBody is the request body to update a credential. The ID and OrganisationID fields are
-     * taken from the URL path.
-     */
-    UpdateCredentialRequestBody: {
-      /** @description Name is the credential name. */
-      name: string;
-      /** @description Data is a map of string keys to string base64 encoded values for the actual credential data. */
-      data: Record<string, never>;
-      type: components["schemas"]["CredentialType"];
-      /**
-       * @description RedactFields is a list of fields within data which once created should not be returned to the user. This
-       * property is only applicable for "Default" credential types. Credentials of other types have their own
-       * redaction list internally and this field will be ignored.
-       */
-      redactFields?: string[];
-      /**
-       * Format: date-time
-       * @description ExpiresAt allows the user to specify when Switchboard should automatically delete the credential.
-       */
-      expiresAt?: string;
-    };
-    /** @description CredentialPage is a page of credentials. */
-    CredentialsPage: components["schemas"]["PageInfo"] & {
-      items?: components["schemas"]["Credential"][];
-    };
-    /**
-     * @description Credential holds sensitive data not owned by Versori. Users can create credentials so that Versori systems can
-     * authenticate to external services on behalf of the user.
-     */
-    Credential: {
-      /** @description ID is the identifier for the credential. */
-      id: string;
-      /** @description OrganisationID is the ID of the organisation which owns this credential. */
-      organisationID: unknown;
       /** @description Name is the credential name. */
       name: string;
       /** @description Data is a map of string keys to string base64 encoded values for the actual credential data. */
@@ -1328,9 +632,6 @@ export interface components {
      * It may not be required to specify them all to connect the App.
      */
     Scopes: Record<string, never>;
-    DeletedResource: {
-      id?: string;
-    };
     PageInfo: {
       totalCount: number;
       next?: string;
@@ -1342,291 +643,18 @@ export interface components {
       global?: components["schemas"]["VariablesSchema"];
     };
     VariablesSchema: Record<string, never>;
-    /** @description Empty placeholder schema */
-    EmptySchema: Record<string, never>;
-    Error: {
-      code: string;
-      message: string;
-      extensions?: Record<string, never>;
-    };
   };
   responses: {
-    /** @description The transformed data from the transformer. */
-    TransformerPreviewResponse: {
+    /** @description All information a hub user is required to provide to use an integration */
+    ConnectIntegrationResponse: {
       content: {
-        "application/json": components["schemas"]["TransformerPreviewOutput"];
-      };
-    };
-    /** @description A paginated result of Apps */
-    GetPublicAppsResponse: {
-      content: {
-        "application/json": components["schemas"]["AppsPage"];
-      };
-    };
-    /** @description A single App result */
-    GetPublicAppResponse: {
-      content: {
-        "application/json": components["schemas"]["App"];
+        "application/json": components["schemas"]["ConnectIntegration"];
       };
     };
     /** @description A paginated set of Boards */
     GetBoardsResponse: {
       content: {
         "application/json": components["schemas"]["BoardsPage"];
-      };
-    };
-    /** @description A single Board result */
-    GetBoardResponse: {
-      content: {
-        "application/json": components["schemas"]["Board"];
-      };
-    };
-    /** @description A paginated set of Hubs */
-    GetHubsResponse: {
-      content: {
-        "application/json": components["schemas"]["HubsPage"];
-      };
-    };
-    /** @description A single Hub result */
-    GetHubResponse: {
-      content: {
-        "application/json": components["schemas"]["Hub"];
-      };
-    };
-    /** @description A paginated set of HubBoardUsers */
-    ListHubBoardUsersResponse: {
-      content: {
-        "application/json": components["schemas"]["HubBoardUsers"];
-      };
-    };
-    /** @description A paginated set of BoardNodes */
-    ListOutOfDateBoardNodesResponse: {
-      content: {
-        "application/json": components["schemas"]["BoardNodesPage"];
-      };
-    };
-    /** @description A list of execution logs for a single board */
-    ListExecutionLogsForBoardResponse: {
-      content: {
-        "application/json": components["schemas"]["ExecutionLogNodesPage"];
-      };
-    };
-    /** @description A single entry for and execution log message for an action/actor */
-    GetExecutionLogMsgForBoardResponse: {
-      content: {
-        "application/json": components["schemas"]["ExecutionLogMsg"];
-      };
-    };
-    /** @description The response after a board has been scheduled to execute. */
-    PublishBoardResponse: {
-      content: {
-        "application/json": components["schemas"]["BoardPublishResult"];
-      };
-    };
-    /** @description The response after a board has been scheduled to be terminated. */
-    UnpublishBoardResponse: {
-      content: {
-        "application/json": components["schemas"]["BoardUnpublishResult"];
-      };
-    };
-    /** @description DeleteBoardResponse is returned after deleting an board. */
-    DeleteBoardResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description DeleteHubResponse is returned after deleting an board. */
-    DeleteHubResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description TriggerBoardExecutionResponse is returned after triggering a board to execute. */
-    TriggerBoardExecutionResponse: {
-      content: {
-        "application/json": components["schemas"]["BoardTriggered"];
-      };
-    };
-    /** @description BuildSchemaOperationResponse is returned after a schema operation has been built. */
-    BuildSchemaOperationResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description A paginated set of DataMappings */
-    GetDataMappingsResponse: {
-      content: {
-        "application/json": components["schemas"]["DataMappingsPage"];
-      };
-    };
-    /** @description A single DataMapping result */
-    GetDataMappingResponse: {
-      content: {
-        "application/json": components["schemas"]["DataMapping"];
-      };
-    };
-    /** @description DeleteDataMappingResponse is returned after deleting a DataMapping. */
-    DeleteDataMappingResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description A paginated set of DataMappingEntries */
-    GetDataMappingEntriesResponse: {
-      content: {
-        "application/json": components["schemas"]["DataMappingEntriesPage"];
-      };
-    };
-    /** @description A single DataMappingEntry result */
-    GetDataMappingEntryResponse: {
-      content: {
-        "application/json": components["schemas"]["DataMappingEntry"];
-      };
-    };
-    /** @description DeleteDataMappingEntryResponse is returned after deleting a DataMappingEntry. */
-    DeleteDataMappingEntryResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description A paginated result of Apps */
-    GetAppsResponse: {
-      content: {
-        "application/json": components["schemas"]["AppsPage"];
-      };
-    };
-    /** @description A paginated result of Schemas */
-    GetSchemasResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemasPage"];
-      };
-    };
-    /** @description A single App result */
-    GetAppResponse: {
-      content: {
-        "application/json": components["schemas"]["App"];
-      };
-    };
-    /** @description DeleteAppResponse is the response definition after deleting an app. */
-    DeleteAppResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description DeleteSchemaResponse is the response definition after deleting a schema. */
-    DeleteSchemaResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description GetAppOperationsResponse is the response definition containing all Operations available to an App. */
-    GetAppOperationsResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationsPage"];
-      };
-    };
-    /** @description GetSchemaOperationsResponse is the response definition containing all Operations available to a Schema. */
-    GetSchemaOperationsResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationsPage"];
-      };
-    };
-    /** @description GetAppOperationSchemaResponse is the response definition containing the schema for a given Operation. */
-    GetAppOperationSchemaResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description GetOperationSchemaResponse is the response definition containing the schema for a given Operation. */
-    GetOperationSchemaResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description DeleteAppOperationResponse is the response definition after deleting an operation for an app. */
-    DeleteAppOperationResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description GetAppOperationSchemaResponse is the response definition containing the schema for a newly created Operation. */
-    CreateAppOperationResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description DeleteSchemaOperationResponse is the response definition after deleting an operation for an schema. */
-    DeleteSchemaOperationResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description CreateSchemaOperationResponse is the response definition containing the schema for a newly created Operation. */
-    CreateSchemaOperationResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description GetSchemaComponentsResponse is the response definition containing the schema types for a given App. */
-    GetSchemaComponentsResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemaComponentsPage"];
-      };
-    };
-    /** @description GetSchemaComponentResponse is the response definition containing the schema type with given ref for a given App. */
-    GetSchemaComponentResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemaComponent"];
-      };
-    };
-    /** @description DeleteSchemaComponentResponse is the response definition after deleting a schema component. */
-    DeleteSchemaComponentResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description CreateSchemaComponentsResponse is the response definition after creating a batch of schema components. */
-    CreateSchemaComponentsResponse: {
-      content: {
-        "application/json": {
-          components: components["schemas"]["SchemaComponent"][];
-        };
-      };
-    };
-    /** @description DeleteSchemaComponentsResponse is the response definition after deleting a list of schema components. */
-    DeleteSchemaComponentsResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description UpdateSchemaComponentResponse is the response definition after updating a schema component. */
-    UpdateSchemaComponentResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemaComponent"];
-      };
-    };
-    /** @description UpdateSchemaOperationResponse is the response definition after updating a schema operation. */
-    UpdateSchemaOperationResponse: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description CreateSchemaSyncResponse is the response definition after creating a schema synchronously. */
-    CreateSchemaSyncResponse: {
-      content: {
-        "application/json": components["schemas"]["Schema"];
-      };
-    };
-    /** @description CreateSchemaAsyncResponse is the response definition after creating a schema asynchronously. */
-    CreateSchemaAsyncResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemaImportJob"];
-      };
-    };
-    /** @description GetSchemaInfoResponse is the request body for getting the schema info of an existing Schema. */
-    GetSchemaInfoResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemaInfo"];
       };
     };
     /** @description A paginated result of apps with associated ConnectionOverview data. */
@@ -1641,26 +669,8 @@ export interface components {
         "application/json": components["schemas"]["ConnectionsPage"];
       };
     };
-    /** @description A single Connection result */
-    GetConnectionResponse: {
-      content: {
-        "application/json": components["schemas"]["Connection"];
-      };
-    };
     /** @description A single Connection result. */
     CreateConnectionResponse: {
-      content: {
-        "application/json": components["schemas"]["Connection"];
-      };
-    };
-    /** @description DeleteConnectionResponse is the response definition after deleting a connection. */
-    DeleteConnectionResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description A single Connection result. */
-    UpdateConnectionResponse: {
       content: {
         "application/json": components["schemas"]["Connection"];
       };
@@ -1671,76 +681,10 @@ export interface components {
         "application/json": components["schemas"]["InitConnectionResponseBody"];
       };
     };
-    /** @description SignedURLResponse contains a URL which can be used to upload a file to object storage. */
-    SchemaSignedURLResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemaSignedURLResponseBody"];
-      };
-    };
-    /** @description SignedURLResponse contains a URL which can be used to upload a file to object storage. */
-    SignedURLResponse: {
-      content: {
-        "application/json": components["schemas"]["SignedURLResponseBody"];
-      };
-    };
-    /** @description UploadSchemaFromURLResponse contains a URL which can be used to download an uploaded schema from object storage. */
-    UploadSchemaFromURLResponse: {
-      content: {
-        "application/json": components["schemas"]["UploadSchemaFromURLResponseBody"];
-      };
-    };
-    /** @description CloneSchemaResponse is the response containing the Schema of a cloned schema. */
-    CloneSchemaResponse: {
-      content: {
-        "application/json": components["schemas"]["Schema"];
-      };
-    };
-    /** @description PublishSchemaResponse is the response containing the Schema of a published schema. */
-    PublishSchemaResponse: {
-      content: {
-        "application/json": components["schemas"]["Schema"];
-      };
-    };
-    /** @description SchemaInfoResponse is the response containing the SchemaInfo of a schema. */
-    SchemaInfoResponse: {
-      content: {
-        "application/json": components["schemas"]["SchemaInfo"];
-      };
-    };
     /** @description CreateCredentialResponse is the response containing the new credential. */
     CreateCredentialResponse: {
       content: {
         "application/json": components["schemas"]["Credential"];
-      };
-    };
-    /** @description GetCredentialsResponse is the response containing the a page of credentials. */
-    GetCredentialsResponse: {
-      content: {
-        "application/json": components["schemas"]["CredentialsPage"];
-      };
-    };
-    /** @description GetCredentialResponse is the response containing the requested credential. */
-    GetCredentialResponse: {
-      content: {
-        "application/json": components["schemas"]["Credential"];
-      };
-    };
-    /** @description UpdateCredentialResponse is the response containing the updated credential. */
-    UpdateCredentialResponse: {
-      content: {
-        "application/json": components["schemas"]["Credential"];
-      };
-    };
-    /** @description DeleteCredentialResponse is the request definition for creating a new credential. */
-    DeleteCredentialResponse: {
-      content: {
-        "application/json": components["schemas"]["DeletedResource"];
-      };
-    };
-    /** @description GetBoardVariablesSchemaResponse is the response containing the board variables schema. */
-    GetBoardVariablesSchemaResponse: {
-      content: {
-        "application/json": components["schemas"]["BoardVariablesSchema"];
       };
     };
     /** @description GetVariablesSchemaResponse is the response containing the variables schema. */
@@ -1749,22 +693,16 @@ export interface components {
         "application/json": components["schemas"]["BoardVariablesSchema"];
       };
     };
-    /** @description CreateOrUpdateBoardVariablesSchemaRequest is the request definition for creating or updating a board variables schema. */
-    CreateOrUpdateBoardVariablesSchemaRequest: {
-      content: {
-        "application/json": components["schemas"]["BoardVariablesSchema"];
-      };
-    };
-    /** @description BoardUsersResponse is a placeholder response. Right now the APi doesn't return a body. */
-    BoardUsersResponse: {
-      content: {
-        "application/json": components["schemas"]["EmptySchema"];
-      };
-    };
     /** @description The default error response */
     ErrorResponse: {
       content: {
         "application/json": components["schemas"]["Error"];
+      };
+    };
+    /** @description Responses for a User. */
+    UserResponse: {
+      content: {
+        "application/json": components["schemas"]["User"];
       };
     };
   };
@@ -1777,145 +715,13 @@ export interface components {
     SortParam?: string;
   };
   requestBodies: {
-    /** @description Payload to pass configuration and preview input data to the transformer. */
-    TransformerPreviewRequest?: {
-      content: {
-        "application/json": components["schemas"]["TransformerPreviewInput"];
-      };
-    };
-    /** @description Payload to create a new App. */
-    CreateAppRequest?: {
-      content: {
-        "application/json": components["schemas"]["AppCreate"];
-      };
-    };
     /**
-     * @description Payload to update an existing App.
-     *
-     * The `id` and `orgId` fields are immutable and must match the fields from the URL. This is a full replace/update,
-     * any unset fields will be unset in the database, for partial updates see the PATCH method.
+     * @description Payload for creating and updating a user.
+     * On update the provided User overwrite the existing one.
      */
-    UpdateAppRequest?: {
+    CreateUser?: {
       content: {
-        "application/json": components["schemas"]["App"];
-      };
-    };
-    /** @description CreateSchemaRequest is the request body for creating a new Schema. */
-    CreateSchemaRequest: {
-      content: {
-        "application/json": components["schemas"]["SchemaCreate"];
-      };
-    };
-    /** @description CreateSchemaComponentsRequest is the request body for creating a new batch of Schema Components. */
-    CreateSchemaComponentsRequest: {
-      content: {
-        "application/json": components["schemas"]["CreateSchemaComponentsRequestBody"];
-      };
-    };
-    /** @description DeleteSchemaComponentsRequest is the request body for deleting a batch of Schema Components. */
-    DeleteSchemaComponentsRequest: {
-      content: {
-        "application/json": components["schemas"]["DeleteSchemaComponentsRequestBody"];
-      };
-    };
-    /** @description UpdateSchemaComponentRequest is the request body for updating a Schema Components. */
-    UpdateSchemaComponentRequest: {
-      content: {
-        "application/json": components["schemas"]["SchemaComponent"];
-      };
-    };
-    /** @description CreateAppOperationRequest is the request body for creating a new Operation for an App. */
-    CreateAppOperationRequest: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description CreateSchemaOperationRequest is the request body for creating a new Operation for a Schema. */
-    CreateSchemaOperationRequest: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description Payload to create a new App. */
-    CreateBoardRequest?: {
-      content: {
-        "application/json": components["schemas"]["BoardCreate"];
-      };
-    };
-    /** @description Payload to create a new Board belonging to a Hub. */
-    CreateHubBoardRequest?: {
-      content: {
-        "application/json": components["schemas"]["HubBoardCreate"];
-      };
-    };
-    /** @description Payload to create a new Hub. */
-    CreateHubRequest?: {
-      content: {
-        "application/json": components["schemas"]["HubCreate"];
-      };
-    };
-    /**
-     * @description Payload to update an existing Board.
-     *
-     * The `id` and `orgId` fields are immutable and must match the fields from the URL. This is a full replace/update,
-     * any unset fields will be unset in the database.
-     */
-    UpdateBoardRequest?: {
-      content: {
-        "application/json": components["schemas"]["Board"];
-      };
-    };
-    /**
-     * @description Payload to update an existing Hub.
-     *
-     * The `id` and `orgId` fields are immutable and must match the fields from the URL. This is a full replace/update,
-     * any unset fields will be unset in the database.
-     */
-    UpdateHubRequest?: {
-      content: {
-        "application/json": components["schemas"]["Hub"];
-      };
-    };
-    /** @description Payload to trigger a board to be published */
-    PublishBoardRequest?: {
-      content: {
-        "application/json": components["schemas"]["BoardPublishCommand"];
-      };
-    };
-    /** @description UnpublishBoardRequest is the payload to schedule an executing Board to be terminated */
-    UnpublishBoardRequest?: {
-      content: {
-        "application/json": components["schemas"]["BoardUnpublishCommand"];
-      };
-    };
-    /** @description TriggerBoardExecutionRequest is the payload to trigger a Board to be executed */
-    TriggerBoardExecutionRequest?: {
-      content: {
-        "application/json": components["schemas"]["TriggerBoardExecution"];
-      };
-    };
-    /** @description Payload to create a new DataMapping. */
-    CreateDataMappingRequest?: {
-      content: {
-        "application/json": components["schemas"]["DataMappingCreate"];
-      };
-    };
-    /** @description Payload to update an existing DataMapping. */
-    UpdateDataMappingRequest?: {
-      content: {
-        "application/json": components["schemas"]["DataMappingUpdate"];
-      };
-    };
-    /** @description Payload to create a new DataMappingEntry. */
-    CreateDataMappingEntryRequest?: {
-      content: {
-        "application/json": components["schemas"]["DataMappingEntryCreate"];
-      };
-    };
-    /** @description Payload to update an existing DataMappingEntry. */
-    UpdateDataMappingEntryRequest?: {
-      content: {
-        "application/json": components["schemas"]["DataMappingEntryUpdate"];
+        "application/json": components["schemas"]["User"];
       };
     };
     /** @description CreateConnectionRequest is the payload for creating a new Connection. */
@@ -1924,64 +730,16 @@ export interface components {
         "application/json": components["schemas"]["CreateConnectionRequestBody"];
       };
     };
-    /** @description UpdateConnectionRequest is the payload for updating an existing Connection. */
-    UpdateConnectionRequest?: {
-      content: {
-        "application/json": components["schemas"]["UpdateConnectionRequestBody"];
-      };
-    };
     /** @description The parameters to initialise a new connection */
     InitConnectionRequest?: {
       content: {
         "application/json": components["schemas"]["InitConnectionRequestBody"];
       };
     };
-    /** @description UploadSchemaFromURLRequest contains the necessary parameters to upload a schema object from a source URL. */
-    UploadSchemaFromURLRequest?: {
-      content: {
-        "application/json": components["schemas"]["UploadSchemaFromURLRequestBody"];
-      };
-    };
-    /** @description BuildSchemaOperationRequest contains the necessary parameters to build a new schema operation. */
-    BuildSchemaOperationRequest?: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description ImportSchemaFromURLRequest contains the necessary parameters to create a schema record from a URL. */
-    ImportSchemaFromURLRequest?: {
-      content: {
-        "application/json": components["schemas"]["ImportSchemaFromURLRequestBody"];
-      };
-    };
-    /** @description GetSchemaInfoRequest contains the necessary parameters to retrieve schema info. */
-    SchemaInfoRequest?: {
-      content: {
-        "application/json": components["schemas"]["SchemaInfoRequestBody"];
-      };
-    };
     /** @description CreateCredentialRequest is the request definition for creating a new credential. */
     CreateCredentialRequest?: {
       content: {
         "application/json": components["schemas"]["CreateCredentialRequestBody"];
-      };
-    };
-    /** @description UpdateCredentialRequest is the request definition for updating an existing credential. */
-    UpdateCredentialRequest?: {
-      content: {
-        "application/json": components["schemas"]["UpdateCredentialRequestBody"];
-      };
-    };
-    /** @description UpdateSchemaOperationRequest is the request definition for updating a schema operation. */
-    UpdateSchemaOperationRequest?: {
-      content: {
-        "application/json": components["schemas"]["OperationSchema"];
-      };
-    };
-    /** @description CreateOrUpdateBoardVariablesSchemaRequest is the request definition for creating or updating a board variables schema. */
-    CreateOrUpdateBoardVariablesSchemaRequest?: {
-      content: {
-        "application/json": components["schemas"]["BoardVariablesSchema"];
       };
     };
   };
@@ -1995,55 +753,8 @@ export type external = Record<string, never>;
 
 export interface operations {
 
-  /**
-   * Preview the output of a transformer.
-   * @description Preview the output of a transformer. This endpoint is useful for testing a transformer before creating an integration.
-   */
-  PreviewTransformer: {
-    requestBody: components["requestBodies"]["TransformerPreviewRequest"];
-    responses: {
-      200: components["responses"]["TransformerPreviewResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves the boards belonging to a given organisation. */
-  GetBoards: {
-    parameters: {
-      query?: {
-        search?: string;
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        organisationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetBoardsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description Create a new Board for the provided organisation. No request body required as all parameters
-   * provided by server.
-   */
-  CreateBoard: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateBoardRequest"];
-    responses: {
-      200: components["responses"]["GetBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves an existing board by ID for the given organisation. */
-  GetBoard: {
+  /** @description Get the JSON schema for the variables of a board. */
+  GetBoardVariablesSchema: {
     parameters: {
       path: {
         /** @example 101 */
@@ -2052,115 +763,7 @@ export interface operations {
       };
     };
     responses: {
-      200: components["responses"]["GetBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Update an existing board, by ID for the given organisation. */
-  UpdateBoard: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateBoardRequest"];
-    responses: {
-      200: components["responses"]["GetBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete an Board by ID in the current organisation. */
-  DeleteBoard: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves the hubs belonging to a given organisation. */
-  GetHubs: {
-    parameters: {
-      query?: {
-        search?: string;
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        organisationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetHubsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description Create a new Hub for the provided organisation. No request body required as all parameters
-   * provided by server.
-   */
-  CreateHub: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateHubRequest"];
-    responses: {
-      200: components["responses"]["GetHubResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves an existing hub by ID for the given organisation. */
-  GetHub: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        hubId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetHubResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Update an existing hub, by ID for the given organisation. */
-  UpdateHub: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        hubId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateHubRequest"];
-    responses: {
-      200: components["responses"]["GetHubResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete a Hub by ID in the current organisation. */
-  DeleteHub: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        hubId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteHubResponse"];
+      200: components["responses"]["GetVariablesSchemaResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
@@ -2185,21 +788,6 @@ export interface operations {
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** @description Creates a board associated with the given Hub ID. */
-  CreateHubBoard: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        hubId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateHubBoardRequest"];
-    responses: {
-      201: components["responses"]["GetBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
   /** @description Retrieves a pagniated list of boards belonging to a given user and hub. */
   GetUserHubBoards: {
     parameters: {
@@ -2220,949 +808,6 @@ export interface operations {
     };
     responses: {
       200: components["responses"]["GetBoardsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves all users of a hub board. */
-  ListHubBoardUsers: {
-    parameters: {
-      path: {
-        organisationId: string;
-        hubId: string;
-        boardId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["ListHubBoardUsersResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Internal endpoint meant to link a dynamic user to a board. */
-  CreateBoardUser: {
-    parameters: {
-      path: {
-        organisationId: string;
-        hubId: string;
-        boardId: string;
-        userid: string;
-      };
-    };
-    responses: {
-      204: components["responses"]["BoardUsersResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description Internal endpoint meant to unlink a dynamic user to a board.
-   * This would indicate a user has removed an integration from the hub.
-   */
-  DeleteBoardUser: {
-    parameters: {
-      path: {
-        organisationId: string;
-        hubId: string;
-        boardId: string;
-        userid: string;
-      };
-    };
-    responses: {
-      204: components["responses"]["BoardUsersResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description Publish a board at the revision specified by the provided event ID. This is an asynchronous action, callers
-   * should await for a `BoardPublishedEvent` over the websocket API (recommended) or poll GetBoard until
-   * `publishedEventId` matches the event ID which has been provided to publish.
-   *
-   * If the request has caused a board to schedule then this request will always return 202.
-   *
-   * If this request succeeds but then an error occurs in scheduling, a `BoardPublishFailedEvent` will be produced
-   * over the websocket API; this functionality is not currently available over the REST API.
-   */
-  PublishBoard: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["PublishBoardRequest"];
-    responses: {
-      202: components["responses"]["PublishBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description UnpublishBoard stops the board execution. This is an asynchronous request and will respond with a "202 Accepted"
-   * to acknowledge that the board has been scheduled for termination. A `BoardUnpublishedEvent` will be emitted once
-   * the board has actually been terminated which can be listened for over the websocket API.
-   */
-  UnpublishBoard: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UnpublishBoardRequest"];
-    responses: {
-      202: components["responses"]["UnpublishBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description ListOutOfDateNodesForBoard will list for a single board the nodes which are using an operation for a schema which is not
-   * the one currently assigned to the corresponding app.
-   */
-  ListOutOfDateNodesForBoard: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["ListOutOfDateBoardNodesResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Get the JSON schema for the variables of a board. */
-  GetBoardVariablesSchema: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetVariablesSchemaResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Update or create the JSON schema for the variables of a board. */
-  CreateOrUpdateBoardVariablesSchema: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateOrUpdateBoardVariablesSchemaRequest"];
-    responses: {
-      200: components["responses"]["GetBoardVariablesSchemaResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description ListOutOfDateBoardNodes will list all of the board nodes which are using an operation for a schema which is not
-   * the one currently assigned to the corresponding app.
-   */
-  ListOutOfDateBoardNodes: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["ListOutOfDateBoardNodesResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description ListExecutionLogsForBoard will list for a single published board the execution logs stored in the Google Cloud logging. */
-  ListExecutionLogsForBoard: {
-    parameters: {
-      query?: {
-        dateFrom?: string;
-        dateTo?: string;
-        actor?: string;
-      };
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["ListExecutionLogsForBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description GetExecutionLogsMessageForBoard will get for a single published board the execution log message for a single action stored in the Google Cloud logging. */
-  GetExecutionLogsMessageForBoard: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-        executionId: string;
-        actorId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetExecutionLogMsgForBoardResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Trigger a board webhook execution. */
-  IncomingBoardWebhook: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-        nodeId: string;
-      };
-    };
-    requestBody?: {
-      content: {
-        "application/json": {
-          [key: string]: unknown;
-        };
-      };
-    };
-    responses: {
-      /** @description OK */
-      202: {
-        content: never;
-      };
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Trigger a board to execute specific start-nodes. */
-  TriggerBoardExecution: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        boardId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["TriggerBoardExecutionRequest"];
-    responses: {
-      202: components["responses"]["TriggerBoardExecutionResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves the data mappings belonging to a given organisation. */
-  GetDataMappings: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        organisationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetDataMappingsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new DataMapping for the provided organisation. */
-  CreateDataMapping: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateDataMappingRequest"];
-    responses: {
-      200: components["responses"]["GetDataMappingResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves an existing data mapping by ID for the given organisation. */
-  GetDataMapping: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        mappingId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetDataMappingResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Update an existing data mapping, by ID for the given organisation. */
-  UpdateDataMapping: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        mappingId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateDataMappingRequest"];
-    responses: {
-      200: components["responses"]["GetDataMappingResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete a DataMapping by ID in the current organisation. */
-  DeleteDataMapping: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        mappingId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteDataMappingResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves the data mapping entries belonging to a given organisation and mapping. */
-  GetDataMappingEntries: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        organisationId: string;
-        mappingId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetDataMappingEntriesResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new DataMappingEntry for the provided organisation and mapping. */
-  CreateDataMappingEntry: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        mappingId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateDataMappingEntryRequest"];
-    responses: {
-      200: components["responses"]["GetDataMappingEntryResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves an existing data mapping entry by ID for the given organisation and mapping. */
-  GetDataMappingEntry: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        mappingId: string;
-        entryId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetDataMappingEntryResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Update an existing data mapping entry by ID for the given organisation and mapping. */
-  UpdateDataMappingEntry: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        mappingId: string;
-        entryId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateDataMappingEntryRequest"];
-    responses: {
-      200: components["responses"]["GetDataMappingEntryResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete a DataMappingEntry by ID in the current organisation and mapping. */
-  DeleteDataMappingEntry: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        mappingId: string;
-        entryId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteDataMappingEntryResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves public Apps not owned by this organisation Apps, as a paginated response. */
-  GetPublicApps: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetPublicAppsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves an existing public App by ID. If the app is not public an error will be returned. */
-  GetPublicApp: {
-    parameters: {
-      path: {
-        appId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetPublicAppResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves all Apps owned by this organisation as a paginated response. */
-  GetApps: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetAppsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new App for the provided organisation */
-  CreateApp: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateAppRequest"];
-    responses: {
-      200: components["responses"]["GetAppResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves an existing App for by ID in the current organisation. */
-  GetApp: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        appId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetAppResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Update an existing App for by ID in the current organisation. */
-  UpdateApp: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        appId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateAppRequest"];
-    responses: {
-      200: components["responses"]["GetAppResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete an App by ID in the current organisation. */
-  DeleteApp: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        appId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteAppResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description BuildSchemaOperationForApp validates and uses the schema builder to fill in any possible fields on a proposed new schema operation for an app. */
-  BuildSchemaOperationForApp: {
-    parameters: {
-      path: {
-        /** @description OrganisationID is the ID of the organisation that the schema belongs to. */
-        organisationId: string;
-        /** @description AppId is the app identifier */
-        appId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["BuildSchemaOperationRequest"];
-    responses: {
-      200: components["responses"]["BuildSchemaOperationResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieve the set of all operations available for the App specified by appId. */
-  GetAppOperations: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        appId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetAppOperationsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new operation for the App in the provided organisation */
-  CreateAppOperation: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        appId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateAppOperationRequest"];
-    responses: {
-      200: components["responses"]["CreateAppOperationResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete the schema operation belonging to an app. */
-  DeleteAppOperation: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        appId: string;
-        operationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteAppOperationResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieve the input and output schema for a given operation belonging to an app. */
-  GetAppOperationSchema: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        appId: string;
-        operationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetAppOperationSchemaResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieves all Schemas owned by this organisation as a paginated response. */
-  GetSchemas: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetSchemasResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new schema, which can be used to create an App and in the future be used to reconfigure an existing  App. */
-  CreateSchema: {
-    parameters: {
-      path: {
-        organisationId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateSchemaRequest"];
-    responses: {
-      200: components["responses"]["CreateSchemaSyncResponse"];
-      201: components["responses"]["CreateSchemaAsyncResponse"];
-    };
-  };
-  /** @description GetSchemaInfo returns information about a schema. This replaces the deprecated operation `SchemaInfo`. */
-  GetSchemaInfo: {
-    parameters: {
-      path: {
-        /** @description OrganisationID is the ID of the organisation that the schema belongs to. */
-        organisationId: string;
-        /** @description ID is the schema identifier */
-        id: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetSchemaInfoResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description DeleteSchema deletes an unpublished schema. */
-  DeleteSchema: {
-    parameters: {
-      path: {
-        /** @description OrganisationID is the ID of the organisation that the schema belongs to. */
-        organisationId: string;
-        /** @description ID is the schema identifier */
-        id: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteSchemaResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description CloneSchema clones an existing schema. */
-  CloneSchema: {
-    parameters: {
-      path: {
-        /** @description OrganisationID is the ID of the organisation that the schema belongs to. */
-        organisationId: string;
-        /** @description ID is the schema identifier */
-        id: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["CloneSchemaResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description PublishSchema publishes an existing schema. */
-  PublishSchema: {
-    parameters: {
-      path: {
-        /** @description OrganisationID is the ID of the organisation that the schema belongs to. */
-        organisationId: string;
-        /** @description ID is the schema identifier */
-        id: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["PublishSchemaResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieve the set of all operations available for the Schema specified by id. */
-  GetSchemaOperations: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetSchemaOperationsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a new operation for the Schema in the provided organisation */
-  CreateSchemaOperation: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateSchemaOperationRequest"];
-    responses: {
-      200: components["responses"]["CreateSchemaOperationResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieve the input and output schema for a given operation belonging to an schema. */
-  GetOperationSchema: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-        operationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetOperationSchemaResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Updates or creates a schema operation. */
-  UpdateSchemaOperation: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-        operationId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateSchemaOperationRequest"];
-    responses: {
-      200: components["responses"]["UpdateSchemaOperationResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Delete the schema operation belonging to an schema. */
-  DeleteSchemaOperation: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-        operationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteSchemaOperationResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieve the set of all schema components available for the Schema specified by id. */
-  GetSchemaComponents: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetSchemaComponentsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Create a batch of schema components. */
-  CreateSchemaComponents: {
-    parameters: {
-      path: {
-        organisationId: string;
-        id: string;
-      };
-    };
-    requestBody: components["requestBodies"]["CreateSchemaComponentsRequest"];
-    responses: {
-      200: components["responses"]["CreateSchemaComponentsResponse"];
-    };
-  };
-  /** @description Retrieves definition of an existing schema component by ref for the current schema. */
-  GetSchemaComponent: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-        ref: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetSchemaComponentResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Update a schema component. */
-  UpdateSchemaComponent: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-        ref: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateSchemaComponentRequest"];
-    responses: {
-      200: components["responses"]["UpdateSchemaComponentResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Deletes a schema component, along with any other components referencing it. */
-  DeleteSchemaComponent: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-        ref: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteSchemaComponentResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description DeleteSchemaComponents deletes a list of schema components, along with any others depending on them. */
-  DeleteSchemaComponents: {
-    parameters: {
-      path: {
-        /** @description OrganisationID is the ID of the organisation that the schema belongs to. */
-        organisationId: string;
-        /** @description ID is the schema identifier */
-        id: string;
-      };
-    };
-    requestBody: components["requestBodies"]["DeleteSchemaComponentsRequest"];
-    responses: {
-      200: components["responses"]["DeleteSchemaComponentsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description BuildSchemaOperation validates and uses the schema builder to fill in any possible fields on a proposed new schema operation. */
-  BuildSchemaOperation: {
-    parameters: {
-      path: {
-        /** @description OrganisationID is the ID of the organisation that the schema belongs to. */
-        organisationId: string;
-        /** @description ID is the schema identifier */
-        id: string;
-      };
-    };
-    requestBody: components["requestBodies"]["BuildSchemaOperationRequest"];
-    responses: {
-      200: components["responses"]["BuildSchemaOperationResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @deprecated
-   * @description ImportSchemaOperations adds the operations for a schema the database for faster retrieval.
-   *
-   * Deprecated: This endpoint is no longer supported as schemas are automatically imported using the
-   * `CreateSchema` (POST /organisations/{organisationId}/schemas) operation. This endpoint will be replaced with a
-   * reimport endpoint in the future, in the meantime this may be used when the `force` parameter is set to true.
-   */
-  ImportSchemaOperations: {
-    parameters: {
-      query?: {
-        force?: boolean;
-      };
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        id: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["SchemaInfoResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @deprecated
-   * @description Create a schema record and import the operations to store locally as DB records.
-   *
-   * Deprecated in favour of CreateSchema (POST /organisations/{organisationId}/schemas)
-   */
-  CreateSchemaOperations: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        schemaType: components["parameters"]["SchemaType"];
-      };
-    };
-    requestBody: components["requestBodies"]["ImportSchemaFromURLRequest"];
-    responses: {
-      200: components["responses"]["SchemaInfoResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Retrieve a signed URL for uploading a schema specification */
-  GetSchemaSignedURL: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        schemaType: components["parameters"]["SchemaType"];
-      };
-    };
-    responses: {
-      200: components["responses"]["SchemaSignedURLResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @description Upload a schema document based on a source URL. The server will download this URL and upload to object
-   * storage automatically.
-   */
-  UploadSchemaFromURL: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        schemaType: components["parameters"]["SchemaType"];
-      };
-    };
-    requestBody: components["requestBodies"]["UploadSchemaFromURLRequest"];
-    responses: {
-      200: components["responses"]["UploadSchemaFromURLResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /**
-   * @deprecated
-   * @description SchemaInfo processes the schema referenced by the provided URL and returns information to allow a user to create
-   * an App.
-   *
-   * Deprecated: This endpoint is no longer supported, users should create a Schema using the `CreateSchema`
-   * (POST /organisations/{organisationId}/schemas) operation, and use the `GetSchemaInfo` operation to retrieve
-   * this information.
-   */
-  SchemaInfo: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        schemaType: components["parameters"]["SchemaType"];
-      };
-    };
-    requestBody: components["requestBodies"]["SchemaInfoRequest"];
-    responses: {
-      200: components["responses"]["SchemaInfoResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
@@ -3231,47 +876,17 @@ export interface operations {
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** @description Retrieves an existing Connection by ID in the current organisation. */
-  GetConnection: {
+  /** @description Retrieves all the information needed that a user needs to fill out to use a Hub integration. */
+  IntegrationInfo: {
     parameters: {
       path: {
-        /** @example 101 */
         organisationId: string;
-        connectionId: string;
+        hubId: string;
+        boardId: string;
       };
     };
     responses: {
-      200: components["responses"]["GetConnectionResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Updates an existing Connection by ID in the current organisation. */
-  UpdateConnection: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        connectionId: string;
-      };
-    };
-    requestBody: components["requestBodies"]["UpdateConnectionRequest"];
-    responses: {
-      200: components["responses"]["UpdateConnectionResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
-  /** @description Deletes a connection, and unpublishes all boards referencing it. */
-  DeleteConnection: {
-    parameters: {
-      path: {
-        /** @example 101 */
-        organisationId: string;
-        /** @example 01FQ2PJ5QVA5H2A8J4V9ZA8NJS */
-        connectionId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["DeleteConnectionResponse"];
+      200: components["responses"]["ConnectIntegrationResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
@@ -3293,25 +908,6 @@ export interface operations {
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** @description Retrieves all Credentials owned by this organisation as a paginated response. */
-  GetCredentials: {
-    parameters: {
-      query?: {
-        first?: number;
-        before?: string;
-        after?: string;
-        sort?: string;
-      };
-      path: {
-        /** @example 101 */
-        organisationId: string;
-      };
-    };
-    responses: {
-      200: components["responses"]["GetCredentialsResponse"];
-      default: components["responses"]["ErrorResponse"];
-    };
-  };
   /**
    * @description CreateCredential allows users to create new Credentials. Valid requests which return a credential marked as
    * "invalid" is normal behaviour, but the credential won't be usable until it's updated to become valid.
@@ -3329,59 +925,65 @@ export interface operations {
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** @description Retrieves an existing Credential by ID in the current organisation. */
-  GetCredential: {
+  /** @description Returns the user specified by the userId. */
+  GetUser: {
     parameters: {
       path: {
-        /** @example 101 */
-        organisationId: string;
-        credentialId: string;
+        orgId: string;
+        hubId: string;
+        boardId: string;
+        userId: string;
       };
     };
     responses: {
-      200: components["responses"]["GetCredentialResponse"];
+      200: components["responses"]["UserResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** @description Updates an existing Credential by ID in the current organisation. */
-  UpdateCredential: {
+  /** @description Updates the given user. */
+  PutUser: {
     parameters: {
       path: {
-        /** @example 101 */
-        organisationId: string;
-        credentialId: string;
+        orgId: string;
+        hubId: string;
+        boardId: string;
+        userId: string;
       };
     };
-    requestBody: components["requestBodies"]["UpdateCredentialRequest"];
+    requestBody: components["requestBodies"]["CreateUser"];
     responses: {
-      200: components["responses"]["UpdateCredentialResponse"];
+      200: components["responses"]["UserResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** @description Deletes an existing Credential by ID in the current organisation. */
-  DeleteCredential: {
+  /** @description Create a new User. */
+  PostUser: {
     parameters: {
       path: {
-        /** @example 101 */
-        organisationId: string;
-        credentialId: string;
+        orgId: string;
+        hubId: string;
+        boardId: string;
+        userId: string;
       };
     };
+    requestBody: components["requestBodies"]["CreateUser"];
     responses: {
-      200: components["responses"]["DeleteCredentialResponse"];
+      200: components["responses"]["UserResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
-  /** @description Retrieve a signed URL for uploading assets */
-  GetSignedURL: {
+  /** @description Delete a user. */
+  DeleteUser: {
     parameters: {
       path: {
-        /** @example 101 */
-        organisationId: string;
+        orgId: string;
+        hubId: string;
+        boardId: string;
+        userId: string;
       };
     };
     responses: {
-      200: components["responses"]["SignedURLResponse"];
+      200: components["responses"]["UserResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };

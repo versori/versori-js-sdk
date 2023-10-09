@@ -7,7 +7,7 @@
   },
   "scripts": {
     "generate": "run-p generate:*",
-    "generate:switchboard": "openapi-typescript src/sdk/switchboard/v1alpha1/openapi.yaml --output src/sdk/switchboard/v1alpha1/generated/api.ts",
+    "generate:switchboard": "openapi-typescript src/switchboard/v1alpha1/openapi.yaml --output src/switchboard/v1alpha1/generated/api.ts",
     "build": "lerna run build",
     "build:watch": "lerna run watch --stream",
     "build:sdk": "lerna run build --stream --scope=@versori/sdk",

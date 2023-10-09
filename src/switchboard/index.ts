@@ -1,5 +1,3 @@
-import * as v1alpha1 from './v1alpha1';
+// import * as v1alpha1 from './v1alpha1';
 
-export {
-    v1alpha1,
-}
+export * from './v1alpha1';
