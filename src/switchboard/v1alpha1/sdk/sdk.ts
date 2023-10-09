@@ -16,53 +16,53 @@ const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1';
 type initHubsParams = {
     userId: string;
     orgId: string;
-    onSuccess: (connection: Connection) => void;
+    onSuccess: (connection: any) => void;
     onError: () => void;
 };
 
-export const VersoriSDK = {
-    currentlyConnectingApp: '',
-    initHubs: async ({ orgId, userId, onSuccess, onError }: initHubsParams) => {
-        const buttons = document.querySelectorAll('button[data-vhubsboardid]');
-        buttons.forEach((button) => {
-            button.addEventListener('click', VersoriSDK.getAppAndOpenModal);
-        });
+class Versori {
+    userId: string;
+    orgId: string;
+    onSuccess: (connection: any) => void;
+    onError: () => void;
+
+    #currentlyConnectingApp = '';
+
+    constructor({ userId, orgId, onSuccess, onError }: initHubsParams) {
+        this.userId = userId;
+        this.orgId = orgId;
+        this.onError = onError;
+        this.onSuccess = onSuccess;
+        this.initialise();
+    }
+
+    initialise = () => {
+        console.log('init');
+        this.attachEventListeners();
+
         const client = new Client({
             baseUrl: BASE_PATH,
         });
 
         (window as any)['Versori'] = {
             client: client.hubs,
-            userId: userId,
-            orgId: orgId,
-            onSuccess: onSuccess,
-            onError: onError,
+            userId: this.userId,
+            orgId: this.orgId,
+            onSuccess: this.onSuccess,
+            onError: this.onError,
         };
+    };
 
-        try {
-            const hubs = await VersoriSDK.getHubs(orgId);
-            const boards = await VersoriSDK.getAllBoards(orgId, hubs);
-            const boardItems = boards.reduce((acc, board) => {
-                return [...acc, ...board.items];
-            }, []);
-            console.log(boardItems);
-        } catch (e) {
-            console.log(e);
-        }
+    attachEventListeners = () => {
+        console.log(document);
+        const buttons = document.querySelectorAll('button[data-vhubsboardid]');
+        buttons.forEach((button) => {
+            console.log('button');
+            button.addEventListener('click', this.getAppAndOpenModal);
+        });
+    };
 
-        // const hubs = await window.Versori.client.listHubs(orgId);
-        // const apps = await window.Versori.client.getConnectedApps(orgId);
-        // console.log(hubs);
-        // // console.log(integrations);
-        // console.log(apps);
-    },
-    removeVersoriSDKModal: () => {
-        const modal = document.querySelector('.v-hubs-sdk-modal');
-        if (modal) {
-            modal.remove();
-        }
-    },
-    getAppAndOpenModal: (e: Event) => {
+    getAppAndOpenModal = (e: Event) => {
         e.preventDefault();
         const el = e.target as HTMLButtonElement;
         // const integrations = await window.Versori.client.getHubIntegrations(
@@ -71,46 +71,47 @@ export const VersoriSDK = {
         //     el.dataset.vhubsboardid
         // );
         const integration = mock.connections.find((integration) => integration.requiresUserAuth)!;
-        VersoriSDK.currentlyConnectingApp = integration.id;
+        this.#currentlyConnectingApp = integration.id;
         const currentConnectionType = integration?.authConfig.authType;
         if (currentConnectionType === 'apikey') {
-            VersoriSDK.renderVersoriSDKModal(el.dataset.vhubsboardid!);
+            console.log('modal');
+            this.renderVersoriSDKModal(el.dataset.vhubsboardid!);
         } else {
             // render oauth modal
         }
-    },
-    getHubs: async (orgId: string) => {
-        try {
-            const hubs = await window.Versori.client.listHubs(orgId);
-            return hubs;
-        } catch (e) {
-            console.log(e);
-        }
-    },
-    getAllBoards: (orgId: string, hubs: any) => {
-        const promises = hubs.items.map((hub: any) => {
-            return window.Versori.client.listHubBoards(orgId, hub.id);
-        });
-        return Promise.all(promises);
-    },
-    connect: async (form: HTMLFormElement) => {
+    };
+
+    connect = async (form: HTMLFormElement) => {
         const formData = new FormData(form);
         const apiKeyName = formData.get('API Key Name');
         const apiKey = formData.get('API Key');
         const formBody = {
             name: apiKeyName,
-            appId: VersoriSDK.currentlyConnectingApp,
+            appId: this.#currentlyConnectingApp,
             authType: 'apiKey',
             data: {
                 apiKey: apiKey,
             },
         };
-        const connectResponse = await window.Versori.client.connect(window.Versori.orgId, formBody);
-        console.log(connectResponse);
-        window.Versori.onSuccess(connectResponse);
-        VersoriSDK.removeVersoriSDKModal();
-    },
-    renderVersoriSDKModal: (boardId: string) => {
+        try {
+            const connectResponse = formBody;
+            // const connectResponse = await window.Versori.client.connect(window.Versori.orgId, formBody);
+            console.log(connectResponse);
+            this.onSuccess('connectResponse');
+        } catch (e) {
+            this.onError();
+        }
+        this.removeVersoriSDKModal();
+    };
+
+    removeVersoriSDKModal = () => {
+        const modal = document.querySelector('.v-hubs-sdk-modal');
+        if (modal) {
+            modal.remove();
+        }
+    };
+
+    renderVersoriSDKModal = (boardId: string) => {
         console.log(boardId);
         const modal = document.createElement('div');
         modal.classList.add('v-hubs-sdk-modal');
@@ -139,7 +140,7 @@ export const VersoriSDK = {
         modalClose.classList.add('v-hubs-sdk-modal-close');
         modalClose.setAttribute('type', 'button');
         modalClose.innerText = 'X';
-        modalClose.addEventListener('click', VersoriSDK.removeVersoriSDKModal);
+        modalClose.addEventListener('click', this.removeVersoriSDKModal);
 
         // Append all elements to header
         modalHeader.appendChild(modalTitle);
@@ -152,7 +153,7 @@ export const VersoriSDK = {
         form.classList.add('v-hubs-sdk-form');
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            VersoriSDK.connect(form);
+            this.connect(form);
         });
 
         // Create div to wrap all inputs and buttons
@@ -190,7 +191,7 @@ export const VersoriSDK = {
         cancelButton.setAttribute('type', 'button');
         cancelButton.classList.add('v-hubs-sdk-cancel-button');
         cancelButton.innerText = 'Cancel';
-        cancelButton.addEventListener('click', VersoriSDK.removeVersoriSDKModal);
+        cancelButton.addEventListener('click', this.removeVersoriSDKModal);
 
         const submitButton = document.createElement('button');
         submitButton.classList.add('v-hubs-sdk-submit-button');
@@ -215,5 +216,11 @@ export const VersoriSDK = {
         modal.appendChild(modalWrapper);
 
         document.body.appendChild(modal);
+    };
+}
+
+export const VersoriSDK = {
+    initHubs: async ({ orgId, userId, onSuccess, onError }: initHubsParams) => {
+        new Versori({ orgId, userId, onSuccess, onError });
     },
 };

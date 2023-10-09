@@ -1,22 +1,21 @@
 import { VersoriSDK } from '@versori/sdk';
-import type { Connection } from '@versori/sdk';
+// import type { Connection } from '@versori/sdk';
 import '@versori/sdk/dist/style.css';
 // import { IntegrationCard } from '@versori/sdk-react';
 import { useEffect } from 'react';
 import './reset.css';
 
 // Values hardcoded for now
-const ORG_ID = '01HARWP7QHM05CGDKH7W4AD9NM';
 function App() {
     useEffect(() => {
+        const ORG_ID = '01HARWP7QHM05CGDKH7W4AD9NM';
         VersoriSDK.initHubs({
             userId: 'switchboard-demo',
             orgId: ORG_ID,
-            onSuccess: (connection: Connection) => console.log(connection),
-            onError: () => console.log('error'),
+            onSuccess: (connection: any) => console.log(connection, 'opop'),
+            onError: () => () => console.log('error'),
         });
-    }, []);
-
+    });
     return (
         <div
             style={{
@@ -38,6 +37,16 @@ function App() {
             </div>
             <div className="card">
                 <h2 className="card-title">Spotify</h2>
+                <button
+                    className="card-button"
+                    data-vhubid="01HARZ9Z72NGZMY0T9613VGJEV"
+                    data-vhubsboardid="01HASBT94R4JZQMVPT85S82KN2"
+                >
+                    Connect
+                </button>
+            </div>
+            <div className="card">
+                <h2 className="card-title">Apple</h2>
                 <button
                     className="card-button"
                     data-vhubid="01HARZ9Z72NGZMY0T9613VGJEV"
