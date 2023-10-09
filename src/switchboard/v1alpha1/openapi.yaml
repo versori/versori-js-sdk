@@ -515,6 +515,103 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 components:
   schemas:
+    Credential:
+      description: |
+        Credential holds sensitive data not owned by Versori. Users can create credentials so that Versori systems can
+        authenticate to external services on behalf of the user.
+      properties:
+        id:
+          description: ID is the identifier for the credential.
+          type: string
+        organisationID:
+          description: OrganisationID is the ID of the organisation which owns this credential.
+        name:
+          description: Name is the credential name.
+          type: string
+        data:
+          description: Data is a map of string keys to string base64 encoded values for the actual credential data.
+          type: object
+        type:
+          $ref: '#/components/schemas/CredentialType'
+        redactFields:
+          description: |
+            RedactFields is a list of fields within data which once created should not be returned to the user. This
+            property is only applicable for "Default" credential types. Credentials of other types have their own
+            redaction list internally and this field will be ignored.
+          type: array
+          items:
+            type: string
+        expiresAt:
+          description: |
+            ExpiresAt allows the user to specify when Switchboard should automatically delete the credential.
+          type: string
+          format: date-time
+      required:
+        - id
+        - organisationID
+        - name
+        - data
+        - type
+    SchemaMetadata:
+      type: object
+      properties:
+        type:
+          description: |
+            Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+            "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+          type: string
+        version:
+          description: |
+            Version denotes the version of the schema specification. This property is contextual based on the schema
+            type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+            supported), but `grpc` APIs could be "proto2" or "proto3".
+          type: string
+        url:
+          description: |
+            URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+            could be a non-HTTP protocol (i.e. gs:// or s3://)
+          type: string
+      required:
+        - type
+        - version
+        - url
+    Schema:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          description: |
+            Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+            "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+          type: string
+        version:
+          description: |
+            Version denotes the version of the schema specification. This property is contextual based on the schema
+            type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+            supported), but `grpc` APIs could be "proto2" or "proto3".
+          type: string
+        sourceUrl:
+          description: |
+            URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+            could be a non-HTTP protocol (i.e. gs:// or s3://)
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - version
+        - sourceUrl
+        - createdAt
+        - updatedAt
     ConnectIntegration:
       type: object
       properties:

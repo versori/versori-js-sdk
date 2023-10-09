@@ -78,6 +78,75 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
+    /**
+     * @description Credential holds sensitive data not owned by Versori. Users can create credentials so that Versori systems can
+     * authenticate to external services on behalf of the user.
+     */
+    Credential: {
+      /** @description ID is the identifier for the credential. */
+      id: string;
+      /** @description OrganisationID is the ID of the organisation which owns this credential. */
+      organisationID: unknown;
+      /** @description Name is the credential name. */
+      name: string;
+      /** @description Data is a map of string keys to string base64 encoded values for the actual credential data. */
+      data: Record<string, never>;
+      type: components["schemas"]["CredentialType"];
+      /**
+       * @description RedactFields is a list of fields within data which once created should not be returned to the user. This
+       * property is only applicable for "Default" credential types. Credentials of other types have their own
+       * redaction list internally and this field will be ignored.
+       */
+      redactFields?: string[];
+      /**
+       * Format: date-time
+       * @description ExpiresAt allows the user to specify when Switchboard should automatically delete the credential.
+       */
+      expiresAt?: string;
+    };
+    SchemaMetadata: {
+      /**
+       * @description Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+       * "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+       */
+      type: string;
+      /**
+       * @description Version denotes the version of the schema specification. This property is contextual based on the schema
+       * type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+       * supported), but `grpc` APIs could be "proto2" or "proto3".
+       */
+      version: string;
+      /**
+       * @description URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+       * could be a non-HTTP protocol (i.e. gs:// or s3://)
+       */
+      url: string;
+    };
+    Schema: {
+      id: string;
+      /**
+       * @description Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+       * "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+       */
+      type: string;
+      /**
+       * @description Version denotes the version of the schema specification. This property is contextual based on the schema
+       * type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+       * supported), but `grpc` APIs could be "proto2" or "proto3".
+       */
+      version: string;
+      /**
+       * @description URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+       * could be a non-HTTP protocol (i.e. gs:// or s3://)
+       */
+      sourceUrl: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      /** Format: date-time */
+      deletedAt?: string;
+    };
     ConnectIntegration: {
       connections?: components["schemas"]["HubApp"][];
       variables?: Record<string, never>;
