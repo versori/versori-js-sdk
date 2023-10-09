@@ -31,6 +31,61 @@ paths:
           $ref: '#/components/responses/GetVariablesSchemaResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/hubs:
+    get:
+      operationId: GetHubs
+      description: |
+        Retrieves the hubs belonging to a given organisation.
+      tags:
+        - hubs
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: first
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          required: false
+          examples:
+            single column ascending:
+              summary: Single column search in ascending order
+              value: id:asc
+            single column descending:
+              summary: Single column search in descending order
+              value: name:desc
+            multiple columns:
+              summary: Multiple column search
+              value: name:asc,id:desc
+          schema:
+            type: string
+            pattern: "^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$"
+      responses:
+        200:
+          $ref: "#/components/responses/GetHubsResponse"
+        default:
+          $ref: "#/components/responses/ErrorResponse"  
   /organisations/{organisationId}/hubs/{hubId}/boards:
     get:
       operationId: ListHubBoards
@@ -1549,6 +1604,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BoardVariablesSchema'
+    GetHubsResponse:
+      description: A paginated set of Hubs
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/HubsPage"
     ErrorResponse:
       description: The default error response
       content:

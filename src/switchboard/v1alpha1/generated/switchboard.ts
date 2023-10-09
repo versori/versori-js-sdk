@@ -9,6 +9,10 @@ export interface paths {
     /** @description Get the JSON schema for the variables of a board. */
     get: operations["GetBoardVariablesSchema"];
   };
+  "/organisations/{organisationId}/hubs": {
+    /** @description Retrieves the hubs belonging to a given organisation. */
+    get: operations["GetHubs"];
+  };
   "/organisations/{organisationId}/hubs/{hubId}/boards": {
     /** @description Retrieves the boards belonging to a given hub and organisation. */
     get: operations["ListHubBoards"];
@@ -729,6 +733,12 @@ export interface components {
         "application/json": components["schemas"]["BoardVariablesSchema"];
       };
     };
+    /** @description A paginated set of Hubs */
+    GetHubsResponse: {
+      content: {
+        "application/json": components["schemas"]["HubsPage"];
+      };
+    };
     /** @description The default error response */
     ErrorResponse: {
       content: {
@@ -785,6 +795,25 @@ export interface operations {
     };
     responses: {
       200: components["responses"]["GetVariablesSchemaResponse"];
+      default: components["responses"]["ErrorResponse"];
+    };
+  };
+  /** @description Retrieves the hubs belonging to a given organisation. */
+  GetHubs: {
+    parameters: {
+      query?: {
+        search?: string;
+        first?: number;
+        before?: string;
+        after?: string;
+        sort?: string;
+      };
+      path: {
+        organisationId: string;
+      };
+    };
+    responses: {
+      200: components["responses"]["GetHubsResponse"];
       default: components["responses"]["ErrorResponse"];
     };
   };
