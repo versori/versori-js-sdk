@@ -1,4 +1,5 @@
 import { HubsClient, UsersClient } from '../client';
+import { openOAuthWindow } from '../utilities';
 import type { Connection } from '../schemas';
 import '../styles/styles.css';
 import { mock } from './mockIntegrationResponse';
@@ -36,11 +37,11 @@ class Versori {
         this.initialise();
     }
 
-    initialise = () => {
+    initialise = async () => {
         console.log('init-sdk');
         this.attachEventListeners();
 
-        const usersclient = new UsersClient({
+        const usersClient = new UsersClient({
             baseUrl: BASE_PATH,
         });
 
@@ -50,12 +51,21 @@ class Versori {
 
         (window as any)['Versori'] = {
             client: hubsClient.hubs,
-            users: usersclient.users,
+            users: usersClient.users,
             userId: this.userId,
             orgId: this.orgId,
             onSuccess: this.onSuccess,
             onError: this.onError,
         };
+        const connections = await window.Versori.client.getConnections(this.orgId);
+        const connectedApps = await window.Versori.client.getConnectedApps(this.orgId);
+        // const user = await window.Versori.users.getUser(
+        //     this.orgId,
+        //     '01HARZ9Z72NGZMY0T9613VGJEV',
+        //     '01HASBT94R4JZQMVPT85S82KN2',
+        //     this.userId
+        // );
+        console.log(connections, connectedApps);
     };
 
     attachEventListeners = () => {
@@ -79,8 +89,35 @@ class Versori {
         if (currentConnectionType === 'apikey') {
             this.renderVersoriSDKModal(el.dataset.vhubsboardid!);
         } else {
-            // render oauth modal
+            this.handleOauthConnect();
         }
+    };
+
+    handleSuccessfulConnection = async (e: MessageEvent) => {
+        console.log('connected');
+    };
+
+    handleOauthConnect = async () => {
+        try {
+            const initConnectResponse = await window.Versori.client.initConnect(this.orgId, {
+                appId: this.#currentlyConnectingApp,
+                authType: 'oauth2',
+            });
+            if (initConnectResponse?.action?.redirect?.url) {
+                // setShowConnectionOverlay(true);
+
+                // Open the window - width and height ensures it is its own pop up window
+                openOAuthWindow({
+                    url: `${initConnectResponse.action.redirect.url}&prompt=login`,
+                    title: 'Switchboard Connect',
+                    width: 800,
+                    height: 800,
+                });
+
+                window.addEventListener('message', this.handleSuccessfulConnection, false);
+            }
+            console.log(initConnectResponse);
+        } catch (e) {}
     };
 
     connect = async (form: HTMLFormElement) => {

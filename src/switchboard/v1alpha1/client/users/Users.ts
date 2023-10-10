@@ -10,16 +10,19 @@ export class Users {
     }
 
     async getUser(organisationId: string, hubId: string, boardId: string, userId: string): Promise<User> {
-        const { data, error, response } = await this.client.GET('/organisations/{organisationId}/connections', {
-            params: {
-                path: {
-                    organisationId,
-                    hubId,
-                    boardId,
-                    userId,
+        const { data, error, response } = await this.client.GET(
+            '/organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}',
+            {
+                params: {
+                    path: {
+                        organisationId,
+                        hubId,
+                        boardId,
+                        userId,
+                    },
                 },
-            },
-        });
+            }
+        );
 
         if (error) {
             throw new ApiError(response, error);

@@ -3,7 +3,7 @@ import { operations } from '../../generated/switchboard.ts';
 import {
     Connection,
     CreateConnectionRequestBody,
-    // InitConnectionResponseBody,
+    InitConnectionResponseBody,
     // InitConnectionRequestBody,
     // Hub,
     HubsPage,
@@ -28,22 +28,22 @@ export class Hubs {
         this.client = client;
     }
 
-    // async connectInit(organisationId: string, body: InitConnectionRequestBody): Promise<InitConnectionResponseBody> {
-    //     const { data, error, response } = await this.client.POST('/organisations/{organisationId}/connection-init', {
-    //         params: {
-    //             path: {
-    //                 organisationId,
-    //             },
-    //         },
-    //         body,
-    //     });
+    async initConnect(organisationId: string, body: any): Promise<InitConnectionResponseBody> {
+        const { data, error, response } = await this.client.POST('/organisations/{organisationId}/connection-init', {
+            params: {
+                path: {
+                    organisationId,
+                },
+            },
+            body,
+        });
 
-    //     if (error) {
-    //         throw new ApiError(response, error);
-    //     }
+        if (error) {
+            throw new ApiError(response, error);
+        }
 
-    //     return data;
-    // }
+        return data;
+    }
 
     async connect(organisationId: string, body: any): Promise<Connection> {
         const { data, error, response } = await this.client.POST('/organisations/{organisationId}/connections', {
