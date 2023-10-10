@@ -6,7 +6,7 @@ info:
 servers:
   - url: 'https://platform.versori.com/apis/hubs-sdk'
     description: Production server
-  - url: 'http://localhost:8080/v1alpha1/'
+  - url: 'http://localhost:8889/v1'
     description: Localhost
 paths:
   /organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}:

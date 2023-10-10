@@ -1,21 +1,76 @@
 import { VersoriSDK } from '@versori/sdk';
-import type { Connection } from '@versori/sdk';
+// import type { Connection } from '@versori/sdk';
 import '@versori/sdk/dist/style.css';
 // import { IntegrationCard } from '@versori/sdk-react';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import './reset.css';
+
+const switchboard = {
+    hubs: {
+        one: '01HARZ9Z72NGZMY0T9613VGJEV',
+        two: '01HC08JFRV9QJBBTA3PP5G82FX',
+    },
+    boards: {
+        hubOneBoardOne: '01HASBT94R4JZQMVPT85S82KN2',
+        hubOneBoardTwo: '01HASBHKXE00A2ERKC9J4960KY',
+        hubOneBoardThree: '01HCD7BMSPVVYRXDGK9963PVP6',
+        hubTwoBoardOne: '01HC08JH1HQSS7BEH57PH3Z47J',
+    },
+};
 
 // Values hardcoded for now
 function App() {
     useEffect(() => {
         const ORG_ID = '01HARWP7QHM05CGDKH7W4AD9NM';
         VersoriSDK.initHubs({
-            userId: 'switchboard-demo',
+            userId: 'test',
             orgId: ORG_ID,
-            onSuccess: (connection: Connection) => console.log(connection),
+            onSuccess: (connection: any) => {
+                console.log('success', connection);
+            },
             onError: () => () => console.log('error'),
         });
     });
+
+    const integrations = [
+        {
+            title: 'Spotify',
+            hubId: switchboard.hubs.two,
+            boardId: switchboard.boards.hubTwoBoardOne,
+        },
+        {
+            title: 'Spot',
+            hubId: switchboard.hubs.one,
+            boardId: switchboard.boards.hubOneBoardTwo,
+        },
+        {
+            title: 'Square',
+            hubId: switchboard.hubs.one,
+            boardId: switchboard.boards.hubOneBoardOne,
+        },
+        {
+            title: 'Square API',
+            hubId: switchboard.hubs.one,
+            boardId: switchboard.boards.hubOneBoardThree,
+        },
+    ];
+
+    const buttons = useRef(new Array());
+
+    //yuk
+    useLayoutEffect(() => {
+        setTimeout(() => {
+            const buttons = document.querySelectorAll('.card-button');
+            buttons.forEach((button) => {
+                if (button.hasAttribute('data-connected')) {
+                    button.innerHTML = 'Connected';
+                } else {
+                    button.innerHTML = 'Connect';
+                }
+            });
+        }, 500);
+    }, []);
+
     return (
         <div
             style={{
@@ -25,36 +80,17 @@ function App() {
                 gap: '20px',
             }}
         >
-            <div className="card">
-                <h2 className="card-title">Google Calendar</h2>
-                <button
-                    className="card-button"
-                    data-vhubid="01HARZ9Z72NGZMY0T9613VGJEV"
-                    data-vhubsboardid="01HASBHKXE00A2ERKC9J4960KY"
-                >
-                    Connect
-                </button>
-            </div>
-            <div className="card">
-                <h2 className="card-title">Spotify</h2>
-                <button
-                    className="card-button"
-                    data-vhubid="01HARZ9Z72NGZMY0T9613VGJEV"
-                    data-vhubsboardid="01HASBT94R4JZQMVPT85S82KN2"
-                >
-                    Connect
-                </button>
-            </div>
-            <div className="card">
-                <h2 className="card-title">Apple</h2>
-                <button
-                    className="card-button"
-                    data-vhubid="01HARZ9Z72NGZMY0T9613VGJEV"
-                    data-vhubsboardid="01HASBT94R4JZQMVPT85S82KN2"
-                >
-                    Connect
-                </button>
-            </div>
+            {integrations.map((integration, index) => (
+                <div className="card" key={integration.title}>
+                    <h2 className="card-title">{integration.title}</h2>
+                    <button
+                        className="card-button"
+                        data-vhubid={integration.hubId}
+                        data-vhubsboardid={integration.boardId}
+                        ref={(element) => buttons.current.push(element)}
+                    ></button>
+                </div>
+            ))}
             {/* <IntegrationCard
                 board={{ name: 'Google' } as any}
                 connected

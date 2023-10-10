@@ -3,11 +3,11 @@ export const mock = {
         // integrations
         {
             authConfig: {
-                authType: 'oauth2',
+                authType: 'apikey',
                 connectionId: 'reallylongconnectionid',
                 data: { in: 'header', name: 'Authorization' },
             },
-            id: '01HCCB8QEY81BJ8MXYZWTN7MD7',
+            id: '01HCD7D96SGEAB73BQP4J42WKJ',
             name: 'Spotify',
             requiresUserAuth: true,
         },

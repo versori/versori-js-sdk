@@ -2,7 +2,7 @@ import { ApiError } from '../../common';
 import { operations } from '../../generated/switchboard.ts';
 import {
     Connection,
-    CreateConnectionRequestBody,
+    // CreateConnectionRequestBody,
     InitConnectionResponseBody,
     // InitConnectionRequestBody,
     // Hub,
@@ -62,22 +62,22 @@ export class Hubs {
         return data;
     }
 
-    // async createCredential(organisationId: string, body: CreateCredentialRequestBody): Promise<Connection> {
-    //     const { data, error, response } = await this.client.POST('/organisations/{organisationId}/credentials', {
-    //         params: {
-    //             path: {
-    //                 organisationId,
-    //             },
-    //         },
-    //         body,
-    //     });
+    async createCredential(organisationId: string, body: any): Promise<Connection> {
+        const { data, error, response } = await this.client.POST('/organisations/{organisationId}/credentials', {
+            params: {
+                path: {
+                    organisationId,
+                },
+            },
+            body,
+        });
 
-    //     if (error) {
-    //         throw new ApiError(response, error);
-    //     }
+        if (error) {
+            throw new ApiError(response, error);
+        }
 
-    //     return data;
-    // }
+        return data;
+    }
 
     async getConnections(organisationId: string, params: ListConnectionsParams): Promise<ConnectionsPage> {
         const { data, error, response } = await this.client.GET('/organisations/{organisationId}/connections', {

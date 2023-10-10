@@ -44,6 +44,11 @@ body {
     transition: 0.1s ease-in-out;
 }
 
+.card-button[data-connected='true'] {
+    background-color: #00b300;
+    border-color: #00b300;
+}
+
 .card-button:hover {
     border-color: #ababab;
 }

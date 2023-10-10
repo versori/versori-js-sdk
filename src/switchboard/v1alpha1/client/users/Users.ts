@@ -9,18 +9,41 @@ export class Users {
         this.client = client;
     }
 
-    async getUser(organisationId: string, hubId: string, boardId: string, userId: string): Promise<User> {
+    async getUser(orgId: string, hubId: string, boardId: string, userId: string): Promise<User> {
         const { data, error, response } = await this.client.GET(
             '/organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}',
             {
                 params: {
                     path: {
-                        organisationId,
+                        orgId,
                         hubId,
                         boardId,
                         userId,
                     },
                 },
+            }
+        );
+
+        if (error) {
+            throw new ApiError(response, error);
+        }
+
+        return data;
+    }
+
+    async createUser(orgId: string, hubId: string, boardId: string, userId: string, body: any): Promise<User> {
+        const { data, error, response } = await this.client.PUT(
+            '/organisations/{orgId}/hubs/{hubId}/boards/{boardId}/users/{userId}',
+            {
+                params: {
+                    path: {
+                        orgId,
+                        hubId,
+                        boardId,
+                        userId,
+                    },
+                },
+                body,
             }
         );
 
