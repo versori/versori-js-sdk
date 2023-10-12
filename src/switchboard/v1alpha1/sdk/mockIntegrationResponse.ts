@@ -8,6 +8,7 @@ const switchboard = {
         hubOneBoardTwo: '01HASBHKXE00A2ERKC9J4960KY',
         hubOneBoardThree: '01HCD7BMSPVVYRXDGK9963PVP6',
         hubTwoBoardOne: '01HC08JH1HQSS7BEH57PH3Z47J',
+        hubTwoBoardTwo: '01HCJA8M0ZX607SP17MMYT9NPB',
     },
 };
 
@@ -17,7 +18,7 @@ type Mock = {
             authConfig: {
                 authType: string;
                 connectionId: string;
-                data: { in: string; name: string };
+                data: { flowType?: string; in?: string; name?: string };
             };
             id: string;
             name: string;
@@ -75,6 +76,18 @@ export const mock: Mock = {
                 },
                 id: '01HCCCZ80JH265836KJA9XBAQG',
                 name: 'Spotify',
+                requiresUserAuth: true,
+            },
+        ],
+        '01HCJA8M0ZX607SP17MMYT9NPB': [
+            {
+                authConfig: {
+                    authType: 'oauth2',
+                    connectionId: 'Square Creds',
+                    data: { flowType: 'clientCredentials' },
+                },
+                id: '01HCJA6XBKYZKYPNDRG6M7BQWX',
+                name: 'Square Creds',
                 requiresUserAuth: true,
             },
         ],

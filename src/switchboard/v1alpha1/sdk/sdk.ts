@@ -17,21 +17,24 @@ declare global {
     }
 }
 
+type VersoriHubsParams = {
+    userId: string;
+    orgId: string;
+    originUrl: string;
+    onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
+    onError: (error: any) => void;
+};
+
 (function () {
     console.log('Versori SDK loaded');
     (window as any)['Versori'] = {
-        initHubs: ({ orgId, userId, originUrl, onSuccess, onConnection, onError }: initHubsParams) => {
-            new Versori({ orgId, userId, originUrl, onSuccess, onConnection, onError });
+        initHubs: ({ orgId, userId, originUrl, onConnection, onError }: VersoriHubsParams) => {
+            new VersoriHubs({ orgId, userId, originUrl, onConnection, onError });
         },
     };
 })();
 
-export type ConnectionData =
-    | ConnectionDataOAuth2ClientCredentials
-    | ConnectionDataAPIKey
-    // | ConnectionDataHTTPRefresh
-    // | ConnectionDataDatabase
-    | ConnectionDataHTTPBasicAuth;
+export type ConnectionData = ConnectionDataOAuth2ClientCredentials | ConnectionDataAPIKey | ConnectionDataHTTPBasicAuth;
 
 type modals = {
     [key: string]: () => void;
@@ -46,22 +49,12 @@ type CurrentlyConnectingInfo = {
 
 const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1';
 
-type initHubsParams = {
+class VersoriHubs {
     userId: string;
     orgId: string;
     originUrl: string;
-    onConnection: string;
-    onSuccess: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
-    onError: (error: string) => void;
-};
-
-class Versori {
-    userId: string;
-    orgId: string;
-    originUrl: string;
-    onConnection: string;
-    onSuccess: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
-    onError: (error: string) => void;
+    onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
+    onError: (error: any) => void;
 
     #currentlyConnectingInfo: CurrentlyConnectingInfo = {
         appId: '',
@@ -71,13 +64,12 @@ class Versori {
     };
     #hubsClient: any;
 
-    constructor({ userId, orgId, originUrl, onSuccess, onConnection, onError }: initHubsParams) {
+    constructor({ userId, orgId, originUrl, onConnection, onError }: VersoriHubsParams) {
         this.userId = userId;
         this.orgId = orgId;
         this.originUrl = originUrl;
         this.onConnection = onConnection;
         this.onError = onError;
-        this.onSuccess = onSuccess;
         this.initialise();
     }
 
@@ -158,7 +150,7 @@ class Versori {
             }
 
             await this.handleOauthConnect();
-        } else if (['apikey', 'httprefresh', 'database', 'httpbasicauth'].includes(currentConnectionType.authType)) {
+        } else if (['apikey', 'httpbasicauth'].includes(currentConnectionType.authType)) {
             this.modalContent(currentConnectionType.authType)();
         } else {
             alert('Unsupported auth method');
@@ -167,34 +159,29 @@ class Versori {
 
     handlePostToClient = async () => {
         try {
-            const response = await fetch(
-                `${this.onSuccess}/${this.#currentlyConnectingInfo.hub}/${this.#currentlyConnectingInfo.board}`,
-                {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        connectionInfo: this.#currentlyConnectingInfo,
-                    }),
-                }
-            );
-            console.log(response);
+            await fetch(`${this.onConnection}`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    connectionInfo: this.#currentlyConnectingInfo,
+                }),
+            });
         } catch (e) {
             console.log(e);
         }
     };
 
     handleSuccessfulConnection = async (event: MessageEvent) => {
-        console.log(event);
         if (event.data.success) {
             if (event.origin === this.originUrl) {
-                if (typeof this.onSuccess === 'string') {
+                if (typeof this.onConnection === 'string') {
                     this.handlePostToClient();
                 } else {
-                    this.onSuccess(event.data.connectionID, this.#currentlyConnectingInfo);
+                    this.onConnection?.(event.data.connectionID, this.#currentlyConnectingInfo);
                 }
             }
         }
         if (!event.data.success) {
-            this.onError('error');
+            this.onError(event);
         }
         window.removeEventListener('message', this.handleSuccessfulConnection);
     };
@@ -215,7 +202,6 @@ class Versori {
 
                 window.addEventListener('message', this.handleSuccessfulConnection, false);
             }
-            console.log(initConnectResponse);
         } catch (e) {}
     };
 
@@ -227,13 +213,13 @@ class Versori {
                 data: formBody,
                 name: name,
             });
-            if (typeof this.onSuccess === 'string') {
-                this.handlePostToClient();
+            if (typeof this.onConnection === 'string') {
+                await this.handlePostToClient();
             } else {
-                this.onSuccess(connectResponse, this.#currentlyConnectingInfo);
+                this.onConnection?.(connectResponse, this.#currentlyConnectingInfo);
             }
-        } catch (e) {
-            this.onError('error');
+        } catch (error) {
+            this.onError(error);
         }
         this.removeVersoriSDKModal();
     };
@@ -314,14 +300,14 @@ class Versori {
 
         // Create input wrapper
         const apiKeyWrapper = document.createElement('div');
-        apiKeyWrapper.classList.add('v-hubs-sdk-api-key-input-wrapper');
+        apiKeyWrapper.classList.add('v-hubs-sdk-input-wrapper');
         const apiKeyNameWrapper = document.createElement('div');
-        apiKeyNameWrapper.classList.add('v-hubs-sdk-api-key-input-wrapper');
+        apiKeyNameWrapper.classList.add('v-hubs-sdk-input-wrapper');
 
         // Create input for api key
         const apiKeyInput = document.createElement('input');
         apiKeyInput.setAttribute('required', '');
-        apiKeyInput.classList.add('v-hubs-sdk-api-key-input');
+        apiKeyInput.classList.add('v-hubs-sdk-input');
         apiKeyInput.setAttribute('type', 'text');
         apiKeyInput.setAttribute('name', 'API Key Name');
         apiKeyInput.setAttribute('placeholder', 'API Key Name');
@@ -329,10 +315,10 @@ class Versori {
         // Create input for api key name
         const apiKeyNameInput = document.createElement('input');
         apiKeyNameInput.setAttribute('required', '');
+        apiKeyNameInput.classList.add('v-hubs-sdk-input');
         apiKeyNameInput.setAttribute('type', 'text');
         apiKeyNameInput.setAttribute('name', 'API Key');
         apiKeyNameInput.setAttribute('placeholder', 'API Key');
-        apiKeyNameInput.classList.add('v-hubs-sdk-api-key-input');
 
         // Append to wrapper
         apiKeyWrapper.appendChild(apiKeyInput);
@@ -398,16 +384,18 @@ class Versori {
         const formInputWrapper = document.createElement('div');
         formInputWrapper.classList.add('v-hubs-sdk-form-input-wrapper');
 
-        // Create input wrapper
-        const apiKeyWrapper = document.createElement('div');
-        apiKeyWrapper.classList.add('v-hubs-sdk-api-key-input-wrapper');
-        const apiKeyNameWrapper = document.createElement('div');
-        apiKeyNameWrapper.classList.add('v-hubs-sdk-api-key-input-wrapper');
+        // Create input wrappers
+        const clientCredentialsNameWrapper = document.createElement('div');
+        clientCredentialsNameWrapper.classList.add('v-hubs-sdk-input-wrapper');
+        const clientCredentialsIdWrapper = document.createElement('div');
+        clientCredentialsIdWrapper.classList.add('v-hubs-sdk-input-wrapper');
+        const clientCredentialsSecretWrapper = document.createElement('div');
+        clientCredentialsSecretWrapper.classList.add('v-hubs-sdk-input-wrapper');
 
         // Create input for name
         const name = document.createElement('input');
         name.setAttribute('required', '');
-        name.classList.add('v-hubs-sdk-api-key-input');
+        name.classList.add('v-hubs-sdk-input');
         name.setAttribute('type', 'text');
         name.setAttribute('name', 'Name');
         name.setAttribute('placeholder', 'Name');
@@ -418,7 +406,7 @@ class Versori {
         clientIdInput.setAttribute('type', 'text');
         clientIdInput.setAttribute('name', 'Client ID');
         clientIdInput.setAttribute('placeholder', 'Client ID');
-        clientIdInput.classList.add('v-hubs-sdk-api-key-input');
+        clientIdInput.classList.add('v-hubs-sdk-input');
 
         // Create input for client secret
         const clientSecretInput = document.createElement('input');
@@ -426,12 +414,12 @@ class Versori {
         clientSecretInput.setAttribute('type', 'text');
         clientSecretInput.setAttribute('name', 'Client ID');
         clientSecretInput.setAttribute('placeholder', 'Client ID');
-        clientSecretInput.classList.add('v-hubs-sdk-api-key-input');
+        clientSecretInput.classList.add('v-hubs-sdk-input');
 
         // Append to wrapper
-        apiKeyWrapper.appendChild(name);
-        apiKeyWrapper.appendChild(clientIdInput);
-        apiKeyNameWrapper.appendChild(clientSecretInput);
+        clientCredentialsNameWrapper.appendChild(name);
+        clientCredentialsIdWrapper.appendChild(clientIdInput);
+        clientCredentialsSecretWrapper.appendChild(clientSecretInput);
 
         // Create cancel button
         const cancelButton = document.createElement('button');
@@ -452,8 +440,9 @@ class Versori {
         formButtonWrapper.appendChild(submitButton);
 
         // Append all elements to form
-        formInputWrapper.appendChild(apiKeyWrapper);
-        formInputWrapper.appendChild(apiKeyNameWrapper);
+        formInputWrapper.appendChild(clientCredentialsNameWrapper);
+        formInputWrapper.appendChild(clientCredentialsIdWrapper);
+        formInputWrapper.appendChild(clientCredentialsSecretWrapper);
         formInputWrapper.appendChild(formButtonWrapper);
         form.appendChild(formInputWrapper);
 
@@ -491,15 +480,15 @@ class Versori {
         formInputWrapper.classList.add('v-hubs-sdk-form-input-wrapper');
 
         // Create input wrapper
-        const apiKeyWrapper = document.createElement('div');
-        apiKeyWrapper.classList.add('v-hubs-sdk-api-key-input-wrapper');
-        const apiKeyNameWrapper = document.createElement('div');
-        apiKeyNameWrapper.classList.add('v-hubs-sdk-api-key-input-wrapper');
+        const basicAuthNameWrapper = document.createElement('div');
+        basicAuthNameWrapper.classList.add('v-hubs-sdk-input-wrapper');
+        const basicAuthPasswordWrapper = document.createElement('div');
+        basicAuthPasswordWrapper.classList.add('v-hubs-sdk-input-wrapper');
 
         // Create input for user
         const user = document.createElement('input');
         user.setAttribute('required', '');
-        user.classList.add('v-hubs-sdk-api-key-input');
+        user.classList.add('v-hubs-sdk-input');
         user.setAttribute('type', 'text');
         user.setAttribute('name', 'User');
         user.setAttribute('placeholder', 'User');
@@ -507,14 +496,14 @@ class Versori {
         // Create input for password
         const password = document.createElement('input');
         password.setAttribute('required', '');
+        password.classList.add('v-hubs-sdk-input');
         password.setAttribute('type', 'text');
         password.setAttribute('name', 'Password');
         password.setAttribute('placeholder', 'Password');
-        password.classList.add('v-hubs-sdk-api-key-input');
 
         // Append to wrapper
-        apiKeyWrapper.appendChild(user);
-        apiKeyWrapper.appendChild(password);
+        basicAuthNameWrapper.appendChild(user);
+        basicAuthPasswordWrapper.appendChild(password);
 
         // Create cancel button
         const cancelButton = document.createElement('button');
@@ -535,8 +524,8 @@ class Versori {
         formButtonWrapper.appendChild(submitButton);
 
         // Append all elements to form
-        formInputWrapper.appendChild(apiKeyWrapper);
-        formInputWrapper.appendChild(apiKeyNameWrapper);
+        formInputWrapper.appendChild(basicAuthNameWrapper);
+        formInputWrapper.appendChild(basicAuthPasswordWrapper);
         formInputWrapper.appendChild(formButtonWrapper);
         form.appendChild(formInputWrapper);
 

@@ -2,6 +2,7 @@
     font-family: Helvetica, Roboto, Inter, system-ui, Avenir, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
+    font-size: 16px;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -19,7 +20,7 @@ body {
 }
 
 #root {
-    max-width: 1280px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 2rem;
     text-align: center;
@@ -33,7 +34,13 @@ body {
     align-items: center;
     justify-content: center;
     height: 200px;
-    width: 200px;
+    padding: 16px;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
 }
 
 .card-button {
@@ -54,7 +61,7 @@ body {
 }
 
 .card-title {
-    font-size: 1.1rem;
+    font-size: 0.8em;
     font-weight: 600;
     margin-bottom: 1rem;
 }

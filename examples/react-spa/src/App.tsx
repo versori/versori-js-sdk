@@ -16,6 +16,7 @@ const switchboard = {
         hubOneBoardTwo: '01HASBHKXE00A2ERKC9J4960KY',
         hubOneBoardThree: '01HCD7BMSPVVYRXDGK9963PVP6',
         hubTwoBoardOne: '01HC08JH1HQSS7BEH57PH3Z47J',
+        hubTwoBoardTwo: '01HCJA8M0ZX607SP17MMYT9NPB',
     },
 };
 
@@ -46,6 +47,11 @@ const integrations: Integration[] = [
         hubId: switchboard.hubs.one,
         boardId: switchboard.boards.hubOneBoardThree,
     },
+    {
+        title: 'Hub Two - Square Creds',
+        hubId: switchboard.hubs.two,
+        boardId: switchboard.boards.hubTwoBoardTwo,
+    },
 ];
 
 const ORG_ID = '01HARWP7QHM05CGDKH7W4AD9NM';
@@ -54,31 +60,15 @@ const USER_ID = 'Izabel';
 function App() {
     useEffect(() => {
         window.Versori.initHubs({
-            userId: USER_ID,
-            orgId: ORG_ID,
+            userId: USER_ID, // currently logged in user
+            orgId: ORG_ID, // switchboard organiaation id
             originUrl: import.meta.env.VITE_ORIGIN_URL, // environment url
-            onConnection: 'http://someclienturl.com/api',
-            // onSuccess: async (connection: any, connectionKey: string) => {
-            //     console.log(connection, connectionKey, currentIntegration);
-            //     // Customer does their thing then calls createUser
-            //     // await window.Versori.users.createUser(
-            //     //     ORG_ID,
-            //     //     currentIntegration?.hubId,
-            //     //     currentIntegration?.boardId,
-            //     //     USER_ID,
-            //     //     {
-            //     //         id: USER_ID,
-            //     //         environments: [
-            //     //             {
-            //     //                 key: connectionKey,
-            //     //                 credentialId: connection.credentialId,
-            //     //                 connectionId: connection.connectionId,
-            //     //             },
-            //     //         ],
-            //     //     }
-            //     // );
+            onConnection: 'http://someclienturl.com/api', // url to send connection data to, payload contains appId, appKey, hub and board
+            // onConnection: async (connection: any, connectionInfo: string) => {
+            //     console.log(connection, connectionInfo);
+            //     // Customer does their thing
             // },
-            onError: (error: string) => console.log(error),
+            onError: (error: any) => console.log(error),
         });
     }, []);
 
@@ -100,22 +90,24 @@ function App() {
         <div
             style={{
                 display: 'flex',
-                maxWidth: '800px',
+                maxWidth: '1440px',
                 justifyContent: 'center',
                 gap: '20px',
             }}
         >
-            {integrations.map((integration) => (
-                <div className="card" key={integration.title}>
-                    <h2 className="card-title">{integration.title}</h2>
-                    <button
-                        className="card-button"
-                        data-vhubs
-                        data-vhubid={integration.hubId}
-                        data-vhubboardid={integration.boardId}
-                    ></button>
-                </div>
-            ))}
+            <div className="card-grid">
+                {integrations.map((integration) => (
+                    <div className="card" key={integration.title}>
+                        <h4 className="card-title">{integration.title}</h4>
+                        <button
+                            className="card-button"
+                            data-vhubs
+                            data-vhubid={integration.hubId}
+                            data-vhubboardid={integration.boardId}
+                        ></button>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
