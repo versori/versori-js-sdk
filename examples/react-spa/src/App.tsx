@@ -1,7 +1,7 @@
 // import type { Connection } from '@versori/sdk';
 import '@versori/sdk/dist';
 import '@versori/sdk/dist/style.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './reset.css';
 
 // Values hardcoded for now
