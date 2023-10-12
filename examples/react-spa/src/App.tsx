@@ -1,9 +1,10 @@
-import { VersoriSDK } from '@versori/sdk';
 // import type { Connection } from '@versori/sdk';
+import '@versori/sdk/dist';
 import '@versori/sdk/dist/style.css';
-// import { IntegrationCard } from '@versori/sdk-react';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import './reset.css';
+
+// Values hardcoded for now
 
 const switchboard = {
     hubs: {
@@ -18,47 +19,71 @@ const switchboard = {
     },
 };
 
-// Values hardcoded for now
+type Integration = {
+    title: string;
+    hubId: string;
+    boardId: string;
+};
+
+const integrations: Integration[] = [
+    {
+        title: 'Hub Two - Spotify',
+        hubId: switchboard.hubs.two,
+        boardId: switchboard.boards.hubTwoBoardOne,
+    },
+    {
+        title: 'Hub One - Spot',
+        hubId: switchboard.hubs.one,
+        boardId: switchboard.boards.hubOneBoardTwo,
+    },
+    {
+        title: 'Hub One - Square',
+        hubId: switchboard.hubs.one,
+        boardId: switchboard.boards.hubOneBoardOne,
+    },
+    {
+        title: 'Hub One - Square API',
+        hubId: switchboard.hubs.one,
+        boardId: switchboard.boards.hubOneBoardThree,
+    },
+];
+
+const ORG_ID = '01HARWP7QHM05CGDKH7W4AD9NM';
+const USER_ID = 'Izabel';
+
 function App() {
     useEffect(() => {
-        const ORG_ID = '01HARWP7QHM05CGDKH7W4AD9NM';
-        VersoriSDK.initHubs({
-            userId: 'test',
+        window.Versori.initHubs({
+            userId: USER_ID,
             orgId: ORG_ID,
-            onSuccess: (connection: any) => {
-                console.log('success', connection);
-            },
-            onError: () => () => console.log('error'),
+            originUrl: import.meta.env.VITE_ORIGIN_URL, // environment url
+            onConnection: 'http://someclienturl.com/api',
+            // onSuccess: async (connection: any, connectionKey: string) => {
+            //     console.log(connection, connectionKey, currentIntegration);
+            //     // Customer does their thing then calls createUser
+            //     // await window.Versori.users.createUser(
+            //     //     ORG_ID,
+            //     //     currentIntegration?.hubId,
+            //     //     currentIntegration?.boardId,
+            //     //     USER_ID,
+            //     //     {
+            //     //         id: USER_ID,
+            //     //         environments: [
+            //     //             {
+            //     //                 key: connectionKey,
+            //     //                 credentialId: connection.credentialId,
+            //     //                 connectionId: connection.connectionId,
+            //     //             },
+            //     //         ],
+            //     //     }
+            //     // );
+            // },
+            onError: (error: string) => console.log(error),
         });
-    });
+    }, []);
 
-    const integrations = [
-        {
-            title: 'Spotify',
-            hubId: switchboard.hubs.two,
-            boardId: switchboard.boards.hubTwoBoardOne,
-        },
-        {
-            title: 'Spot',
-            hubId: switchboard.hubs.one,
-            boardId: switchboard.boards.hubOneBoardTwo,
-        },
-        {
-            title: 'Square',
-            hubId: switchboard.hubs.one,
-            boardId: switchboard.boards.hubOneBoardOne,
-        },
-        {
-            title: 'Square API',
-            hubId: switchboard.hubs.one,
-            boardId: switchboard.boards.hubOneBoardThree,
-        },
-    ];
-
-    const buttons = useRef(new Array());
-
-    //yuk
-    useLayoutEffect(() => {
+    useEffect(() => {
+        // Hack to change button text
         setTimeout(() => {
             const buttons = document.querySelectorAll('.card-button');
             buttons.forEach((button) => {
@@ -69,7 +94,7 @@ function App() {
                 }
             });
         }, 500);
-    }, []);
+    });
 
     return (
         <div
@@ -80,29 +105,17 @@ function App() {
                 gap: '20px',
             }}
         >
-            {integrations.map((integration, index) => (
+            {integrations.map((integration) => (
                 <div className="card" key={integration.title}>
                     <h2 className="card-title">{integration.title}</h2>
                     <button
                         className="card-button"
+                        data-vhubs
                         data-vhubid={integration.hubId}
-                        data-vhubsboardid={integration.boardId}
-                        ref={(element) => buttons.current.push(element)}
+                        data-vhubboardid={integration.boardId}
                     ></button>
                 </div>
             ))}
-            {/* <IntegrationCard
-                board={{ name: 'Google' } as any}
-                connected
-                onConnect={() => handleConnection()}
-                onDisconnect={() => {}}
-            />
-            <IntegrationCard
-                board={{ name: 'Office 365' } as any}
-                connected={false}
-                onConnect={() => handleConnection()}
-                onDisconnect={() => {}}
-            /> */}
         </div>
     );
 }

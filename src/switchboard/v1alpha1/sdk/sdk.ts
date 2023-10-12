@@ -1,4 +1,4 @@
-import { HubsClient, UsersClient } from '../client';
+import { HubsClient } from '../client';
 import { openOAuthWindow } from '../utilities';
 import type {
     Connection,
@@ -6,6 +6,7 @@ import type {
     ConnectionDataAPIKey,
     ConnectionDataHTTPBasicAuth,
     AppAuthConfigOAuth2,
+    Board,
 } from '../schemas';
 import '../styles/styles.css';
 import { mock } from './mockIntegrationResponse';
@@ -15,6 +16,15 @@ declare global {
         Versori: any;
     }
 }
+
+(function () {
+    console.log('Versori SDK loaded');
+    (window as any)['Versori'] = {
+        initHubs: ({ orgId, userId, originUrl, onSuccess, onConnection, onError }: initHubsParams) => {
+            new Versori({ orgId, userId, originUrl, onSuccess, onConnection, onError });
+        },
+    };
+})();
 
 export type ConnectionData =
     | ConnectionDataOAuth2ClientCredentials
@@ -27,29 +37,45 @@ type modals = {
     [key: string]: () => void;
 };
 
-const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1';
-const USERS_PATH = 'http://localhost:8889/v1';
+type CurrentlyConnectingInfo = {
+    appId: string;
+    appKey: string;
+    hub: string;
+    board: string;
+};
 
-// Click connect, authorise, get credential token, pass to their backend, they save it and then send us the userId and credential Id. We therefore know thereafter what the credential Id is for that user.
+const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1';
 
 type initHubsParams = {
     userId: string;
     orgId: string;
-    onSuccess: (connection: any) => void;
-    onError: () => void;
+    originUrl: string;
+    onConnection: string;
+    onSuccess: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
+    onError: (error: string) => void;
 };
 
 class Versori {
     userId: string;
     orgId: string;
-    onSuccess: (connection: any) => void;
-    onError: () => void;
+    originUrl: string;
+    onConnection: string;
+    onSuccess: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
+    onError: (error: string) => void;
 
-    #currentlyConnectingApp = '';
+    #currentlyConnectingInfo: CurrentlyConnectingInfo = {
+        appId: '',
+        appKey: '',
+        hub: '',
+        board: '',
+    };
+    #hubsClient: any;
 
-    constructor({ userId, orgId, onSuccess, onError }: initHubsParams) {
+    constructor({ userId, orgId, originUrl, onSuccess, onConnection, onError }: initHubsParams) {
         this.userId = userId;
         this.orgId = orgId;
+        this.originUrl = originUrl;
+        this.onConnection = onConnection;
         this.onError = onError;
         this.onSuccess = onSuccess;
         this.initialise();
@@ -58,46 +84,34 @@ class Versori {
     initialise = async () => {
         this.attachEventListeners();
 
-        const usersClient = new UsersClient({
-            baseUrl: USERS_PATH,
-        });
-
         const hubsClient = new HubsClient({
             baseUrl: BASE_PATH,
         });
+        this.#hubsClient = hubsClient.hubs;
 
-        (window as any)['Versori'] = {
-            client: hubsClient.hubs,
-            users: usersClient.users,
-            userId: this.userId,
-            orgId: this.orgId,
-            onSuccess: this.onSuccess,
-            onError: this.onError,
-        };
-        // const connections = await window.Versori.client.getConnections(this.orgId);
-        // const connectedApps = await window.Versori.client.getConnectedApps(this.orgId);
         this.setConnectedApps();
-        // console.log(connections, connectedApps);
     };
 
     setConnectedApps = async () => {
-        const buttons = document.querySelectorAll('button[data-vhubsboardid]') as NodeListOf<HTMLElement>;
-        for (const button of buttons) {
-            const usersHubs = await window.Versori.client.getUsersHubBoards(
-                this.orgId,
-                button.dataset.vhubid,
-                this.userId
-            );
-            console.log(usersHubs);
-            const connection = usersHubs.find((board: any) => board.id === button.dataset.vhubsboardid);
-            if (connection) {
-                button.setAttribute('data-connected', 'true');
+        const buttons = document.querySelectorAll('button[data-vhubs]') as NodeListOf<HTMLElement>;
+        const usersHubs = Array.from(buttons).map((button) => {
+            if (button.hasAttribute('data-vhubid')) {
+                return button.getAttribute('data-vhubid');
             }
+            return null;
+        });
+        const uniqueHubs = [...new Set(usersHubs)];
+        for (const hub of uniqueHubs) {
+            const boards: Board[] = await this.#hubsClient.getUsersHubBoards(this.orgId, hub, this.userId);
+            boards.forEach((board) => {
+                const button = document.querySelector(`button[data-vhubboardid="${board.id}"]`);
+                if (button) button.setAttribute('data-connected', 'true');
+            });
         }
     };
 
     attachEventListeners = () => {
-        const buttons = document.querySelectorAll('button[data-vhubsboardid]');
+        const buttons = document.querySelectorAll('button[data-vhubboardid]');
         buttons.forEach((button) => {
             button.addEventListener('click', this.getAppAndOpenModal);
         });
@@ -113,16 +127,27 @@ class Versori {
         return modals[authType];
     };
 
-    getAppAndOpenModal = async (e: Event) => {
-        e.preventDefault();
-        // const el = e.target as HTMLButtonElement;
-        // const integrations = await window.Versori.client.getHubIntegrations(
+    getAppAndOpenModal = async (event: Event) => {
+        event.preventDefault();
+        const target = event.target as HTMLButtonElement;
+        /* Integration endpoint won't work localy */
+        // const integrations = await this.#hubsClient.getHubIntegrations(
         //     window.Versori.orgId,
         //     el.dataset.vhubid,
-        //     el.dataset.vhubsboardid
+        //     el.dataset.vhubboardid
         // );
-        const integration = mock.connections.find((integration) => integration.requiresUserAuth)!;
-        this.#currentlyConnectingApp = integration.id;
+
+        /*  Work around for mock data */
+        if (!(target instanceof HTMLButtonElement)) return;
+        const integration = mock[target.dataset.vhubid!][target.dataset.vhubboardid!].find(
+            (integration) => integration.requiresUserAuth
+        )!;
+        this.#currentlyConnectingInfo = {
+            appId: integration.id,
+            appKey: integration.authConfig.connectionId,
+            hub: target.dataset.vhubid!,
+            board: target.dataset.vhubboardid!,
+        };
         const currentConnectionType = integration?.authConfig;
 
         if (currentConnectionType.authType === 'oidc' || currentConnectionType.authType === 'oauth2') {
@@ -136,46 +161,54 @@ class Versori {
         } else if (['apikey', 'httprefresh', 'database', 'httpbasicauth'].includes(currentConnectionType.authType)) {
             this.modalContent(currentConnectionType.authType)();
         } else {
-            // handleCancelConnection();
-            // addToast({
-            //     title: 'Unsupported auth method',
-            //     variant: 'error',
-            // });
+            alert('Unsupported auth method');
+        }
+    };
+
+    handlePostToClient = async () => {
+        try {
+            const response = await fetch(
+                `${this.onSuccess}/${this.#currentlyConnectingInfo.hub}/${this.#currentlyConnectingInfo.board}`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        connectionInfo: this.#currentlyConnectingInfo,
+                    }),
+                }
+            );
+            console.log(response);
+        } catch (e) {
+            console.log(e);
         }
     };
 
     handleSuccessfulConnection = async (event: MessageEvent) => {
-        console.log('connected', event);
-        this.onSuccess('connected');
-        this.createUser();
-    };
-
-    createUser = async () => {
-        const createdUser = await window.Versori.users.createUser(
-            this.orgId,
-            '01HARZ9Z72NGZMY0T9613VGJEV',
-            '01HCD7BMSPVVYRXDGK9963PVP6',
-            this.userId,
-            {
-                id: this.userId,
+        console.log(event);
+        if (event.data.success) {
+            if (event.origin === this.originUrl) {
+                if (typeof this.onSuccess === 'string') {
+                    this.handlePostToClient();
+                } else {
+                    this.onSuccess(event.data.connectionID, this.#currentlyConnectingInfo);
+                }
             }
-        );
-        console.log(createdUser);
+        }
+        if (!event.data.success) {
+            this.onError('error');
+        }
+        window.removeEventListener('message', this.handleSuccessfulConnection);
     };
 
     handleOauthConnect = async () => {
         try {
-            const initConnectResponse = await window.Versori.client.initConnect(this.orgId, {
-                appId: this.#currentlyConnectingApp,
+            const initConnectResponse = await this.#hubsClient.initConnection(this.orgId, {
+                appId: this.#currentlyConnectingInfo.appId,
                 authType: 'oauth2',
             });
             if (initConnectResponse?.action?.redirect?.url) {
-                // setShowConnectionOverlay(true);
-
-                // Open the window - width and height ensures it is its own pop up window
                 openOAuthWindow({
                     url: `${initConnectResponse.action.redirect.url}&prompt=login`,
-                    title: 'Switchboard Connect',
+                    title: 'Connect',
                     width: 800,
                     height: 800,
                 });
@@ -188,16 +221,19 @@ class Versori {
 
     createConnection = async (name: string, formBody: ConnectionData, authType: string) => {
         try {
-            const connectResponse = await window.Versori.client.connect(this.orgId, {
-                appId: this.#currentlyConnectingApp,
+            const connectResponse = await this.#hubsClient.createConnection(this.orgId, {
+                appId: this.#currentlyConnectingInfo.appId,
                 authType,
                 data: formBody,
                 name: name,
             });
-            this.onSuccess(connectResponse);
-            this.createUser();
+            if (typeof this.onSuccess === 'string') {
+                this.handlePostToClient();
+            } else {
+                this.onSuccess(connectResponse, this.#currentlyConnectingInfo);
+            }
         } catch (e) {
-            this.onError();
+            this.onError('error');
         }
         this.removeVersoriSDKModal();
     };
@@ -442,7 +478,7 @@ class Versori {
             e.preventDefault();
             const formData = new FormData(form);
             const user = formData.get('User') as string;
-            const password = formData.get('Password');
+            const password = formData.get('Password') as string;
             const formBody = {
                 user: user,
                 password: password,
@@ -465,14 +501,14 @@ class Versori {
         user.setAttribute('required', '');
         user.classList.add('v-hubs-sdk-api-key-input');
         user.setAttribute('type', 'text');
-        user.setAttribute('user', 'User');
+        user.setAttribute('name', 'User');
         user.setAttribute('placeholder', 'User');
 
         // Create input for password
         const password = document.createElement('input');
         password.setAttribute('required', '');
         password.setAttribute('type', 'text');
-        password.setAttribute('name', 'Paswword');
+        password.setAttribute('name', 'Password');
         password.setAttribute('placeholder', 'Password');
         password.classList.add('v-hubs-sdk-api-key-input');
 
@@ -512,9 +548,3 @@ class Versori {
         document.body.appendChild(modal);
     };
 }
-
-export const VersoriSDK = {
-    initHubs: async ({ orgId, userId, onSuccess, onError }: initHubsParams) => {
-        new Versori({ orgId, userId, onSuccess, onError });
-    },
-};

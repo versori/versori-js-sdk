@@ -28,7 +28,7 @@ export class Hubs {
         this.client = client;
     }
 
-    async initConnect(organisationId: string, body: any): Promise<InitConnectionResponseBody> {
+    async initConnection(organisationId: string, body: any): Promise<InitConnectionResponseBody> {
         const { data, error, response } = await this.client.POST('/organisations/{organisationId}/connection-init', {
             params: {
                 path: {
@@ -45,7 +45,7 @@ export class Hubs {
         return data;
     }
 
-    async connect(organisationId: string, body: any): Promise<Connection> {
+    async createConnection(organisationId: string, body: any): Promise<Connection> {
         const { data, error, response } = await this.client.POST('/organisations/{organisationId}/connections', {
             params: {
                 path: {

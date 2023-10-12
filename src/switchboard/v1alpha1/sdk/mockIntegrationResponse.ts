@@ -1,35 +1,82 @@
-export const mock = {
-    connections: [
-        // integrations
-        {
+const switchboard = {
+    hubs: {
+        one: '01HARZ9Z72NGZMY0T9613VGJEV',
+        two: '01HC08JFRV9QJBBTA3PP5G82FX',
+    },
+    boards: {
+        hubOneBoardOne: '01HASBT94R4JZQMVPT85S82KN2',
+        hubOneBoardTwo: '01HASBHKXE00A2ERKC9J4960KY',
+        hubOneBoardThree: '01HCD7BMSPVVYRXDGK9963PVP6',
+        hubTwoBoardOne: '01HC08JH1HQSS7BEH57PH3Z47J',
+    },
+};
+
+type Mock = {
+    [key: string]: {
+        [key: string]: {
             authConfig: {
-                authType: 'apikey',
-                connectionId: 'reallylongconnectionid',
-                data: { in: 'header', name: 'Authorization' },
+                authType: string;
+                connectionId: string;
+                data: { in: string; name: string };
+            };
+            id: string;
+            name: string;
+            requiresUserAuth: boolean;
+        }[];
+    };
+};
+
+export const mock: Mock = {
+    '01HARZ9Z72NGZMY0T9613VGJEV': {
+        '01HASBT94R4JZQMVPT85S82KN2': [
+            {
+                authConfig: {
+                    authType: 'httpbasicauth',
+                    connectionId: 'Square Basic',
+                    data: { in: 'header', name: 'Authorization' },
+                },
+                id: '01HCCSBSZS2D2345XGNW5VDP9F',
+                name: 'Square',
+                requiresUserAuth: true,
             },
-            id: '01HCD7D96SGEAB73BQP4J42WKJ',
-            name: 'Spotify',
-            requiresUserAuth: true,
-        },
-        {
-            authConfig: {
-                authType: 'apikey',
-                connectionId: 'ghfh',
-                data: { in: 'header', name: 'X-Shopify-Access-Token' },
+        ],
+        '01HASBHKXE00A2ERKC9J4960KY': [
+            {
+                authConfig: {
+                    authType: 'oauth2',
+                    connectionId: 'Popeye',
+                    data: { in: 'header', name: 'Authorization' },
+                },
+                id: '01HCCB8QEY81BJ8MXYZWTN7MD7',
+                name: 'Spot',
+                requiresUserAuth: true,
             },
-            id: '01HBDWAWX2SXZTBYN94SA8ZW73',
-            listenerUrl: 'https://s14r825t.sb-cvspobmh7bhw-cvspobmt76x1.switchboard.versori.io',
-            name: 'Versori Shopify',
-        },
-        {
-            authConfig: {
-                authType: 'apikey',
-                connectionId: 'ghfh',
-                data: { in: 'header', name: 'X-Shopify-Access-Token' },
+        ],
+        '01HCD7BMSPVVYRXDGK9963PVP6': [
+            {
+                authConfig: {
+                    authType: 'apikey',
+                    connectionId: 'Square APIKEY',
+                    data: { in: 'header', name: 'Authorization' },
+                },
+                id: '01HCD7D96SGEAB73BQP4J42WKJ',
+                name: 'Square API',
+                requiresUserAuth: true,
             },
-            id: '01HBDWAWX2SXZTBYN94SA8ZW73',
-            listenerUrl: 'https://s14r825t.sb-cvspobmh7bhw-cvspobmt76x1.switchboard.versori.io',
-            name: 'Versori Shopify',
-        },
-    ],
+        ],
+    },
+    '01HC08JFRV9QJBBTA3PP5G82FX': {
+        '01HC08JH1HQSS7BEH57PH3Z47J': [
+            {
+                authConfig: {
+                    authType: 'oauth2',
+                    connectionId: 'Spotify oAuth',
+                    data: { in: 'header', name: 'Authorization' },
+                },
+                id: '01HCCCZ80JH265836KJA9XBAQG',
+                name: 'Spotify',
+                requiresUserAuth: true,
+            },
+        ],
+    },
 };
