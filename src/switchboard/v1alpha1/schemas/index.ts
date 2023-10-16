@@ -58,6 +58,8 @@ export type BoardVariablesSchema = switchboardComponents['schemas']['BoardVariab
 export type VariablesSchema = switchboardComponents['schemas']['VariablesSchema'];
 export type Error = switchboardComponents['schemas']['Error'];
 export type ConnectIntegration = switchboardComponents['schemas']['ConnectIntegration'];
+export type HubApp = switchboardComponents['schemas']['HubApp'];
+export type HubAppAuthConfig = switchboardComponents['schemas']['HubAppAuthConfig'];
 
 // User Schema
 export type User = userComponents['schemas']['User'];

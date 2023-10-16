@@ -161,7 +161,7 @@ export interface components {
        * webhooks with.
        */
       requiresUserAuth?: boolean;
-      authConfig?: components["schemas"]["AppAuthConfig"][];
+      authConfig?: components["schemas"]["HubAppAuthConfig"];
     };
     Error: {
       code: string;
@@ -189,6 +189,12 @@ export interface components {
       updatedAt: string;
       /** Format: date-time */
       deletedAt?: string;
+    };
+    HubAppAuthConfig: {
+      /** @enum {string} */
+      authType?: "oidc" | "oauth2" | "apikey" | "httpBasicAuth";
+      connectionId?: string;
+      data?: components["schemas"]["AppAuthConfigData"];
     };
     /** @description AppAuthConfig describes how an organisation can authenticate with an app. */
     AppAuthConfig: {

@@ -1,15 +1,18 @@
 import { HubsClient } from '../client';
 import { openOAuthWindow } from '../utilities';
 import type {
-    Connection,
+    // Connection,
+    HubApp,
     ConnectionDataOAuth2ClientCredentials,
     ConnectionDataAPIKey,
     ConnectionDataHTTPBasicAuth,
     AppAuthConfigOAuth2,
     Board,
+    ConnectIntegration,
 } from '../schemas';
 import '../styles/styles.css';
-import { mock } from './mockIntegrationResponse';
+// import { mock } from './mockIntegrationResponse';
+// import { mock as stagingMock } from './staging-mockResponse';
 
 declare global {
     interface Window {
@@ -22,7 +25,7 @@ type VersoriHubsParams = {
     orgId: string;
     originUrl: string;
     onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
-    onError: (error: any) => void;
+    onError: (error: Error) => void;
 };
 
 (function () {
@@ -41,20 +44,26 @@ type modals = {
 };
 
 type CurrentlyConnectingInfo = {
-    appId: string;
-    appKey: string;
-    hub: string;
-    board: string;
+    appId?: string;
+    appKey?: string;
+    hub?: string;
+    board?: string;
 };
 
-const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1';
+type Error = {
+    message: string;
+    description: any;
+};
+
+// const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1'; // DEV
+const BASE_PATH = 'https://platform-staging.versori.com/apis/switchboard/v1/'; // STAGING
 
 class VersoriHubs {
     userId: string;
     orgId: string;
     originUrl: string;
     onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
-    onError: (error: any) => void;
+    onError: (error: Error) => void;
 
     #currentlyConnectingInfo: CurrentlyConnectingInfo = {
         appId: '',
@@ -94,11 +103,15 @@ class VersoriHubs {
         });
         const uniqueHubs = [...new Set(usersHubs)];
         for (const hub of uniqueHubs) {
-            const boards: Board[] = await this.#hubsClient.getUsersHubBoards(this.orgId, hub, this.userId);
-            boards.forEach((board) => {
-                const button = document.querySelector(`button[data-vhubboardid="${board.id}"]`);
-                if (button) button.setAttribute('data-connected', 'true');
-            });
+            try {
+                const boards: Board[] = await this.#hubsClient.getUsersHubBoards(this.orgId, hub, this.userId);
+                boards.forEach((board) => {
+                    const button = document.querySelector(`button[data-vhubboardid="${board.id}"]`);
+                    if (button) button.setAttribute('data-connected', 'true');
+                });
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
@@ -109,13 +122,14 @@ class VersoriHubs {
         });
     };
 
-    modalContent = (authType: string) => {
+    modalContent = (authType?: string) => {
         const modals: modals = {
             apikey: this.renderAPIKeyModal,
             clientCredentials: this.renderClientCredentialsModal,
             httpbasicauth: this.renderBasicAuthModal,
         };
 
+        if (authType === undefined) return this.renderBasicAuthModal;
         return modals[authType];
     };
 
@@ -123,37 +137,48 @@ class VersoriHubs {
         event.preventDefault();
         const target = event.target as HTMLButtonElement;
         /* Integration endpoint won't work localy */
-        // const integrations = await this.#hubsClient.getHubIntegrations(
-        //     window.Versori.orgId,
-        //     el.dataset.vhubid,
-        //     el.dataset.vhubboardid
-        // );
+        try {
+            const integrations: ConnectIntegration = await this.#hubsClient.getHubIntegrationInfo(
+                this.orgId,
+                target.dataset.vhubid,
+                target.dataset.vhubboardid
+            );
+            /*  Work around for mock data */
+            // if (!(target instanceof HTMLButtonElement)) return;
+            // const integration = stagingMock[target.dataset.vhubid!][target.dataset.vhubboardid!].find(
+            //     (integration) => integration.requiresUserAuth
+            // )!;
 
-        /*  Work around for mock data */
-        if (!(target instanceof HTMLButtonElement)) return;
-        const integration = mock[target.dataset.vhubid!][target.dataset.vhubboardid!].find(
-            (integration) => integration.requiresUserAuth
-        )!;
-        this.#currentlyConnectingInfo = {
-            appId: integration.id,
-            appKey: integration.authConfig.connectionId,
-            hub: target.dataset.vhubid!,
-            board: target.dataset.vhubboardid!,
-        };
-        const currentConnectionType = integration?.authConfig;
+            if (!integrations.connections) return;
+            const integration = integrations.connections.find((integration) => integration.requiresUserAuth) as HubApp;
+            if (!integration) return;
 
-        if (currentConnectionType.authType === 'oidc' || currentConnectionType.authType === 'oauth2') {
-            if ((currentConnectionType.data as AppAuthConfigOAuth2).flowType === 'clientCredentials') {
-                this.modalContent('clientCredentials')();
+            this.#currentlyConnectingInfo = {
+                appId: integration.id,
+                appKey: integration.authConfig?.connectionId,
+                hub: target.dataset.vhubid!,
+                board: target.dataset.vhubboardid!,
+            };
+            const currentConnectionType = integration?.authConfig;
 
-                return;
+            if (currentConnectionType?.authType === 'oidc' || currentConnectionType?.authType === 'oauth2') {
+                if ((currentConnectionType.data as AppAuthConfigOAuth2).flowType === 'clientCredentials') {
+                    this.modalContent('clientCredentials')();
+
+                    return;
+                }
+
+                await this.handleOauthConnect();
+            } else if (['apikey', 'httpbasicauth'].some((item) => item === currentConnectionType?.authType)) {
+                this.modalContent(currentConnectionType?.authType)();
+            } else {
+                alert('Unsupported auth method');
             }
-
-            await this.handleOauthConnect();
-        } else if (['apikey', 'httpbasicauth'].includes(currentConnectionType.authType)) {
-            this.modalContent(currentConnectionType.authType)();
-        } else {
-            alert('Unsupported auth method');
+        } catch (e) {
+            this.onError({
+                message: 'No Authentication config found for this Integration',
+                description: e,
+            });
         }
     };
 
@@ -166,6 +191,10 @@ class VersoriHubs {
                 }),
             });
         } catch (e) {
+            this.onError({
+                message: 'Failed to sync with client backend',
+                description: e,
+            });
             console.log(e);
         }
     };
@@ -181,7 +210,10 @@ class VersoriHubs {
             }
         }
         if (!event.data.success) {
-            this.onError(event);
+            this.onError({
+                message: 'Failed to authenticate',
+                description: event,
+            });
         }
         window.removeEventListener('message', this.handleSuccessfulConnection);
     };
@@ -219,7 +251,10 @@ class VersoriHubs {
                 this.onConnection?.(connectResponse, this.#currentlyConnectingInfo);
             }
         } catch (error) {
-            this.onError(error);
+            this.onError({
+                message: 'Failed to create credential',
+                description: error,
+            });
         }
         this.removeVersoriSDKModal();
     };
@@ -369,13 +404,14 @@ class VersoriHubs {
             e.preventDefault();
             const formData = new FormData(form);
             const name = formData.get('Name') as string;
-            const clientId = formData.get('Client ID');
-            const clientSecret = formData.get('Client Secret');
+            const clientId = formData.get('Client ID') as string;
+            const clientSecret = formData.get('Client Secret') as string;
+            const issueToken = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
             const formBody = {
                 clientId: clientId,
                 clientSecret: clientSecret,
-                // additionalParameters: [],
-                // issueToken: false,
+                additionalParameters: '',
+                issueToken: issueToken?.checked,
             } as ConnectionDataOAuth2ClientCredentials;
             this.createConnection(name, formBody, 'clientCredentials');
         });
@@ -416,6 +452,50 @@ class VersoriHubs {
         clientSecretInput.setAttribute('placeholder', 'Client ID');
         clientSecretInput.classList.add('v-hubs-sdk-input');
 
+        const addAdditionalParametersButton = document.createElement('button');
+        addAdditionalParametersButton.setAttribute('type', 'button');
+        addAdditionalParametersButton.classList.add('v-hubs-sdk-add-additional-parameters-button');
+        addAdditionalParametersButton.innerText = 'Add Additional Parameters';
+        addAdditionalParametersButton.addEventListener('click', () => {
+            const additionalParametersWrapper = document.createElement('div');
+            additionalParametersWrapper.classList.add('v-hubs-sdk-additional-parameters-wrapper');
+            const keyInput = document.createElement('input');
+            keyInput.setAttribute('required', '');
+            keyInput.classList.add('v-hubs-sdk-input');
+            keyInput.setAttribute('type', 'text');
+            keyInput.setAttribute('name', 'Key');
+            keyInput.setAttribute('placeholder', 'Key');
+            const valueInput = document.createElement('input');
+            valueInput.setAttribute('required', '');
+            valueInput.classList.add('v-hubs-sdk-input');
+            valueInput.setAttribute('type', 'text');
+            valueInput.setAttribute('name', 'Value');
+            valueInput.setAttribute('placeholder', 'Value');
+            const removeButton = document.createElement('button');
+            removeButton.setAttribute('type', 'button');
+            removeButton.classList.add('v-hubs-sdk-remove-additional-parameters-button');
+            removeButton.innerText = 'Remove';
+            removeButton.addEventListener('click', () => {
+                additionalParametersWrapper.remove();
+            });
+            additionalParametersWrapper.appendChild(keyInput);
+            additionalParametersWrapper.appendChild(valueInput);
+            additionalParametersWrapper.appendChild(removeButton);
+            formInputWrapper.appendChild(additionalParametersWrapper);
+        });
+        //create title for section
+        const additionalParametersTitle = document.createElement('h3');
+        additionalParametersTitle.innerText = 'Additional Parameters';
+
+        formInputWrapper.appendChild(addAdditionalParametersButton);
+
+        // For additional parameters, create 2 text inputs, one text input is for key, the other is for value. The text inputs should sit side by side in a container. The container should have a button below to add more text inputs.
+
+        // Checkbox
+        const checkbox = document.createElement('input');
+        checkbox.setAttribute('type', 'checkbox');
+        checkbox.setAttribute('name', 'Issue Token');
+
         // Append to wrapper
         clientCredentialsNameWrapper.appendChild(name);
         clientCredentialsIdWrapper.appendChild(clientIdInput);
@@ -443,6 +523,7 @@ class VersoriHubs {
         formInputWrapper.appendChild(clientCredentialsNameWrapper);
         formInputWrapper.appendChild(clientCredentialsIdWrapper);
         formInputWrapper.appendChild(clientCredentialsSecretWrapper);
+        formInputWrapper.appendChild(checkbox);
         formInputWrapper.appendChild(formButtonWrapper);
         form.appendChild(formInputWrapper);
 

@@ -325,6 +325,7 @@ paths:
       description: |
         Retrieves all the information needed that a user needs to fill out to use a Hub integration.
       tags:
+        - hubs
         - boards
       parameters:
         - name: organisationId
@@ -567,9 +568,7 @@ components:
             only really returned due to the possiblity of them having a listener URL which the user may need to configure
             webhooks with.
         authConfig:
-          type: array
-          items:
-            $ref: '#/components/schemas/AppAuthConfig'
+          $ref: '#/components/schemas/HubAppAuthConfig'
     Error:
       type: object
       properties:
@@ -630,6 +629,16 @@ components:
         - schema
         - createdAt
         - updatedAt
+    HubAppAuthConfig:
+      type: object
+      properties:
+        authType:
+          type: string
+          enum: ['oidc', 'oauth2', 'apikey', 'httpBasicAuth']
+        connectionId:
+          type: string
+        data:
+          $ref: '#/components/schemas/AppAuthConfigData'
     AppAuthConfig:
       description: |
         AppAuthConfig describes how an organisation can authenticate with an app.
