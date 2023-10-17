@@ -97,10 +97,10 @@ function App() {
             //     Customer does their thing here
             //     console.log(connection, connectionInfo);
             // },
-            onComplete: (connection: any) => {
+            onComplete: () => {
                 // Optional onComplete callback. Callback only trigged when onConnection is a url
                 // Customer does their thing here
-                console.log(connection);
+                console.log('complete');
             },
             onError: (error: Error) => console.log(error.message, error.description), //onError triggered at any point when an error occurs that would prevent the connection from being made
         });
