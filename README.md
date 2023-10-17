@@ -41,6 +41,8 @@ When using the Versori Hubs SDK with a script tag the SDK will be attached to th
 
 ### Usage
 
+##### Using onConnection as string
+
 ```
 <script src="/versori-hubs-sdk" tpye="module" crossorigin></script>
 <script>
@@ -49,26 +51,38 @@ When using the Versori Hubs SDK with a script tag the SDK will be attached to th
         orgId: 'test orgId,
         originUrl: 'origin url'
         onConnection: 'client backend',
-        onComplete: (connection: any) => {
-            console.log(connection);
-        },
+        onComplete: () => console.log('complete'),
         onError: (error: Error) => console.log(error.message, error.description)
+    });
+</script>
+```
+
+##### Using onConnection callback
+
+```
+<script src="/versori-hubs-sdk" tpye="module" crossorigin></script>
+<script>
+     window.Versori.initHubs({
+        userId: 'test',
+        orgId: 'test orgId,
+        originUrl: 'origin url'
+        onConnection: (connection) => console.log(connection),
+        onError: (error) => console.log(error.message, error.description)
     });
 </script>
 ```
 
 ## Script Options
 
-| Option       | Type              | Description                                                                                  |
-| ------------ | ----------------- | -------------------------------------------------------------------------------------------- |
-| userId       | string            | The currently logged in user                                                                 |
-| orgId        | string            | The organisation Id used for the Versori Hubs SDK                                            |
-| originUrl    | string            | Url used to validate the origin of the window post message used for 0Auth matches the source |
-| onConnection | string / function | string: Url to post directly to in order to sync connection info                             |
-
-function: Callback called after connection made. Useful when frontend wants to handle sync independently. Callback will contain connectionId and connectionInfo. |
-| onComplete | function | Optional callback: Callback will be triggered after a successful POST request if a url is provided in onConnection |
-| onError | function | Callback triggered at any point when an error occurs that would prevent the connection from being made. Response will contain a message and description. |
+| Option       | Type     | Params                       | Description                                                                                     |
+| ------------ | -------- | ---------------------------- | ----------------------------------------------------------------------------------------------- |
+| userId       | string   |                              | The currently logged in user                                                                    |
+| orgId        | string   |                              | The organisation Id used for the Versori Hubs SDK                                               |
+| originUrl    | string   |                              | Url used to validate the origin of the window post message used for 0Auth matches the source    |
+| onConnection | string   |                              | Url for SDK to POST direct to in order to sync connection info                                  |
+| onConnection | function | connectionId, connectionInfo | Callback called after connection made. Useful when frontend wants to handle sync independently. |
+| onComplete   | function |                              | Optional: Triggered after a successful POST request if a URL is provided in onConnection        |
+| onError      | function | message, description         | Triggered at any point when an error would prevent the connection being made                    |
 
 ## Contributing
 
