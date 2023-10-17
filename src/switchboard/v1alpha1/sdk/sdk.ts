@@ -57,6 +57,7 @@ type Error = {
 
 // const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1'; // DEV
 const BASE_PATH = 'https://platform-staging.versori.com/apis/switchboard/v1/'; // STAGING
+// const BASE_PATH = 'https://platform.versori.com/apis/switchboard/v1/'; // PROD
 
 class VersoriHubs {
     userId: string;
