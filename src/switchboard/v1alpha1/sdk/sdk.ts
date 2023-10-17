@@ -26,13 +26,14 @@ type VersoriHubsParams = {
     originUrl: string;
     onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
     onError: (error: Error) => void;
+    onComplete?: () => void;
 };
 
 (function () {
     console.log('Versori SDK loaded');
     (window as any)['Versori'] = {
-        initHubs: ({ orgId, userId, originUrl, onConnection, onError }: VersoriHubsParams) => {
-            new VersoriHubs({ orgId, userId, originUrl, onConnection, onError });
+        initHubs: ({ orgId, userId, originUrl, onConnection, onComplete, onError }: VersoriHubsParams) => {
+            new VersoriHubs({ orgId, userId, originUrl, onConnection, onComplete, onError });
         },
     };
 })();
@@ -65,6 +66,7 @@ class VersoriHubs {
     originUrl: string;
     onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
     onError: (error: Error) => void;
+    onComplete?: () => void;
 
     #currentlyConnectingInfo: CurrentlyConnectingInfo = {
         appId: '',
@@ -74,12 +76,13 @@ class VersoriHubs {
     };
     #hubsClient: any;
 
-    constructor({ userId, orgId, originUrl, onConnection, onError }: VersoriHubsParams) {
+    constructor({ userId, orgId, originUrl, onConnection, onComplete, onError }: VersoriHubsParams) {
         this.userId = userId;
         this.orgId = orgId;
         this.originUrl = originUrl;
         this.onConnection = onConnection;
         this.onError = onError;
+        this.onComplete = onComplete;
         this.initialise();
     }
 
@@ -111,7 +114,7 @@ class VersoriHubs {
                     if (button) button.setAttribute('data-connected', 'true');
                 });
             } catch (error) {
-                console.log(error);
+                console.warn(error);
             }
         }
     };
@@ -150,9 +153,21 @@ class VersoriHubs {
             //     (integration) => integration.requiresUserAuth
             // )!;
 
-            if (!integrations.connections) return;
+            if (!integrations.connections) {
+                this.onError({
+                    message: 'No Authentication config found for this Integration',
+                    description: integrations,
+                });
+                return;
+            }
             const integration = integrations.connections.find((integration) => integration.requiresUserAuth) as HubApp;
-            if (!integration) return;
+            if (!integration) {
+                this.onError({
+                    message: 'No Authentication config found for this Integration',
+                    description: integration,
+                });
+                return;
+            }
 
             this.#currentlyConnectingInfo = {
                 appId: integration.id,
@@ -175,11 +190,12 @@ class VersoriHubs {
             } else {
                 alert('Unsupported auth method');
             }
-        } catch (e) {
+        } catch (error) {
             this.onError({
                 message: 'No Authentication config found for this Integration',
-                description: e,
+                description: error,
             });
+            console.warn(error);
         }
     };
 
@@ -191,12 +207,13 @@ class VersoriHubs {
                     connectionInfo: this.#currentlyConnectingInfo,
                 }),
             });
-        } catch (e) {
+            this.onComplete?.();
+        } catch (error) {
             this.onError({
                 message: 'Failed to sync with client backend',
-                description: e,
+                description: error,
             });
-            console.log(e);
+            console.warn(error);
         }
     };
 
@@ -215,6 +232,7 @@ class VersoriHubs {
                 message: 'Failed to authenticate',
                 description: event,
             });
+            console.warn(event);
         }
         window.removeEventListener('message', this.handleSuccessfulConnection);
     };
@@ -256,6 +274,7 @@ class VersoriHubs {
                 message: 'Failed to create credential',
                 description: error,
             });
+            console.warn(error);
         }
         this.removeVersoriSDKModal();
     };

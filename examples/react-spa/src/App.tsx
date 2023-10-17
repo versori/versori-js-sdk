@@ -88,15 +88,21 @@ type Error = {
 function App() {
     useEffect(() => {
         window.Versori.initHubs({
-            userId: USER_ID, // currently logged in user
-            orgId: ORG_ID, // switchboard organiaation id
-            originUrl: import.meta.env.VITE_ORIGIN_URL, // environment url
-            onConnection: 'http://someclienturl.com/api', // url to send connection data to, payload contains appId, appKey, hub and board
+            userId: USER_ID, // Currently logged in user
+            orgId: ORG_ID, // Switchboard organiaation id
+            originUrl: import.meta.env.VITE_ORIGIN_URL, // Environment url passed in from desired config. Value is used to check the origin of the request when connectin with OAuth
+            onConnection: 'http://someclienturl.com/api', // Url to send connection data to, payload contains appId, appKey, hub and board
             // onConnection: async (connection: any, connectionInfo: string) => {
+            //     Optional callback to handle connection data independently. Useful for when extra side effects are needed
+            //     Customer does their thing here
             //     console.log(connection, connectionInfo);
-            //     // Customer does their thing
             // },
-            onError: (error: Error) => console.log(error.message, error.description),
+            onComplete: (connection: any) => {
+                // Optional onComplete callback. Callback only trigged when onConnection is a url
+                // Customer does their thing here
+                console.log(connection);
+            },
+            onError: (error: Error) => console.log(error.message, error.description), //onError triggered at any point when an error occurs that would prevent the connection from being made
         });
     }, []);
 
