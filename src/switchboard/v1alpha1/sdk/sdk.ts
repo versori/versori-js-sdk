@@ -12,7 +12,6 @@ import type {
 } from '../schemas';
 import '../styles/styles.css';
 // import { mock } from './mockIntegrationResponse';
-// import { mock as stagingMock } from './staging-mockResponse';
 
 declare global {
     interface Window {
@@ -30,7 +29,7 @@ type VersoriHubsParams = {
 };
 
 (function () {
-    console.log('Versori SDK loaded');
+    console.log('Versori Hubs SDK loaded');
     (window as any)['Versori'] = {
         initHubs: ({ orgId, userId, originUrl, onConnection, onComplete, onError }: VersoriHubsParams) => {
             new VersoriHubs({ orgId, userId, originUrl, onConnection, onComplete, onError });
@@ -140,8 +139,8 @@ class VersoriHubs {
     getAppAndOpenModal = async (event: Event) => {
         event.preventDefault();
         const target = event.target as HTMLButtonElement;
-        /* Integration endpoint won't work localy */
         try {
+            /* Integration endpoint won't work localy */
             const integrations: ConnectIntegration = await this.#hubsClient.getHubIntegrationInfo(
                 this.orgId,
                 target.dataset.vhubid,

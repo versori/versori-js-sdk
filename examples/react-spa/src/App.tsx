@@ -20,15 +20,6 @@ import './reset.css';
 //     },
 // };
 
-const switchboardStaging = {
-    hubs: {
-        one: '01HCW15T4HS63AH9Y2A83EH8HZ',
-    },
-    boards: {
-        hubOneBoardOne: '01HCW15XJH7HE4YRFWTHJEQWV3',
-    },
-};
-
 type Integration = {
     title: string;
     hubId: string;
@@ -63,9 +54,18 @@ type Integration = {
 //     },
 // ];
 
+const switchboardStaging = {
+    hubs: {
+        one: '01HCW15T4HS63AH9Y2A83EH8HZ',
+    },
+    boards: {
+        hubOneBoardOne: '01HCWC8PPM0FGJNTDNXF2KTCMS',
+    },
+};
+
 const integrationsStaging: Integration[] = [
     {
-        title: 'Square',
+        title: 'Spotify',
         hubId: switchboardStaging.hubs.one,
         boardId: switchboardStaging.boards.hubOneBoardOne,
     },
