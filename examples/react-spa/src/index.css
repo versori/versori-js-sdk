@@ -26,6 +26,13 @@ body {
     text-align: center;
 }
 
+.user-input {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 8px;
+    width: 400px;
+}
+
 .card {
     border: 2px solid #ccc;
     border-radius: 8px;

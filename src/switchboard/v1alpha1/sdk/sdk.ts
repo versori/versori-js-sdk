@@ -1,4 +1,4 @@
-import { HubsClient } from '../client';
+import { HubsClient, UsersClient } from '../client';
 import { openOAuthWindow } from '../utilities';
 import type {
     // Connection,
@@ -26,13 +26,42 @@ type VersoriHubsParams = {
     onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
     onError: (error: Error) => void;
     onComplete?: () => void;
+    hubsBaseUrl: string;
+};
+
+type CreateUserParams = {
+    orgId: string;
+    hubId: string;
+    boardId: string;
+    userId: string;
+    connection: any;
+    usersBaseUrl: string;
 };
 
 (function () {
     console.log('Versori Hubs SDK loaded');
     (window as any)['Versori'] = {
-        initHubs: ({ orgId, userId, originUrl, onConnection, onComplete, onError }: VersoriHubsParams) => {
-            new VersoriHubs({ orgId, userId, originUrl, onConnection, onComplete, onError });
+        initHubs: ({ orgId, userId, originUrl, onConnection, onComplete, onError, hubsBaseUrl }: VersoriHubsParams) => {
+            new VersoriHubs({ orgId, userId, originUrl, onConnection, onComplete, onError, hubsBaseUrl });
+        },
+        createUser: async ({ orgId, hubId, boardId, userId, connection, usersBaseUrl }: CreateUserParams) => {
+            const usersClient = new UsersClient({
+                baseUrl: usersBaseUrl,
+            });
+            const userClient = usersClient.users;
+            const createdUser = await userClient.createUser(orgId, hubId, boardId, userId, {
+                environments: [
+                    {
+                        connectionId: connection.connection.id,
+                        credentialId: connection.connection.credentialId,
+                        key: connection.info.appKey,
+                        variables: null,
+                    },
+                ],
+                id: userId,
+                variables: null,
+            });
+            return createdUser;
         },
     };
 })();
@@ -55,10 +84,6 @@ type Error = {
     description: any;
 };
 
-// const BASE_PATH = 'http://127.0.0.1:8080/v1alpha1'; // DEV
-const BASE_PATH = 'https://platform-staging.versori.com/apis/switchboard/v1/'; // STAGING
-// const BASE_PATH = 'https://platform.versori.com/apis/switchboard/v1/'; // PROD
-
 class VersoriHubs {
     userId: string;
     orgId: string;
@@ -66,6 +91,7 @@ class VersoriHubs {
     onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
     onError: (error: Error) => void;
     onComplete?: () => void;
+    hubsBaseUrl: string;
 
     #currentlyConnectingInfo: CurrentlyConnectingInfo = {
         appId: '',
@@ -75,11 +101,12 @@ class VersoriHubs {
     };
     #hubsClient: any;
 
-    constructor({ userId, orgId, originUrl, onConnection, onComplete, onError }: VersoriHubsParams) {
+    constructor({ userId, orgId, originUrl, onConnection, onComplete, onError, hubsBaseUrl }: VersoriHubsParams) {
         this.userId = userId;
         this.orgId = orgId;
         this.originUrl = originUrl;
         this.onConnection = onConnection;
+        this.hubsBaseUrl = hubsBaseUrl;
         this.onError = onError;
         this.onComplete = onComplete;
         this.initialise();
@@ -89,7 +116,7 @@ class VersoriHubs {
         this.attachEventListeners();
 
         const hubsClient = new HubsClient({
-            baseUrl: BASE_PATH,
+            baseUrl: this.hubsBaseUrl,
         });
         this.#hubsClient = hubsClient.hubs;
 
@@ -148,7 +175,7 @@ class VersoriHubs {
             );
             /*  Work around for mock data */
             // if (!(target instanceof HTMLButtonElement)) return;
-            // const integration = stagingMock[target.dataset.vhubid!][target.dataset.vhubboardid!].find(
+            // const integration = mock[target.dataset.vhubid!][target.dataset.vhubboardid!].find(
             //     (integration) => integration.requiresUserAuth
             // )!;
 
@@ -217,12 +244,13 @@ class VersoriHubs {
     };
 
     handleSuccessfulConnection = async (event: MessageEvent) => {
+        if (event.data.id !== 'versori') return;
         if (event.data.success) {
             if (event.origin === this.originUrl) {
                 if (typeof this.onConnection === 'string') {
                     this.handlePostToClient();
                 } else {
-                    this.onConnection?.(event.data.connectionID, this.#currentlyConnectingInfo);
+                    this.onConnection?.(event.data.connection, this.#currentlyConnectingInfo);
                 }
             }
         }
@@ -412,9 +440,30 @@ class VersoriHubs {
 
     renderClientCredentialsModal = () => {
         const { modal, modalWrapper, modalContent } = this.renderBaseModal(
-            'Connect OAuth2 (client_credentials)',
+            'Connect OAuth2 (Client Credentials)',
             'Add credentials to connect using OAuth2'
         );
+
+        let additionalParametersCount = 0;
+
+        function getAdditionalParameters() {
+            const inputs = [];
+            for (let i = 0; i <= additionalParametersCount; i++) {
+                const item = {
+                    key: '',
+                    value: '',
+                };
+                const additionalItem = document.querySelector(`#additional-parameters-${i + 1}`);
+                if (additionalItem) {
+                    const keyInput = additionalItem.querySelector('input[name="Key"]') as HTMLInputElement;
+                    const valueInput = additionalItem.querySelector('input[name="Value"]') as HTMLInputElement;
+                    item.key = keyInput?.value;
+                    item.value = valueInput?.value;
+                    inputs.push(item);
+                }
+            }
+            return inputs;
+        }
 
         const form = document.createElement('form');
         form.setAttribute('action', '#');
@@ -426,12 +475,14 @@ class VersoriHubs {
             const clientId = formData.get('Client ID') as string;
             const clientSecret = formData.get('Client Secret') as string;
             const issueToken = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
+            const additionalParemeters = getAdditionalParameters();
             const formBody = {
                 clientId: clientId,
                 clientSecret: clientSecret,
-                additionalParameters: '',
+                additionalParameters: JSON.stringify(additionalParemeters),
                 issueToken: issueToken?.checked,
             } as ConnectionDataOAuth2ClientCredentials;
+            console.log(formBody);
             this.createConnection(name, formBody, 'clientCredentials');
         });
 
@@ -467,53 +518,80 @@ class VersoriHubs {
         const clientSecretInput = document.createElement('input');
         clientSecretInput.setAttribute('required', '');
         clientSecretInput.setAttribute('type', 'text');
-        clientSecretInput.setAttribute('name', 'Client ID');
-        clientSecretInput.setAttribute('placeholder', 'Client ID');
+        clientSecretInput.setAttribute('name', 'Client Secret');
+        clientSecretInput.setAttribute('placeholder', 'Client Secret');
         clientSecretInput.classList.add('v-hubs-sdk-input');
 
+        const additionalParametersWrapper = document.createElement('div');
+        additionalParametersWrapper.classList.add('v-hubs-sdk-additional-parameters-wrapper');
+        const additionalParametersTitle = document.createElement('h3');
+        additionalParametersTitle.classList.add('v-hubs-sdk-additional-parameters-title');
+        additionalParametersTitle.innerText = 'Additional Parameters';
+        additionalParametersWrapper.append(additionalParametersTitle);
+
         const addAdditionalParametersButton = document.createElement('button');
+        additionalParametersWrapper.appendChild(addAdditionalParametersButton);
         addAdditionalParametersButton.setAttribute('type', 'button');
         addAdditionalParametersButton.classList.add('v-hubs-sdk-add-additional-parameters-button');
-        addAdditionalParametersButton.innerText = 'Add Additional Parameters';
+        addAdditionalParametersButton.innerText = '+';
         addAdditionalParametersButton.addEventListener('click', () => {
-            const additionalParametersWrapper = document.createElement('div');
-            additionalParametersWrapper.classList.add('v-hubs-sdk-additional-parameters-wrapper');
+            additionalParametersCount += 1;
+            const additionalParametersItem = document.createElement('div');
+            additionalParametersItem.classList.add('v-hubs-sdk-additional-parameters-item');
+            additionalParametersItem.setAttribute('id', `additional-parameters-${additionalParametersCount}`);
+            const keyInputWrapper = document.createElement('div');
+            keyInputWrapper.classList.add('v-hubs-sdk-parameters-input-wrapper');
             const keyInput = document.createElement('input');
             keyInput.setAttribute('required', '');
             keyInput.classList.add('v-hubs-sdk-input');
             keyInput.setAttribute('type', 'text');
             keyInput.setAttribute('name', 'Key');
             keyInput.setAttribute('placeholder', 'Key');
+            keyInputWrapper.appendChild(keyInput);
+            const valueInputWrapper = document.createElement('div');
+            valueInputWrapper.classList.add('v-hubs-sdk-parameters-input-wrapper');
             const valueInput = document.createElement('input');
             valueInput.setAttribute('required', '');
             valueInput.classList.add('v-hubs-sdk-input');
             valueInput.setAttribute('type', 'text');
             valueInput.setAttribute('name', 'Value');
             valueInput.setAttribute('placeholder', 'Value');
+            valueInputWrapper.appendChild(valueInput);
             const removeButton = document.createElement('button');
             removeButton.setAttribute('type', 'button');
             removeButton.classList.add('v-hubs-sdk-remove-additional-parameters-button');
             removeButton.innerText = 'Remove';
-            removeButton.addEventListener('click', () => {
-                additionalParametersWrapper.remove();
+            removeButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                const _self = event.target as HTMLButtonElement;
+                const parent = _self.parentElement;
+                if (parent) {
+                    parent.remove();
+                }
             });
-            additionalParametersWrapper.appendChild(keyInput);
-            additionalParametersWrapper.appendChild(valueInput);
-            additionalParametersWrapper.appendChild(removeButton);
-            formInputWrapper.appendChild(additionalParametersWrapper);
+            additionalParametersItem.appendChild(keyInputWrapper);
+            additionalParametersItem.appendChild(valueInputWrapper);
+            additionalParametersItem.appendChild(removeButton);
+            const addAdditionalParametersButton = document.querySelector(
+                '.v-hubs-sdk-add-additional-parameters-button'
+            );
+            additionalParametersWrapper.insertBefore(additionalParametersItem, addAdditionalParametersButton);
         });
-        //create title for section
-        const additionalParametersTitle = document.createElement('h3');
-        additionalParametersTitle.innerText = 'Additional Parameters';
-
-        formInputWrapper.appendChild(addAdditionalParametersButton);
-
-        // For additional parameters, create 2 text inputs, one text input is for key, the other is for value. The text inputs should sit side by side in a container. The container should have a button below to add more text inputs.
 
         // Checkbox
+        const checkboxWrapper = document.createElement('div');
+        checkboxWrapper.classList.add('v-hubs-sdk-checkbox-wrapper');
         const checkbox = document.createElement('input');
         checkbox.setAttribute('type', 'checkbox');
         checkbox.setAttribute('name', 'Issue Token');
+        checkbox.setAttribute('id', 'Issue Token');
+        checkbox.classList.add('v-hubs-sdk-checkbox');
+        const checkboxLabel = document.createElement('label');
+        checkboxLabel.setAttribute('for', 'Issue Token');
+        checkboxLabel.classList.add('v-hubs-sdk-checkbox-label');
+        checkboxLabel.innerText = 'Issue Token';
+        checkboxWrapper.appendChild(checkbox);
+        checkboxWrapper.appendChild(checkboxLabel);
 
         // Append to wrapper
         clientCredentialsNameWrapper.appendChild(name);
@@ -542,7 +620,8 @@ class VersoriHubs {
         formInputWrapper.appendChild(clientCredentialsNameWrapper);
         formInputWrapper.appendChild(clientCredentialsIdWrapper);
         formInputWrapper.appendChild(clientCredentialsSecretWrapper);
-        formInputWrapper.appendChild(checkbox);
+        formInputWrapper.appendChild(additionalParametersWrapper);
+        formInputWrapper.appendChild(checkboxWrapper);
         formInputWrapper.appendChild(formButtonWrapper);
         form.appendChild(formInputWrapper);
 

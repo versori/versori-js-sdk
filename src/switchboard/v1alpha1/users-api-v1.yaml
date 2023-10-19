@@ -4,7 +4,7 @@ info:
   description: The Hubs API provides the endpoints for users to use the hubs SDK.
   version: 0.0.1-alpha.0
 servers:
-  - url: 'https://platform.versori.com/apis/hubs-sdk'
+  - url: 'https://platform.versori.com/apis/hubs-sdk/v1'
     description: Production server
   - url: 'http://localhost:8889/v1'
     description: Localhost

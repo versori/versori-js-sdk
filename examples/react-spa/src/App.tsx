@@ -1,79 +1,6 @@
-// import type { Connection } from '@versori/sdk';
-// import '@versori/sdk/dist/index.mjs';
-import '@versori/sdk/dist/style.css';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { integrations, integrationsStaging, switchboard, ORG_ID } from './sdk-setup-data';
 import './reset.css';
-
-// Values hardcoded for now
-
-// const switchboard = {
-//     hubs: {
-//         one: '01HARZ9Z72NGZMY0T9613VGJEV',
-//         two: '01HC08JFRV9QJBBTA3PP5G82FX',
-//     },
-//     boards: {
-//         hubOneBoardOne: '01HASBT94R4JZQMVPT85S82KN2',
-//         hubOneBoardTwo: '01HASBHKXE00A2ERKC9J4960KY',
-//         hubOneBoardThree: '01HCD7BMSPVVYRXDGK9963PVP6',
-//         hubTwoBoardOne: '01HC08JH1HQSS7BEH57PH3Z47J',
-//         hubTwoBoardTwo: '01HCJA8M0ZX607SP17MMYT9NPB',
-//     },
-// };
-
-type Integration = {
-    title: string;
-    hubId: string;
-    boardId: string;
-};
-
-// const integrations: Integration[] = [
-//     {
-//         title: 'Hub Two - Spotify',
-//         hubId: switchboard.hubs.two,
-//         boardId: switchboard.boards.hubTwoBoardOne,
-//     },
-//     {
-//         title: 'Hub One - Spot',
-//         hubId: switchboard.hubs.one,
-//         boardId: switchboard.boards.hubOneBoardTwo,
-//     },
-//     {
-//         title: 'Hub One - Square',
-//         hubId: switchboard.hubs.one,
-//         boardId: switchboard.boards.hubOneBoardOne,
-//     },
-//     {
-//         title: 'Hub One - Square API',
-//         hubId: switchboard.hubs.one,
-//         boardId: switchboard.boards.hubOneBoardThree,
-//     },
-//     {
-//         title: 'Hub Two - Square Creds',
-//         hubId: switchboard.hubs.two,
-//         boardId: switchboard.boards.hubTwoBoardTwo,
-//     },
-// ];
-
-const switchboardStaging = {
-    hubs: {
-        one: '01HCW15T4HS63AH9Y2A83EH8HZ',
-    },
-    boards: {
-        hubOneBoardOne: '01HCWC8PPM0FGJNTDNXF2KTCMS',
-    },
-};
-
-const integrationsStaging: Integration[] = [
-    {
-        title: 'Spotify',
-        hubId: switchboardStaging.hubs.one,
-        boardId: switchboardStaging.boards.hubOneBoardOne,
-    },
-];
-
-const ORG_ID = '01HCW119CAWJQRE7EQPVPMWA8H';
-const USER_ID = 'andy';
-
 declare global {
     interface Window {
         Versori: any;
@@ -86,17 +13,28 @@ type Error = {
 };
 
 function App() {
+    const [userId, setUserId] = useState<string>('');
     useEffect(() => {
+        if (!userId) return;
         window.Versori.initHubs({
-            userId: USER_ID, // Currently logged in user
+            userId: userId, // Currently logged in user
             orgId: ORG_ID, // Switchboard organiaation id
-            originUrl: import.meta.env.VITE_ORIGIN_URL, // Environment url passed in from desired config. Value is used to check the origin of the request when connectin with OAuth
-            onConnection: 'http://someclienturl.com/api', // Url to send connection data to, payload contains appId, appKey, hub and board
-            // onConnection: async (connection: any, connectionInfo: string) => {
-            //     Optional callback to handle connection data independently. Useful for when extra side effects are needed
-            //     Customer does their thing here
-            //     console.log(connection, connectionInfo);
-            // },
+            hubsBaseUrl: import.meta.env.VITE_HUBS_BASE_URL,
+            originUrl: import.meta.env.VITE_ORIGIN_URL, // Environment url passed in from desired config. Value is used to check the origin of the request when connecting with OAuth
+            // onConnection: 'http://someclienturl.com/api', // Url to send connection data to, payload contains appId, appKey, hub and board
+            onConnection: async (connection: any, connectionInfo: any) => {
+                await window.Versori.createUser({
+                    orgId: ORG_ID,
+                    hubId: switchboard.staging.hubs.one,
+                    boardId: switchboard.staging.boards.hubOneBoardOne,
+                    userId: userId,
+                    usersBaseUrl: import.meta.env.VITE_USERS_BASE_URL,
+                    connection: {
+                        connection: connection,
+                        info: connectionInfo,
+                    },
+                });
+            },
             onComplete: () => {
                 // Optional onComplete callback. Callback only trigged when onConnection is a url
                 // Customer does their thing here
@@ -104,7 +42,7 @@ function App() {
             },
             onError: (error: Error) => console.log(error.message, error.description), //onError triggered at any point when an error occurs that would prevent the connection from being made
         });
-    }, []);
+    }, [userId]);
 
     useEffect(() => {
         // Hack to change button text
@@ -118,19 +56,30 @@ function App() {
                 }
             });
         }, 500);
-    });
+    }, [userId]);
+
+    const currentEnvIntegrations =
+        import.meta.env.VITE_ENVIRONMENT === 'production' ? integrationsStaging : integrations;
 
     return (
         <div
             style={{
                 display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'column',
                 maxWidth: '1440px',
                 justifyContent: 'center',
                 gap: '20px',
             }}
         >
+            <input
+                type="text"
+                placeholder="Who are you?"
+                className="user-input"
+                onBlur={(event) => setUserId(event.target.value)}
+            />
             <div className="card-grid">
-                {integrationsStaging.map((integration) => (
+                {currentEnvIntegrations.map((integration) => (
                     <div className="card" key={integration.title}>
                         <h4 className="card-title">{integration.title}</h4>
                         <button

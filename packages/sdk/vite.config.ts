@@ -18,10 +18,10 @@ export default defineConfig({
             name: '@versori/sdk',
             entry: path.resolve(__dirname, '../../src/sdk.ts'),
             formats: ['es', 'umd'],
-            fileName: 'index',
+            fileName: 'index-1',
         },
         rollupOptions: {
-            treeshake: "safest",
+            treeshake: 'safest',
             external: [],
         },
     },

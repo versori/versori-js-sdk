@@ -97,3 +97,57 @@
     white-space: nowrap;
     padding: 8px 16px;
 }
+
+.v-hubs-sdk-additional-parameters-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.v-hubs-sdk-additional-parameters-title {
+    align-self: flex-start;
+    margin-bottom: 16px;
+}
+
+.v-hubs-sdk-add-additional-parameters-button {
+    cursor: pointer;
+    margin-bottom: 24px;
+}
+
+.v-hubs-sdk-additional-parameters-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.v-hubs-sdk-parameters-input-wrapper {
+    position: relative;
+    border: 1px solid rgba(145, 158, 171, 0.4);
+    border-radius: 8px;
+    width: 100%;
+}
+
+.v-hubs-sdk-remove-additional-parameters-button {
+    font-size: 11px;
+}
+
+.v-hubs-sdk-checkbox-label {
+    display: flex;
+    align-items: center;
+}
+
+.v-hubs-sdk-checkbox {
+    border: 1px solid black;
+    border-radius: 4px;
+    height: 16px;
+    width: 16px;
+    order: -1;
+    margin-right: 8px;
+}
+
+.v-hubs-sdk-checkbox-wrapper {
+    display: flex;
+    align-items: center;
+}
