@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
-import { integrations, integrationsStaging, switchboard, ORG_ID } from './sdk-setup-data';
+import { FiCheckCircle } from 'react-icons/fi';
+import toast, { Toaster } from 'react-hot-toast';
+import { type Connection } from '@versori/sdk/dist/switchboard/v1alpha1/schemas';
+import { integrations, integrationsStaging, ORG_ID } from './sdk-setup-data';
 import './reset.css';
 declare global {
     interface Window {
@@ -12,51 +15,94 @@ type Error = {
     description: any;
 };
 
+type ConnectionInfo = {
+    appId?: string;
+    appKey?: string;
+    hubId: string;
+    boardId: string;
+};
+
 function App() {
     const [userId, setUserId] = useState<string>('');
+
     useEffect(() => {
         if (!userId) return;
         window.Versori.initHubs({
-            userId: userId, // Currently logged in user
-            orgId: ORG_ID, // Switchboard organiaation id
-            hubsBaseUrl: import.meta.env.VITE_HUBS_BASE_URL,
-            originUrl: import.meta.env.VITE_ORIGIN_URL, // Environment url passed in from desired config. Value is used to check the origin of the request when connecting with OAuth
-            // onConnection: 'http://someclienturl.com/api', // Url to send connection data to, payload contains appId, appKey, hub and board
-            onConnection: async (connection: any, connectionInfo: any) => {
-                await window.Versori.createUser({
+            userId: userId,
+            orgId: ORG_ID,
+            apiKey: 'swo_9MT3FcHBZb_s6RMpP7Rz4emQDG4lfXtwzLNCZiLrnb7',
+            basePaths: {
+                hubs: 'https://platform-staging.versori.com/apis/switchboard/v1/',
+                users: 'https://platform-staging.versori.com/apis/hubs-sdk/v1/',
+                origin: 'https://switchboard-staging.versori.io',
+            },
+            // finaliseTo: 'http://someclienturl.com/api',
+            onConnected: async (connection: Connection, connectionInfo: ConnectionInfo) => {
+                const user = await window.Versori.connectUser({
                     orgId: ORG_ID,
-                    hubId: switchboard.staging.hubs.one,
-                    boardId: switchboard.staging.boards.hubOneBoardOne,
+                    hubId: connectionInfo.hubId,
+                    boardId: connectionInfo.boardId,
                     userId: userId,
-                    usersBaseUrl: import.meta.env.VITE_USERS_BASE_URL,
                     connection: {
                         connection: connection,
                         info: connectionInfo,
                     },
                 });
+                if (user.id === userId) {
+                    changeSingleButtonText(connectionInfo.hubId, connectionInfo.boardId);
+                    toast('Integration connected');
+                }
             },
-            onComplete: () => {
-                // Optional onComplete callback. Callback only trigged when onConnection is a url
-                // Customer does their thing here
+            onDisconnected: async (connectionInfo: Pick<ConnectionInfo, 'hubId' | 'boardId'>) => {
+                const user = await window.Versori.disconnectUser({
+                    orgId: ORG_ID,
+                    hubId: connectionInfo.hubId,
+                    boardId: connectionInfo.boardId,
+                    userId: userId,
+                });
+                if (user.id === userId) {
+                    changeSingleButtonText(connectionInfo.hubId, connectionInfo.boardId);
+                    toast('Integration disconnected');
+                }
+            },
+            onCompleted: () => {
                 console.log('complete');
             },
-            onError: (error: Error) => console.log(error.message, error.description), //onError triggered at any point when an error occurs that would prevent the connection from being made
+            onError: (error: Error) => {
+                console.log(error.message, error.description);
+                toast.error(error.message);
+            },
+            onInitialised: () => {
+                changeAllButtonText();
+            },
         });
     }, [userId]);
 
-    useEffect(() => {
-        // Hack to change button text
-        setTimeout(() => {
-            const buttons = document.querySelectorAll('.card-button');
-            buttons.forEach((button) => {
-                if (button.hasAttribute('data-connected')) {
-                    button.innerHTML = 'Connected';
-                } else {
-                    button.innerHTML = 'Connect';
-                }
-            });
-        }, 500);
-    }, [userId]);
+    const changeAllButtonText = () => {
+        const buttons = document.querySelectorAll('.card-button');
+        buttons.forEach((button) => {
+            const parent = button.parentElement;
+            if (button.hasAttribute('data-connected')) {
+                parent?.classList.add('connected');
+                button.innerHTML = 'Disconnect';
+            } else {
+                parent?.classList.remove('connected');
+                button.innerHTML = 'Connect';
+            }
+        });
+    };
+
+    const changeSingleButtonText = (hubId: string, boardId: string) => {
+        const button = document.querySelector(`[data-vhubid="${hubId}"][data-vhubboardid="${boardId}"]`)!;
+        const parent = button?.parentElement;
+        if (!button?.hasAttribute('data-connected')) {
+            parent?.classList.add('connected');
+            button.innerHTML = 'Disconnect';
+        } else {
+            parent?.classList.remove('connected');
+            button.innerHTML = 'Connect';
+        }
+    };
 
     const currentEnvIntegrations =
         import.meta.env.VITE_ENVIRONMENT === 'production' ? integrationsStaging : integrations;
@@ -74,23 +120,28 @@ function App() {
         >
             <input
                 type="text"
-                placeholder="Who are you?"
+                placeholder="Hi, who are you?"
                 className="user-input"
                 onBlur={(event) => setUserId(event.target.value)}
             />
             <div className="card-grid">
                 {currentEnvIntegrations.map((integration) => (
                     <div className="card" key={integration.title}>
+                        <div className="card-connection"></div>
                         <h4 className="card-title">{integration.title}</h4>
                         <button
                             className="card-button"
                             data-vhubs
                             data-vhubid={integration.hubId}
                             data-vhubboardid={integration.boardId}
-                        ></button>
+                            disabled={!userId}
+                        >
+                            Connect
+                        </button>
                     </div>
                 ))}
             </div>
+            <Toaster />
         </div>
     );
 }

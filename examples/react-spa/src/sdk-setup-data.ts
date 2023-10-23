@@ -21,6 +21,7 @@ export const switchboard = {
         },
         boards: {
             hubOneBoardOne: '01HD1FGVPED3SX4PD8YGAG072B',
+            hubOneBoardTwo: '01HD6FFCZ05MT9E76JYYD5PD08',
         },
     },
 };
@@ -64,5 +65,10 @@ export const integrationsStaging: Integration[] = [
         title: 'Spotify',
         hubId: switchboard.staging.hubs.one,
         boardId: switchboard.staging.boards.hubOneBoardOne,
+    },
+    {
+        title: 'Shopify',
+        hubId: switchboard.staging.hubs.one,
+        boardId: switchboard.staging.boards.hubOneBoardTwo,
     },
 ];

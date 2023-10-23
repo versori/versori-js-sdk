@@ -1,7 +1,7 @@
 import { HubsClient, UsersClient } from '../client';
 import { openOAuthWindow } from '../utilities';
 import type {
-    // Connection,
+    Connection,
     HubApp,
     ConnectionDataOAuth2ClientCredentials,
     ConnectionDataAPIKey,
@@ -19,14 +19,24 @@ declare global {
     }
 }
 
+type BasePaths = {
+    hubs?: string;
+    users?: string;
+    origin?: string;
+};
+
 type VersoriHubsParams = {
     userId: string;
     orgId: string;
-    originUrl: string;
-    onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
+    apiKey: string;
+    basePaths?: BasePaths;
+    originUrl?: string;
+    finaliseTo?: string;
+    onConnected?: (connection: Connection, ConnectionInfo: ConnectionInfo) => void;
     onError: (error: Error) => void;
-    onComplete?: () => void;
-    hubsBaseUrl: string;
+    onDisconnected: () => void;
+    onCompleted?: () => void;
+    onInitialised?: () => void;
 };
 
 type CreateUserParams = {
@@ -35,21 +45,47 @@ type CreateUserParams = {
     boardId: string;
     userId: string;
     connection: any;
-    usersBaseUrl: string;
 };
 
+const HUBS_BASE_PATH = 'https://platform.versori.com/apis/switchboard/v1/';
+const USERS_BASE_PATH = 'https://platform.versori.com/apis/hubs-sdk/v1/';
+const ORIGIN_PATH = 'https://switchboard.versori.io/';
+
+let EVENT_LISTENERS = false;
+
 (function () {
-    console.log('Versori Hubs SDK loaded');
     (window as any)['Versori'] = {
-        initHubs: ({ orgId, userId, originUrl, onConnection, onComplete, onError, hubsBaseUrl }: VersoriHubsParams) => {
-            new VersoriHubs({ orgId, userId, originUrl, onConnection, onComplete, onError, hubsBaseUrl });
+        initHubs: ({
+            orgId,
+            userId,
+            apiKey,
+            basePaths,
+            finaliseTo,
+            onConnected,
+            onCompleted,
+            onError,
+            onDisconnected,
+            onInitialised,
+        }: VersoriHubsParams) => {
+            new VersoriHubs({
+                orgId,
+                userId,
+                apiKey,
+                basePaths,
+                finaliseTo,
+                onConnected,
+                onCompleted,
+                onError,
+                onDisconnected,
+                onInitialised,
+            });
         },
-        createUser: async ({ orgId, hubId, boardId, userId, connection, usersBaseUrl }: CreateUserParams) => {
+        connectUser: async ({ orgId, hubId, boardId, userId, connection }: CreateUserParams) => {
             const usersClient = new UsersClient({
-                baseUrl: usersBaseUrl,
+                baseUrl: USERS_BASE_PATH,
             });
             const userClient = usersClient.users;
-            const createdUser = await userClient.createUser(orgId, hubId, boardId, userId, {
+            const createdUser = await userClient.createUserProxy(orgId, hubId, boardId, userId, {
                 environments: [
                     {
                         connectionId: connection.connection.id,
@@ -63,6 +99,14 @@ type CreateUserParams = {
             });
             return createdUser;
         },
+        disconnectUser: async ({ orgId, hubId, boardId, userId }: CreateUserParams) => {
+            const usersClient = new UsersClient({
+                baseUrl: USERS_BASE_PATH,
+            });
+            const userClient = usersClient.users;
+            const deletedUser = await userClient.deleteUserProxy(orgId, hubId, boardId, userId);
+            return deletedUser;
+        },
     };
 })();
 
@@ -72,11 +116,11 @@ type modals = {
     [key: string]: () => void;
 };
 
-type CurrentlyConnectingInfo = {
+type ConnectionInfo = {
     appId?: string;
     appKey?: string;
-    hub?: string;
-    board?: string;
+    hubId?: string;
+    boardId?: string;
 };
 
 type Error = {
@@ -87,28 +131,47 @@ type Error = {
 class VersoriHubs {
     userId: string;
     orgId: string;
-    originUrl: string;
-    onConnection: string | ((connection: any, ConnectionInfo: CurrentlyConnectingInfo) => void);
+    apiKey: string;
+    hubsBasePath: string;
+    usersBasePath: string;
+    originBaseUrl: string;
+    finaliseTo?: string;
+    onConnected?: (connection: Connection, ConnectionInfo: ConnectionInfo) => void;
     onError: (error: Error) => void;
-    onComplete?: () => void;
-    hubsBaseUrl: string;
+    onCompleted?: () => void;
+    onDisconnected: (connectionInfo: Pick<ConnectionInfo, 'hubId' | 'boardId'>) => void;
+    onInitialised?: () => void;
 
-    #currentlyConnectingInfo: CurrentlyConnectingInfo = {
+    #currentlyConnectingInfo: ConnectionInfo = {
         appId: '',
         appKey: '',
-        hub: '',
-        board: '',
+        hubId: '',
+        boardId: '',
     };
     #hubsClient: any;
 
-    constructor({ userId, orgId, originUrl, onConnection, onComplete, onError, hubsBaseUrl }: VersoriHubsParams) {
+    constructor({
+        userId,
+        orgId,
+        apiKey,
+        basePaths,
+        onConnected,
+        onCompleted,
+        onDisconnected,
+        onInitialised,
+        onError,
+    }: VersoriHubsParams) {
         this.userId = userId;
         this.orgId = orgId;
-        this.originUrl = originUrl;
-        this.onConnection = onConnection;
-        this.hubsBaseUrl = hubsBaseUrl;
+        this.apiKey = apiKey;
+        this.hubsBasePath = basePaths?.hubs || HUBS_BASE_PATH;
+        this.usersBasePath = basePaths?.users || USERS_BASE_PATH;
+        this.originBaseUrl = basePaths?.origin || ORIGIN_PATH;
+        this.onConnected = onConnected;
         this.onError = onError;
-        this.onComplete = onComplete;
+        this.onCompleted = onCompleted;
+        this.onDisconnected = onDisconnected;
+        this.onInitialised = onInitialised;
         this.initialise();
     }
 
@@ -116,40 +179,74 @@ class VersoriHubs {
         this.attachEventListeners();
 
         const hubsClient = new HubsClient({
-            baseUrl: this.hubsBaseUrl,
+            baseUrl: this.hubsBasePath,
+            headers: {
+                Authorization: `Bearer ${this.apiKey}`,
+            },
         });
         this.#hubsClient = hubsClient.hubs;
 
-        this.setConnectedApps();
+        const connectedApps = await this.setConnectedApps();
+        if (connectedApps) this.onInitialised?.();
+        console.info('Versori Hubs SDK initialised');
     };
 
     setConnectedApps = async () => {
-        const buttons = document.querySelectorAll('button[data-vhubs]') as NodeListOf<HTMLElement>;
+        const buttons = document.querySelectorAll('[data-vhubs]') as NodeListOf<HTMLElement>;
         const usersHubs = Array.from(buttons).map((button) => {
+            /* Remove connected Attribute */
+            button.removeAttribute('data-connected');
             if (button.hasAttribute('data-vhubid')) {
                 return button.getAttribute('data-vhubid');
             }
             return null;
         });
         const uniqueHubs = [...new Set(usersHubs)];
+        let count: number = 0;
         for (const hub of uniqueHubs) {
             try {
                 const boards: Board[] = await this.#hubsClient.getUsersHubBoards(this.orgId, hub, this.userId);
                 boards.forEach((board) => {
-                    const button = document.querySelector(`button[data-vhubboardid="${board.id}"]`);
+                    const button = document.querySelector(`[data-vhubboardid="${board.id}"]`);
                     if (button) button.setAttribute('data-connected', 'true');
                 });
+                count += 1;
             } catch (error) {
                 console.warn(error);
+                this.onError({
+                    message: `Unable to get ${count} of users connected apps`,
+                    description: error,
+                });
             }
         }
+        return true;
     };
 
     attachEventListeners = () => {
-        const buttons = document.querySelectorAll('button[data-vhubboardid]');
+        // To stop multiple event listeners being attached we remove all event listeners and reattach them
+        const buttons = document.querySelectorAll('[data-vhubs]');
+        console.log(EVENT_LISTENERS, 'EVENT 2');
+        if (EVENT_LISTENERS) {
+            buttons.forEach((button) => {
+                button.removeEventListener('click', this.triggerFlow);
+            });
+        }
         buttons.forEach((button) => {
-            button.addEventListener('click', this.getAppAndOpenModal);
+            button.addEventListener('click', this.triggerFlow);
         });
+        EVENT_LISTENERS = true;
+    };
+
+    triggerFlow = (event: Event) => {
+        const target = event.target as HTMLButtonElement;
+        if (target.hasAttribute('data-connected')) {
+            this.onDisconnected({
+                hubId: target.dataset.vhubid!,
+                boardId: target.dataset.vhubboardid!,
+            });
+        } else {
+            this.getAppAndOpenModal(event);
+        }
     };
 
     modalContent = (authType?: string) => {
@@ -198,8 +295,8 @@ class VersoriHubs {
             this.#currentlyConnectingInfo = {
                 appId: integration.id,
                 appKey: integration.authConfig?.connectionId,
-                hub: target.dataset.vhubid!,
-                board: target.dataset.vhubboardid!,
+                hubId: target.dataset.vhubid!,
+                boardId: target.dataset.vhubboardid!,
             };
             const currentConnectionType = integration?.authConfig;
 
@@ -227,13 +324,13 @@ class VersoriHubs {
 
     handlePostToClient = async () => {
         try {
-            await fetch(`${this.onConnection}`, {
+            await fetch(`${this.finaliseTo}`, {
                 method: 'POST',
                 body: JSON.stringify({
                     connectionInfo: this.#currentlyConnectingInfo,
                 }),
             });
-            this.onComplete?.();
+            this.onCompleted?.();
         } catch (error) {
             this.onError({
                 message: 'Failed to sync with client backend',
@@ -244,13 +341,18 @@ class VersoriHubs {
     };
 
     handleSuccessfulConnection = async (event: MessageEvent) => {
-        if (event.data.id !== 'versori') return;
+        // if (event.data.id !== 'versori') return;
         if (event.data.success) {
-            if (event.origin === this.originUrl) {
-                if (typeof this.onConnection === 'string') {
+            if (event.origin === this.originBaseUrl) {
+                if (this.finaliseTo) {
                     this.handlePostToClient();
+                } else if (this.onConnected) {
+                    this.onConnected?.(event.data.connection, this.#currentlyConnectingInfo);
                 } else {
-                    this.onConnection?.(event.data.connection, this.#currentlyConnectingInfo);
+                    this.onError({
+                        message: 'No callback event provided',
+                        description: 'Please provide either a onConnected callback or a finaliseTo url',
+                    });
                 }
             }
         }
@@ -291,10 +393,15 @@ class VersoriHubs {
                 data: formBody,
                 name: name,
             });
-            if (typeof this.onConnection === 'string') {
+            if (this.finaliseTo) {
                 await this.handlePostToClient();
+            } else if (this.onConnected) {
+                this.onConnected?.(connectResponse, this.#currentlyConnectingInfo);
             } else {
-                this.onConnection?.(connectResponse, this.#currentlyConnectingInfo);
+                this.onError({
+                    message: 'No callback event provided',
+                    description: 'Please provide either a onConnected callback or a finaliseTo url',
+                });
             }
         } catch (error) {
             this.onError({
