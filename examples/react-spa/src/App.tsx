@@ -48,7 +48,7 @@ function App() {
                     },
                 });
                 if (user.id === userId) {
-                    addConnectedLabel(connectionInfo.hubId, connectionInfo.boardId);
+                    addConnectedAttr(connectionInfo.hubId, connectionInfo.boardId);
                     toast('Integration connected');
                 }
             },
@@ -60,7 +60,7 @@ function App() {
                     userId: userId,
                 });
                 if (user.id === userId) {
-                    removeConnectedLabel(connectionInfo.hubId, connectionInfo.boardId);
+                    removeConnectedAttr(connectionInfo.hubId, connectionInfo.boardId);
                     toast('Integration disconnected');
                 }
             },
@@ -91,17 +91,19 @@ function App() {
         });
     };
 
-    const addConnectedLabel = (hubId: string, boardId: string) => {
+    const addConnectedAttr = (hubId: string, boardId: string) => {
         const button = document.querySelector(`[data-vhubid="${hubId}"][data-vhubboardid="${boardId}"]`)!;
         const parent = button?.parentElement;
         parent?.classList.add('connected');
+        button.setAttribute('data-connected', 'true');
         button.innerHTML = 'Disconnect';
     };
 
-    const removeConnectedLabel = (hubId: string, boardId: string) => {
+    const removeConnectedAttr = (hubId: string, boardId: string) => {
         const button = document.querySelector(`[data-vhubid="${hubId}"][data-vhubboardid="${boardId}"]`)!;
         const parent = button?.parentElement;
         parent?.classList.remove('connected');
+        button.removeAttribute('data-connected');
         button.innerHTML = 'Connect';
     };
 

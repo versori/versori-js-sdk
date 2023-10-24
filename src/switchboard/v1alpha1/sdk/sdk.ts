@@ -11,7 +11,6 @@ import type {
     ConnectIntegration,
 } from '../schemas';
 import '../styles/styles.css';
-// import { mock } from './mockIntegrationResponse';
 
 declare global {
     interface Window {
@@ -51,7 +50,23 @@ const HUBS_BASE_PATH = 'https://platform.versori.com/apis/switchboard/v1/';
 const USERS_BASE_PATH = 'https://platform.versori.com/apis/hubs-sdk/v1/';
 const ORIGIN_PATH = 'https://switchboard.versori.io/';
 
-let HUBS_EVENT_LISTENERS = false;
+var VERSORI_HUBS: VersoriHubs | null = null;
+
+const REMOVE_VERSORI_HUBS_EVENT_LISTENERS = () => {
+    const buttons = document.querySelectorAll('[data-vhubs]');
+    buttons.forEach((button) => {
+        if (!VERSORI_HUBS) return;
+        button.removeEventListener('click', VERSORI_HUBS.triggerFlow);
+    });
+};
+
+const ATTACH_VERSORI_HUBS_EVENT_LISTENERS = () => {
+    const buttons = document.querySelectorAll('[data-vhubs]');
+    buttons.forEach((button) => {
+        if (!VERSORI_HUBS) return;
+        button.addEventListener('click', VERSORI_HUBS.triggerFlow);
+    });
+};
 
 (function () {
     (window as any)['Versori'] = {
@@ -67,7 +82,11 @@ let HUBS_EVENT_LISTENERS = false;
             onDisconnected,
             onInitialised,
         }: VersoriHubsParams) => {
-            new VersoriHubs({
+            if (VERSORI_HUBS) {
+                REMOVE_VERSORI_HUBS_EVENT_LISTENERS();
+                VERSORI_HUBS = null;
+            }
+            VERSORI_HUBS = new VersoriHubs({
                 orgId,
                 userId,
                 apiKey,
@@ -79,6 +98,13 @@ let HUBS_EVENT_LISTENERS = false;
                 onDisconnected,
                 onInitialised,
             });
+            ATTACH_VERSORI_HUBS_EVENT_LISTENERS();
+        },
+        reset: () => {
+            if (VERSORI_HUBS) {
+                REMOVE_VERSORI_HUBS_EVENT_LISTENERS();
+                VERSORI_HUBS = null;
+            }
         },
         connectUser: async ({ orgId, hubId, boardId, userId, connection }: CreateUserParams) => {
             const usersClient = new UsersClient({
@@ -176,8 +202,6 @@ class VersoriHubs {
     }
 
     initialise = async () => {
-        this.attachEventListeners();
-
         const hubsClient = new HubsClient({
             baseUrl: this.hubsBasePath,
             headers: {
@@ -220,17 +244,6 @@ class VersoriHubs {
             }
         }
         return true;
-    };
-
-    attachEventListeners = () => {
-        // To stop multiple event listeners being attached we remove all event listeners and reattach them
-        const buttons = document.querySelectorAll('[data-vhubs]');
-        if (!HUBS_EVENT_LISTENERS) {
-            buttons.forEach((button) => {
-                button.addEventListener('click', this.triggerFlow);
-            });
-        }
-        HUBS_EVENT_LISTENERS = true;
     };
 
     triggerFlow = (event: Event) => {
@@ -326,7 +339,6 @@ class VersoriHubs {
                     connectionInfo: this.#currentlyConnectingInfo,
                 }),
             });
-            this.setDataConnectedOnElement(this.#currentlyConnectingInfo.boardId!);
             this.onCompleted?.();
         } catch (error) {
             this.onError({
@@ -337,11 +349,6 @@ class VersoriHubs {
         }
     };
 
-    setDataConnectedOnElement = (boardId: string) => {
-        const button = document.querySelector(`[data-vhubboardid="${boardId}"]`);
-        if (button) button.setAttribute('data-connected', 'true');
-    };
-
     handleSuccessfulConnection = async (event: MessageEvent) => {
         // if (event.data.id !== 'versori') return;
         if (event.data.success) {
@@ -349,7 +356,6 @@ class VersoriHubs {
                 if (this.finaliseTo) {
                     this.handlePostToClient();
                 } else if (this.onConnected) {
-                    this.setDataConnectedOnElement(this.#currentlyConnectingInfo.boardId!);
                     this.onConnected?.(event.data.connection, this.#currentlyConnectingInfo);
                 } else {
                     this.onError({
@@ -399,7 +405,6 @@ class VersoriHubs {
             if (this.finaliseTo) {
                 await this.handlePostToClient();
             } else if (this.onConnected) {
-                this.setDataConnectedOnElement(this.#currentlyConnectingInfo.boardId!);
                 this.onConnected?.(connectResponse, this.#currentlyConnectingInfo);
             } else {
                 this.onError({
@@ -418,9 +423,11 @@ class VersoriHubs {
     };
 
     removeVersoriSDKModal = () => {
-        const modal = document.querySelector('.v-hubs-sdk-modal');
-        if (modal) {
-            modal.remove();
+        const modals = document.querySelectorAll('.v-hubs-sdk-modal');
+        if (modals.length) {
+            modals.forEach((modal) => {
+                modal.remove();
+            });
         }
     };
 
