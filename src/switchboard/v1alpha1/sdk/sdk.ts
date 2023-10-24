@@ -326,7 +326,7 @@ class VersoriHubs {
                     connectionInfo: this.#currentlyConnectingInfo,
                 }),
             });
-            this.setDataConnected(this.#currentlyConnectingInfo.boardId!);
+            this.setDataConnectedOnElement(this.#currentlyConnectingInfo.boardId!);
             this.onCompleted?.();
         } catch (error) {
             this.onError({
@@ -337,7 +337,7 @@ class VersoriHubs {
         }
     };
 
-    setDataConnected = (boardId: string) => {
+    setDataConnectedOnElement = (boardId: string) => {
         const button = document.querySelector(`[data-vhubboardid="${boardId}"]`);
         if (button) button.setAttribute('data-connected', 'true');
     };
@@ -349,7 +349,7 @@ class VersoriHubs {
                 if (this.finaliseTo) {
                     this.handlePostToClient();
                 } else if (this.onConnected) {
-                    this.setDataConnected(this.#currentlyConnectingInfo.boardId!);
+                    this.setDataConnectedOnElement(this.#currentlyConnectingInfo.boardId!);
                     this.onConnected?.(event.data.connection, this.#currentlyConnectingInfo);
                 } else {
                     this.onError({
@@ -399,7 +399,7 @@ class VersoriHubs {
             if (this.finaliseTo) {
                 await this.handlePostToClient();
             } else if (this.onConnected) {
-                this.setDataConnected(this.#currentlyConnectingInfo.boardId!);
+                this.setDataConnectedOnElement(this.#currentlyConnectingInfo.boardId!);
                 this.onConnected?.(connectResponse, this.#currentlyConnectingInfo);
             } else {
                 this.onError({
