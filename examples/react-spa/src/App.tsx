@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { FiCheckCircle } from 'react-icons/fi';
 import toast, { Toaster } from 'react-hot-toast';
 import { type Connection } from '@versori/sdk/dist/switchboard/v1alpha1/schemas';
 import { integrations, integrationsStaging, ORG_ID } from './sdk-setup-data';
@@ -49,7 +48,7 @@ function App() {
                     },
                 });
                 if (user.id === userId) {
-                    changeSingleButtonText(connectionInfo.hubId, connectionInfo.boardId);
+                    addConnectedLabel(connectionInfo.hubId, connectionInfo.boardId);
                     toast('Integration connected');
                 }
             },
@@ -61,7 +60,7 @@ function App() {
                     userId: userId,
                 });
                 if (user.id === userId) {
-                    changeSingleButtonText(connectionInfo.hubId, connectionInfo.boardId);
+                    removeConnectedLabel(connectionInfo.hubId, connectionInfo.boardId);
                     toast('Integration disconnected');
                 }
             },
@@ -92,16 +91,18 @@ function App() {
         });
     };
 
-    const changeSingleButtonText = (hubId: string, boardId: string) => {
+    const addConnectedLabel = (hubId: string, boardId: string) => {
         const button = document.querySelector(`[data-vhubid="${hubId}"][data-vhubboardid="${boardId}"]`)!;
         const parent = button?.parentElement;
-        if (!button?.hasAttribute('data-connected')) {
-            parent?.classList.add('connected');
-            button.innerHTML = 'Disconnect';
-        } else {
-            parent?.classList.remove('connected');
-            button.innerHTML = 'Connect';
-        }
+        parent?.classList.add('connected');
+        button.innerHTML = 'Disconnect';
+    };
+
+    const removeConnectedLabel = (hubId: string, boardId: string) => {
+        const button = document.querySelector(`[data-vhubid="${hubId}"][data-vhubboardid="${boardId}"]`)!;
+        const parent = button?.parentElement;
+        parent?.classList.remove('connected');
+        button.innerHTML = 'Connect';
     };
 
     const currentEnvIntegrations =
