@@ -100,7 +100,7 @@ const ATTACH_VERSORI_HUBS_EVENT_LISTENERS = () => {
             });
             ATTACH_VERSORI_HUBS_EVENT_LISTENERS();
         },
-        reset: () => {
+        destroy: () => {
             if (VERSORI_HUBS) {
                 REMOVE_VERSORI_HUBS_EVENT_LISTENERS();
                 VERSORI_HUBS = null;
