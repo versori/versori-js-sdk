@@ -48,7 +48,7 @@ type CreateUserParams = {
 
 const HUBS_BASE_PATH = 'https://platform.versori.com/apis/switchboard/v1/';
 const USERS_BASE_PATH = 'https://platform.versori.com/apis/hubs-sdk/v1/';
-const ORIGIN_PATH = 'https://switchboard.versori.io/';
+const ORIGIN_PATH = 'https://switchboard.versori.com/';
 
 var VERSORI_HUBS: VersoriHubs | null = null;
 

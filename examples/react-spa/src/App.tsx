@@ -29,11 +29,11 @@ function App() {
         window.Versori.initHubs({
             userId: userId,
             orgId: ORG_ID,
-            apiKey: 'swo_9MT3FcHBZb_s6RMpP7Rz4emQDG4lfXtwzLNCZiLrnb7',
+            apiKey: import.meta.env.VITE_API_KEY,
             basePaths: {
-                hubs: 'https://platform-staging.versori.com/apis/switchboard/v1/',
+                hubs: 'https://platform-staging.versori.com/api/switchboard/v1alpha1/',
                 users: 'https://platform-staging.versori.com/apis/hubs-sdk/v1/',
-                origin: 'https://switchboard-staging.versori.io',
+                origin: 'https://switchboard-staging.versori.com',
             },
             // finaliseTo: 'http://someclienturl.com/api',
             onConnected: async (connection: Connection, connectionInfo: ConnectionInfo) => {
