@@ -21,7 +21,7 @@ export default defineConfig({
             fileName: 'index',
         },
         rollupOptions: {
-            treeshake: "safest",
+            treeshake: 'safest',
             external: [],
         },
     },

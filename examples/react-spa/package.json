@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@versori/sdk-react": "*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@versori/sdk-react": "*"
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.11.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

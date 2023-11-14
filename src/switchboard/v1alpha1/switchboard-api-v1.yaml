@@ -1,0 +1,1636 @@
+openapi: 3.0.3
+info:
+  title: Hubs API
+  description: The Hubs API provides the endpoints for users to use the hubs SDK.
+  version: 0.0.1-alpha.0
+servers:
+  - url: 'https://platform.versori.com/apis/switchboard'
+    description: Production server
+  - url: 'http://localhost:8080/v1alpha1/'
+    description: Localhost
+paths:
+  /organisations/{organisationId}/boards/{boardId}/variables:
+    get:
+      description: |
+        Get the JSON schema for the variables of a board.
+      operationId: GetBoardVariablesSchema
+      tags:
+        - boards
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+        - name: boardId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/GetVariablesSchemaResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/hubs:
+    get:
+      operationId: GetHubs
+      description: |
+        Retrieves the hubs belonging to a given organisation.
+      tags:
+        - hubs
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: first
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          required: false
+          examples:
+            single column ascending:
+              summary: Single column search in ascending order
+              value: id:asc
+            single column descending:
+              summary: Single column search in descending order
+              value: name:desc
+            multiple columns:
+              summary: Multiple column search
+              value: name:asc,id:desc
+          schema:
+            type: string
+            pattern: '^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$'
+      responses:
+        200:
+          $ref: '#/components/responses/GetHubsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/hubs/{hubId}/boards:
+    get:
+      operationId: ListHubBoards
+      description: |
+        Retrieves the boards belonging to a given hub and organisation.
+      tags:
+        - boards
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+        - name: hubId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: first
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          required: false
+          examples:
+            single column ascending:
+              summary: Single column search in ascending order
+              value: id:asc
+            single column descending:
+              summary: Single column search in descending order
+              value: name:desc
+            multiple columns:
+              summary: Multiple column search
+              value: name:asc,id:desc
+          schema:
+            type: string
+            pattern: '^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$'
+      responses:
+        200:
+          $ref: '#/components/responses/GetBoardsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/hubs/{hubId}/users/{userId}:
+    get:
+      operationId: GetUserHubBoards
+      description: |
+        Retrieves a pagniated list of boards belonging to a given user and hub.
+      tags:
+        - boards
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+        - name: hubId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: first
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          required: false
+          examples:
+            single column ascending:
+              summary: Single column search in ascending order
+              value: id:asc
+            single column descending:
+              summary: Single column search in descending order
+              value: name:desc
+            multiple columns:
+              summary: Multiple column search
+              value: name:asc,id:desc
+          schema:
+            type: string
+            pattern: '^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$'
+      responses:
+        200:
+          $ref: '#/components/responses/GetBoardsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/connected-apps:
+    get:
+      operationId: GetConnectedApps
+      description: |
+        Retrieves a page of Apps which have connections for an organisation.
+      tags:
+        - connections
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+        - name: first
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        200:
+          $ref: '#/components/responses/GetConnectedAppsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/connections:
+    post:
+      operationId: CreateConnection
+      description: |
+        Creates a connection between an organisation and an App. This is to be used by authentication methods which the
+        user can explicitly configure, such as API Key and Basic Auth. For OAuth2/OIDC connections, users should call
+        the InitialiseConnection endpoint instead.
+      tags:
+        - connections
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateConnectionRequest'
+      responses:
+        201:
+          $ref: '#/components/responses/CreateConnectionResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    get:
+      operationId: GetConnections
+      description: |
+        Retrieves connections for an organisation, potentially filtering by appId. The response is structured as a page
+        but currently the response returns all items. Consumers wishing to be backwards compatible should not assume
+        this API will always return all items.
+      tags:
+        - connections
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+        - name: appId
+          description: Optionally filter connections by an App ID
+          in: query
+          required: false
+          schema:
+            type: string
+          example: '01FQ2PJ5QVA5H2A8J4V9ZA8NJS'
+        - name: first
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: before
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: after
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        200:
+          $ref: '#/components/responses/GetConnectionsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/hubs/{hubId}/boards/{boardId}/integration-info:
+    get:
+      operationId: IntegrationInfo # not sure on this operation name
+      description: |
+        Retrieves all the information needed that a user needs to fill out to use a Hub integration.
+      tags:
+        - hubs
+        - boards
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hubId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: boardId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/ConnectIntegrationResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/connection-init:
+    post:
+      operationId: InitialiseConnection
+      description: |
+        InitialiseConnection is used to initiate a connection of an App to a user's organisation. Different connections
+        require different auth methods (or even no auth method at all), this endpoint returns the necessary
+        configuration required to establish that connection.
+      tags:
+        - connections
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+      requestBody:
+        $ref: '#/components/requestBodies/InitConnectionRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/InitConnectionResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /organisations/{organisationId}/credentials:
+    post:
+      operationId: CreateCredential
+      description: |
+        CreateCredential allows users to create new Credentials. Valid requests which return a credential marked as
+        "invalid" is normal behaviour, but the credential won't be usable until it's updated to become valid.
+      tags:
+        - connections
+      parameters:
+        - name: organisationId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '101'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateCredentialRequest'
+      responses:
+        201:
+          $ref: '#/components/responses/CreateCredentialResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /connections/oauth2/callback:
+    get:
+      # We have two options for implementing this URL:
+      # 1. The UI forwards the request to the API
+      # 2. We have some istio routes which send the UI request to the API which in turn redirects to the UI.
+      operationId: FinaliseConnectionCallback
+      description: |
+        FinaliseConnectionCallback is the redirect URL to exchange an authorization code for an access token in an
+        OAuth2.0 authorization code grant. It must be noted that the real callback URL configured with the
+        OAuth2.0 provider should be a Switchboard URL (prompted to the user at app-creation time) and not this API URL.
+      tags:
+        - oauth
+      parameters:
+        - name: code
+          description: The authorization code to exchange for an access token.
+          in: query
+          schema:
+            type: string
+        - name: state
+          description: |
+            This value is generated by the `/organisations/{organisationId}/connection-init` operation and is an opaque
+            string and should have no meaning to external clients. Internally, it's used to verify the flow was
+            initialised by Switchboard and connect the authorisation grant to the user/organisation who initiated it.
+          in: query
+          schema:
+            type: string
+        - name: error
+          description: |
+            An error code by the OAuth2.0 provider indicating a problem occurred during the grant.
+          in: query
+          schema:
+            type: string
+        - name: error_description
+          description: |
+            A human-readable error message associated to the error code specified in the `error` parameter.
+          in: query
+          schema:
+            type: string
+      responses:
+        204:
+          description: |
+            The callback has been handled successfully, there is no response to this request. In a browser context, the
+            user should be redirected back to a suitable location.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  schemas:
+    Credential:
+      description: |
+        Credential holds sensitive data not owned by Versori. Users can create credentials so that Versori systems can
+        authenticate to external services on behalf of the user.
+      properties:
+        id:
+          description: ID is the identifier for the credential.
+          type: string
+        organisationID:
+          description: OrganisationID is the ID of the organisation which owns this credential.
+        name:
+          description: Name is the credential name.
+          type: string
+        data:
+          description: Data is a map of string keys to string base64 encoded values for the actual credential data.
+          type: object
+        type:
+          $ref: '#/components/schemas/CredentialType'
+        redactFields:
+          description: |
+            RedactFields is a list of fields within data which once created should not be returned to the user. This
+            property is only applicable for "Default" credential types. Credentials of other types have their own
+            redaction list internally and this field will be ignored.
+          type: array
+          items:
+            type: string
+        expiresAt:
+          description: |
+            ExpiresAt allows the user to specify when Switchboard should automatically delete the credential.
+          type: string
+          format: date-time
+      required:
+        - id
+        - organisationID
+        - name
+        - data
+        - type
+    SchemaMetadata:
+      type: object
+      properties:
+        type:
+          description: |
+            Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+            "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+          type: string
+        version:
+          description: |
+            Version denotes the version of the schema specification. This property is contextual based on the schema
+            type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+            supported), but `grpc` APIs could be "proto2" or "proto3".
+          type: string
+        url:
+          description: |
+            URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+            could be a non-HTTP protocol (i.e. gs:// or s3://)
+          type: string
+      required:
+        - type
+        - version
+        - url
+    Schema:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          description: |
+            Type denotes the type of schema the corresponding App is backed by. Currently the only supported value is
+            "openapi", but other types such as "soap", "graphql" and "grpc" are on the roadmap.
+          type: string
+        version:
+          description: |
+            Version denotes the version of the schema specification. This property is contextual based on the schema
+            type, for example openapi schemas will contain the OpenAPI specification version (currently only 3.0.x is
+            supported), but `grpc` APIs could be "proto2" or "proto3".
+          type: string
+        sourceUrl:
+          description: |
+            URL is the private address for accessing the schema. This is not guaranteed to be publicly accessible and
+            could be a non-HTTP protocol (i.e. gs:// or s3://)
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - version
+        - sourceUrl
+        - createdAt
+        - updatedAt
+    ConnectIntegration:
+      type: object
+      properties:
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/HubApp'
+        variables:
+          type: object
+    HubApp:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        imageUrl:
+          type: string
+        listenerUrl:
+          type: string
+          description: |
+            ListenerUrl is the URL which webhooks will send data to Switchboard. This is only populated if the
+            app has a listener URL configured.
+        requiresUserAuth:
+          type: boolean
+          description: |
+            RequiresUserAuth is true if the app requires the user of the integration to authenticate with the app before it can be used.
+            Apps that have this set to true, should be the only ones shown in the client's UI. The other apps are
+            only really returned due to the possiblity of them having a listener URL which the user may need to configure
+            webhooks with.
+        authConfig:
+          $ref: '#/components/schemas/HubAppAuthConfig'
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        error:
+          type: string
+      required:
+        - code
+        - message
+        - error
+    App:
+      type: object
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        name:
+          type: string
+        public:
+          type: boolean
+        server:
+          $ref: '#/components/schemas/Server'
+        schemaMetadata:
+          $ref: '#/components/schemas/SchemaMetadata'
+        supportedAuthConfigs:
+          description: |
+            SupportedAuthConfigs is a list of authentication standards which can be used to connect a user's account to
+            this app. At least one auth type needs to be valid for the App to be used by a user.
+          type: array
+          items:
+            $ref: '#/components/schemas/AppAuthConfig'
+        imageUrl:
+          type: string
+        schema:
+          $ref: '#/components/schemas/Schema'
+        schemaId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - orgId
+        - name
+        - public
+        - server
+        - schemaMetadata
+        - schema
+        - createdAt
+        - updatedAt
+    HubAppAuthConfig:
+      type: object
+      properties:
+        authType:
+          type: string
+          enum: ['oidc', 'oauth2', 'apikey', 'httpBasicAuth']
+        connectionId:
+          type: string
+        data:
+          $ref: '#/components/schemas/AppAuthConfigData'
+    AppAuthConfig:
+      description: |
+        AppAuthConfig describes how an organisation can authenticate with an app.
+      type: object
+      properties:
+        type:
+          description: |
+            Type denotes the method of authentication. Valid values are: `"oidc"`, `"oauth2"`, `"apikey"`, `"httpBasicAuth"
+          type: string
+        isValid:
+          description: |
+            IsValid is true if and only if the `data` field is populated with all the required information to enable
+            an organisation to connect to the App via this auth type. It is allowed for an App to have invalid auth
+            configs providing there is at least one valid.
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AppAuthConfigData'
+      required:
+        - type
+        - isValid
+        - data
+    AppAuthConfigData:
+      type: object
+      description: |
+        AppAuthConfigData should JSON-marshal to one of the types specified in the jsonschema oneOf:
+
+        - AppAuthConfigOIDC
+        - AppAuthConfigOAuth2
+        - AppAuthConfigApiKey
+        - AppAuthConfigHTTPRefresh
+        - AppAuthConfigHTTPBasicAuth
+      oneOf:
+        - $ref: '#/components/schemas/AppAuthConfigOIDC'
+        - $ref: '#/components/schemas/AppAuthConfigOAuth2'
+        - $ref: '#/components/schemas/AppAuthConfigApiKey'
+        - $ref: '#/components/schemas/AppAuthConfigHTTPRefresh'
+        - $ref: '#/components/schemas/AppAuthConfigHTTPBasicAuth'
+    AppAuthConfigOIDC:
+      description: |
+        AppAuthConfigOIDC specifies the configuration for authenticating using the OpenID Connect specification.
+      type: object
+      properties:
+        discoveryUrl:
+          description:
+            Takes precedent over the endpoint properties. If this property is set, it will be queried and override
+            any defined endpoint properties.
+          type: string
+        clientId:
+          type: string
+        clientSecret:
+          description: |
+            ClientSecret is the OAuth2.0 client's secret. This should be write-only, and not be viewable after
+            creation.
+          type: string
+        scopes:
+          $ref: '#/components/schemas/Scopes'
+    AppAuthConfigOAuth2:
+      type: object
+      properties:
+        flowType:
+          type: string
+          enum: ['authorizationCode', 'clientCredentials']
+          description: |
+            FlowType is the type of OAuth2 Flow supported. Valid values are `authorizationCode` and `clientCredentials`.
+        authorizationEndpoint:
+          type: string
+        tokenEndpoint:
+          type: string
+        clientId:
+          type: string
+        clientSecret:
+          description: |
+            ClientSecret is the OAuth2.0 client's secret. This should be write-only, and not be viewable after
+            creation.
+          type: string
+        scopes:
+          $ref: '#/components/schemas/Scopes'
+    AppAuthConfigApiKey:
+      type: object
+      properties:
+        name:
+          description: |
+            Name is the header, query param or cookie name which the API key should be provided as.
+          type: string
+        in:
+          description: |
+            In denotes where the API key should be set when calling the API. Possible values are: `"query"`,
+            `"header"` or `"cookie"`.
+          type: string
+      required:
+        - name
+        - in
+    AppAuthConfigHTTPBasicAuth:
+      type: object
+      properties:
+        user:
+          description: |
+            User is the identifier to perform the basic authentication.
+          type: string
+        password:
+          description: |
+            Password is the secret used to perform the basic authentication.
+          type: string
+      required:
+        - user
+        - password
+    AppAuthConfigHTTPRefresh:
+      type: object
+      properties:
+        tokenEndpoint:
+          description: |
+            TokenEndpoint is the URL to use to Request a token.
+          type: string
+        method:
+          description: The http method to use for the token request.
+          type: string
+          enum: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH', 'TRACE']
+        tokenTTL:
+          description: |
+            TokenTTL is the duration in seconds for a token to last before refreshing to get a new one.
+          type: integer
+          x-go-type: int64
+        in:
+          description: |
+            In denotes where the client secret should be set when calling the API. Possible values are: `"header"` or `"body"`.
+          type: string
+        headerDestination:
+          description: |
+            HeaderDestination is used if `"in"` is set to `"header"` to specify the header key for the ClientSecret data to be sent with.
+            This can be empty if the `"in"` is not set to `"header"`.
+          type: string
+        headers:
+          description: |
+            Headers is a list of static headers to send along with the token request.
+          type: object
+          x-go-type: map[string][]string
+        selector:
+          description: |
+            Selector is an expression to evaluate to obtain the token from the Response returned from the TokenEndpoint.
+            This always extracts from the body response from the TokenEndpoint.
+          type: string
+        targetName:
+          description: |
+            TargetName is the header, query param or cookie name which the token should be provided as.
+          type: string
+        targetIn:
+          description: |
+            TargetIn denotes where the token should be set when calling the API. Possible values are: `"query"`,
+            `"header"` or `"cookie"`.
+          type: string
+      required:
+        - tokenEndpoint
+        - method
+        - tokenTTL
+        - in
+        - selector
+    AppAuthConfigCreate:
+      description: |
+        AppAuthConfigCreate describes how an organisation can authenticate with an app.
+      type: object
+      properties:
+        type:
+          description: |
+            Type denotes the method of authentication. Valid values are: `"oidc"`, `"oauth2"` or `"apikey"`.
+          type: string
+        data:
+          $ref: '#/components/schemas/AppAuthConfigData'
+      required:
+        - type
+        - data
+    Hub:
+      type: object
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - orgId
+        - name
+        - createdAt
+        - updatedAt
+    HubBoardUsers:
+      type: array
+      items:
+        $ref: '#/components/schemas/HubBoardUser'
+    HubBoardUser:
+      type: object
+      properties:
+        userId:
+          type: string
+        boardId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - userId
+        - boardId
+        - createdAt
+        - updatedAt
+    Board:
+      type: object
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        name:
+          type: string
+        hubId:
+          type: string
+        status:
+          $ref: '#/components/schemas/BoardStatus'
+        activePublishInfo:
+          $ref: '#/components/schemas/BoardPublishInfo'
+        recentPublishHistory:
+          description: |
+            RecentPublishHistory is an array of BoardPublishInfo containing up to the last 5 publishes for a board. If
+            full history is required, users should use the ListPublishHistory operation for a paginated view.
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardPublishInfo'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - orgId
+        - name
+        - status
+        - createdAt
+        - updatedAt
+    BoardCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        hubId:
+          type: string
+        # TODO: need to add proper types for CRDT objects
+        nodes:
+          x-go-type: board.Nodes
+          x-go-type-import:
+            path: versori.dev/switchboard-api/pkg/board
+          type: object
+        edges:
+          x-go-type: board.Edges
+          x-go-type-import:
+            path: versori.dev/switchboard-api/pkg/board
+          type: object
+      required:
+        - name
+    HubBoardCreate:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    BoardPublishCommand:
+      type: object
+      properties:
+        lastEventId:
+          type: string
+      required:
+        - lastEventId
+    BoardUnpublishCommand:
+      type: object
+      properties:
+        taskId:
+          type: string
+      required:
+        - taskId
+    BoardPublishResult:
+      description: |
+        BoardPublishResult is used to indicate if the publish request has been accepted. The actual scheduling is
+        done in the background and does not indicate the board is ready to accept data.
+      type: object
+      properties:
+        ok:
+          type: boolean
+        taskId:
+          type: string
+      required:
+        - ok
+    BoardUnpublishResult:
+      description: |
+        BoardUnpublishResult is used to indicate if the unpublish request has been accepted. The actual scheduling is
+        done in the background and does not indicate the board has terminated.
+      type: object
+      properties:
+        ok:
+          type: boolean
+      required:
+        - ok
+    BoardPublishResultMessage:
+      type: object
+      properties:
+        type:
+          description: One of, "info", "warn" or "error"
+          type: string
+        message:
+          description: The main message to display to the user
+          type: string
+        details:
+          description: An optional field containing further information relating to the message.
+          type: array
+          items:
+            type: string
+      required:
+        - type
+        - message
+    BoardStatus:
+      description: |
+        BoardStatus is used to indicate the status of a board. The "unknown" status is used in case of inconsistencies
+        in the database with the Board scheduler and the API cannot deduce the correct status without administrator
+        intervention.
+
+        If the status is "unknown", then clients should assume it's in a draft/published state based on
+        whether the board has an "activePublishInfo" field. If a board cannot be published due to it already
+        being published and the "activePublishInfo" field is null, users should contact support.
+      type: string
+      enum:
+        - unknown
+        - draft
+        - publishing
+        - published
+        - unpublishing
+    BoardPublishInfo:
+      type: object
+      description: BoardPublishInfo provides information on a published board instance
+      properties:
+        id:
+          type: string
+        taskId:
+          description: |
+            TaskID is a unique identifier for the execution of a board. Each time a board is (re)published a new task ID
+            will be generated.
+          type: string
+        lastEventId:
+          description: |
+            LastEventID is the last observed event before this board was published. This may not be the last event on
+            the stream for this board, since the observer may not have replayed all events at the time of publish. As
+            such, the version of the board which will be executed is defined by this field, and not necessarily the
+            latest event on the stream.
+          type: string
+        listeners:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoardListener'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - taskId
+        - lastEventId
+        - listeners
+        - createdAt
+        - updatedAt
+    BoardListener:
+      description: |
+        BoardListener provides information on where a board is listening for external events.
+      type: object
+      properties:
+        id:
+          type: string
+        appNodeId:
+          description: |
+            AppNodeID is the identifier of the App Node to which this listener's operation belongs to.
+          type: string
+        operationNodeId:
+          description: |
+            OperationNodeID is the identifier of the Operation within the App Node, which is listening for data from an
+            external source.
+          type: string
+        url:
+          description: |
+            URL is the address for where the Node specified by NodeID is listening. Downstream services (such as
+            webhooks) should be configured with this URL.
+          type: string
+        contentType:
+          description: |
+            ContentType is the "content-type" header for which data should be sent with. Initially only
+            "application/json" is supported but other content types may be added in the future.
+          type: string
+        security:
+          description: |
+            Security defines any parameters which external services must supply in order for Switchboard to acknowledge
+            an incoming event. If this is defined but an external service does not supply matching information, the
+            event will be ignored.
+          type: object
+        additionalHeaders:
+          description: |
+            AdditionalHeaders describes any other headers which the downstream service must supply with the request.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - appNodeId
+        - operationNodeId
+        - url
+        - contentType
+        - createdAt
+        - updatedAt
+    BoardsPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PageInfo'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Board'
+    HubsPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PageInfo'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Hub'
+    Connection:
+      type: object
+      properties:
+        id:
+          type: string
+        orgId:
+          type: string
+        name:
+          type: string
+        app:
+          $ref: '#/components/schemas/App'
+        authConfig:
+          $ref: '#/components/schemas/AppAuthConfig'
+        credentialId:
+          type: string
+        usedByBoards:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionBoardReference'
+      required:
+        - id
+        - orgId
+        - name
+        - app
+        - authType
+        - credentialId
+    ConnectionBoardReference:
+      description: Describes which boards a connection is in use by.
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    CreateConnectionRequestBody:
+      type: object
+      description: |
+        CreateConnectionRequestBody is the request body to create a new connection. The ID is automatically generated
+        and the organisation ID is defined by the request's path parameter.
+      properties:
+        name:
+          type: string
+        appId:
+          type: string
+        authType:
+          type: string
+        data:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ConnectionDataAPIKey'
+            - $ref: '#/components/schemas/ConnectionDataHTTPBasicAuth'
+            - $ref: '#/components/schemas/ConnectionDataSecret'
+            - $ref: '#/components/schemas/ConnectionDataOAuth2ClientCredentials'
+      required:
+        - name
+        - appId
+        - authType
+        - data
+    UpdateConnectionRequestBody:
+      type: object
+      description: |
+        UpdateConnectionRequestBody is the request body to update an existing connection. This will replace the existing
+        connection details.
+      properties:
+        name:
+          type: string
+        data:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ConnectionDataAPIKey'
+            - $ref: '#/components/schemas/ConnectionDataHTTPBasicAuth'
+            - $ref: '#/components/schemas/ConnectionDataSecret'
+            - $ref: '#/components/schemas/ConnectionDataOAuth2ClientCredentials'
+      required:
+        - name
+        - data
+    ConnectionDataAPIKey:
+      description: |
+        ConnectionDataAPIKey is the data element of a connection which is using an apikey authentication type.
+      properties:
+        apiKey:
+          type: string
+      required:
+        - apiKey
+    ConnectionDataHTTPBasicAuth:
+      description: |
+        ConnectionDataHTTPBasicAuth is the data element of a connection which is using a HTTP Basic Auth authentication type.
+      properties:
+        user:
+          type: string
+        password:
+          type: string
+      required:
+        - user
+        - password
+    ConnectionDataSecret:
+      description: |
+        ConnectionDataSecret is the data element of a connection for an authentication type requiring a secret (eg HTTPRefresh).
+      properties:
+        secret:
+          type: string
+      required:
+        - secret
+    ConnectionDataOAuth2ClientCredentials:
+      description: |
+        ConnectionDataOAuth2ClientCredentials is the data element of a connection for OAuth2 using the client_credentials flow.
+      properties:
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+        additionalParameters:
+          type: string
+          description: |
+            AdditionalParameters is a URL-encoded query string which can be used to be pass extra parameters the OAuth2
+            provider.
+          example: audience=https://example.com
+        issueToken:
+          type: boolean
+          description: |
+            IssueToken is a flag which indicates whether the connection should issue a token when it is created. The
+            request to create/update a connection will fail if this is true and issuing fails.
+          default: false
+      required:
+        - clientId
+        - clientSecret
+    ConnectedAppsPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PageInfo'
+        - properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConnectedApp'
+          required:
+            - items
+    ConnectedApp:
+      type: object
+      description: ConnectedApp provides an overview of all connections associated to an app for a given organisation.
+      properties:
+        app:
+          $ref: '#/components/schemas/App'
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectionOverview'
+      required:
+        - app
+        - connections
+    ConnectionOverview:
+      type: object
+      description: |
+        ConnectionOverview provides minimal information on a connection. This information can be used to link through to
+        a connection details page via its ID.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - name
+    ConnectionsPage:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PageInfo'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Connection'
+          required:
+            - items
+    InitConnectionRequestBody:
+      type: object
+      properties:
+        appId:
+          type: string
+        authType:
+          type: string
+      required:
+        - appId
+        - authType
+    InitConnectionResponseBody:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/InitConnectionAction'
+      required:
+        - action
+    InitConnectionAction:
+      type: object
+      properties:
+        redirect:
+          $ref: '#/components/schemas/InitConnectionActionRedirect'
+        form:
+          $ref: '#/components/schemas/InitConnectionActionForm'
+    InitConnectionActionRedirect:
+      description: |
+        InitConnectionActionRedirect tells the user agent to redirect to the provided URL to complete the connection.
+        This is most likely to perform an OAuth2.0 authorization code grant, but there may be other protocols in the
+        future. In the case of an OAuth2.0 flow, the redirect URL will be back to switchboard to complete the connection
+        process, this will be transparent to the user.
+      type: object
+      properties:
+        url:
+          description: The URL to redirect the user
+          type: string
+      required:
+        - url
+    InitConnectionActionForm:
+      description: |
+        InitConnectionActionForm tells the user agent to render a form requesting additional information from the user
+        such as api-key or basic-auth credentials.
+      type: object
+      properties:
+        schema:
+          description: |
+            This is to be some kind of schema used to generate a HTML form. The exact details of this schema are not
+            known at the time of writing.
+          type: object
+    SchemaSignedURLResponseBody:
+      description: |
+        SchemaSignedURLResponseBody is the response to allow user-agents upload a schema to our internal storage and
+        provide a URL for use when creating the associated App.
+      type: object
+      properties:
+        uploadURL:
+          description: |
+            The URL used to upload the object, this includes parameters containing the signature of the ServiceAccount
+            which authorised the upload
+          type: string
+        url:
+          description: |
+            The URL to identify the schema. This is not publicly accessible and is to be used when creating an App.
+          type: string
+      required:
+        - uploadURL
+        - url
+    SignedURLResponseBody:
+      description: |
+        SignedURLResponseBody is the response to allow user-agents to upload assets to our internal storage.
+      type: object
+      properties:
+        uploadURL:
+          description: |
+            The URL used to upload the object, this includes parameters containing the signature of the ServiceAccount
+            which authorised the upload
+          type: string
+        url:
+          description: |
+            The URL to identify the asset.
+          type: string
+      required:
+        - uploadURL
+        - url
+    CreateCredentialRequestBody:
+      description: |
+        CreateCredentialRequestBody is the request body to create a new credential. The ID is automatically generated
+        and the organisation ID is defined by the request's path parameter.
+      properties:
+        name:
+          description: Name is the credential name.
+          type: string
+        data:
+          description: Data is a map of string keys to string base64 encoded values for the actual credential data.
+          type: object
+        type:
+          $ref: '#/components/schemas/CredentialType'
+        redactFields:
+          description: |
+            RedactFields is a list of fields within data which once created should not be returned to the user. This
+            property is only applicable for "Default" credential types. Credentials of other types have their own
+            redaction list internally and this field will be ignored.
+          type: array
+          items:
+            type: string
+        expiresAt:
+          description: |
+            ExpiresAt allows the user to specify when Switchboard should automatically delete the credential.
+          type: string
+          format: date-time
+      required:
+        - name
+        - data
+        - type
+    CredentialType:
+      description: |
+        Type provides additional context to what data the credential contains. Certain types dictate that certain fields
+        must be set in order for the credential to be considered valid:
+
+        - "Default" is the default type for a Credential. Data may contain arbitrary properties and will always be
+          considered valid.
+        - "OAuth2Refresh" signifies the credential is to be used for issuing OAuth 2.0 access tokens based on a refresh
+          token. The credential data must json-marshal into a CredentialDataOAuth2Refresh in order to be valid.
+          Credentials of this type may only be created or updated via the connections APIs, not by the credentials APIs.
+        - "Raw" signifies the credential contains a value which can be used until the credential expires (or never if
+          the credential has no expiry). The credential data must json-marshal into a CredentialDataRaw in order to be
+          valid.
+        - "BasicAuth" signifies the credential contains credentials to be used in HTTP Basic authentication schemes. The
+          credential data must json-marshal into a CredentialDataBasicAuth in order to be valid.
+      type: string
+    CredentialDataOAuth2Refresh:
+      description: |
+        CredentialDataOAuth2Refresh holds the configuration required to issue access tokens from a refresh token.
+      properties:
+        clientID:
+          description: |
+            ClientID is the identifier for the OAuth2 client.
+          type: string
+        clientSecret:
+          description: |
+            ClientSecret is the credential for the OAuth2 client.
+          type: string
+        tokenURL:
+          description: |
+            TokenURL is where requests should be made to issue an access token in exchange for a refresh token.
+          type: string
+        authStyle:
+          description: |
+            AuthStyle denotes how the client ID and secret should be sent to the token URL. The default is to
+            auto-detect.
+          type: string
+        refreshToken:
+          description: |
+            RefreshToken is the token issued to the client when they manually authorise it.
+          type: string
+      required:
+        - clientID
+        - clientSecret
+        - tokenURL
+        - refreshToken
+    CredentialDataRaw:
+      description: |
+        CredentialDataRaw holds a single value which can be used to store an arbitrary secret like an API key or
+        password.
+      properties:
+        raw:
+          description: Raw is the raw value which this credential manages
+          type: string
+      required:
+        - raw
+    CredentialDataBasicAuth:
+      description: |
+        CredentialDataBasicAuth holds credentials to authenticate to a HTTP server protected by Basic Authentication.
+      properties:
+        username:
+          description: |
+            Username is the basic-auth username.
+          type: string
+        password:
+          description: |
+            Password is the basic-auth password.
+          type: string
+      required:
+        - username
+        - password
+    Server:
+      type: object
+      properties:
+        name:
+          description: |
+            Description is a human-friendly name for this server address. If a friendly name isn't available then this
+            defaults to the URL.
+          type: string
+        url:
+          description: |
+            URL is the server address listening for requests.
+          type: string
+      required:
+        - name
+        - url
+    Scopes:
+      description: |
+        Scopes is a map of scopes this API supports, with the scope name as keys and a description as the value.
+        It may not be required to specify them all to connect the App.
+      type: object
+      x-go-type: map[string]string
+    PageInfo:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        next:
+          type: string
+        prev:
+          type: string
+      required:
+        - totalCount
+    BoardVariablesSchema:
+      description: |
+        BoardVariablesSchema is the schema definition for board variables.
+      type: object
+      properties:
+        dynamic:
+          $ref: '#/components/schemas/VariablesSchema'
+        global:
+          $ref: '#/components/schemas/VariablesSchema'
+    VariablesSchema:
+      type: object
+  parameters:
+    SchemaType:
+      name: schemaType
+      description: |
+        SchemaType is the type of schema which an App implements. The only supported values are currently "openapi", but
+        is planned to be extended to include gRPC, GraphQL and SOAP.
+      in: path
+      required: true
+      schema:
+        type: string
+    SortParam:
+      name: sort
+      in: query
+      required: false
+      examples:
+        single column ascending:
+          summary: Single column search in ascending order
+          value: id:asc
+        single column descending:
+          summary: Single column search in descending order
+          value: name:desc
+        multiple columns:
+          summary: Multiple column search
+          value: name:asc,rating:desc,id:desc
+      schema:
+        type: string
+        pattern: '^([^:,]+:[^:,]+)(,[^:,]+:[^:,]+)*$'
+  requestBodies:
+    CreateConnectionRequest:
+      description: CreateConnectionRequest is the payload for creating a new Connection.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateConnectionRequestBody'
+          examples:
+            apikey:
+              description: Create a new connection using an API key.
+              value:
+                name: 'My API Key'
+                appId: '01G01QZNWG0000000000000000'
+                authType: 'apikey'
+                data:
+                  apiKey: 'my-secret-key'
+    InitConnectionRequest:
+      description: The parameters to initialise a new connection
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InitConnectionRequestBody'
+    CreateCredentialRequest:
+      description: |
+        CreateCredentialRequest is the request definition for creating a new credential.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateCredentialRequestBody'
+  responses:
+    ConnectIntegrationResponse:
+      description: All information a hub user is required to provide to use an integration
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectIntegration'
+    GetBoardsResponse:
+      description: A paginated set of Boards
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BoardsPage'
+    GetConnectedAppsResponse:
+      description: A paginated result of apps with associated ConnectionOverview data.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectedAppsPage'
+    GetConnectionsResponse:
+      description: A paginated result of Apps.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConnectionsPage'
+    CreateConnectionResponse:
+      description: A single Connection result.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Connection'
+    InitConnectionResponse:
+      description: The configuration to initialise a new connection.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InitConnectionResponseBody'
+    CreateCredentialResponse:
+      description: |
+        CreateCredentialResponse is the response containing the new credential.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Credential'
+    GetVariablesSchemaResponse:
+      description: |
+        GetVariablesSchemaResponse is the response containing the variables schema.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BoardVariablesSchema'
+    GetHubsResponse:
+      description: A paginated set of Hubs
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HubsPage'
+    ErrorResponse:
+      description: The default error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: query
+      name: api_key
+security:
+  - apiKey: []
