@@ -2,21 +2,21 @@
 
 This repository contains packages to assist in the development against Versori APIs.
 
--   `@versori/sdk` - Contains a browser compatible SDK for Versori APIs
--   `@versori/sdk-react` - Contains React components for embedding Versori functionality in your application
+- `@versori/sdk` - Contains a browser compatible SDK for Versori APIs
+- `@versori/sdk-react` - Contains React components for embedding Versori functionality in your application
 
 These packages are designed to be used for integrations facilitated by [Versori Hubs][hubs], a no-code integration
 platform for providing bespoke integrations to your customers.
 
 > This project is currently a work in progress, with the following outstanding tasks:
 >
-> -   [ ] Add API endpoints for reading hub configuration, available integrations, and whether the current user is
+> - [ ] Add API endpoints for reading hub configuration, available integrations, and whether the current user is
 >         connected to a given integration.
-> -   [ ] Add React components to simplify the rendering of your Integration Hub.
-> -   [ ] Add React components for collecting user credentials when connecting an integration by either API key or
+> - [ ] Add React components to simplify the rendering of your Integration Hub.
+> - [ ] Add React components for collecting user credentials when connecting an integration by either API key or
 >         OAuth 2.0.
-> -   [ ] Simple `<script />` tag approach which allows attaching a custom "Connect" button to our SDK.
-> -   [ ] Simple `<script />` tag approach which will render a full integration page with all integrations available to
+> - [ ] Simple `<script />` tag approach which allows attaching a custom "Connect" button to our SDK.
+> - [ ] Simple `<script />` tag approach which will render a full integration page with all integrations available to
 >         connect to. This implementation will support theming to match the look and feel of your application.
 
 ## Getting Started
@@ -95,10 +95,10 @@ To get started, clone the repository and install dependencies:
 npm install
 ```
 
-Then, build the packages in watch mode:
+Then, build the packages:
 
 ```shell
-npm run build:watch
+npm run build:sdk
 ```
 
 You can then run the example project(s), for example, using the React SPA example:
