@@ -26,8 +26,6 @@ jobs:
           service_account: ${{ env.WORKLOAD_IDENTITY_SERVICE_ACCOUNT }}
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
-      - name: NPM Login
-        run: npm run ar-login
       - name: Install dependencies
         run: npm ci
       - name: Build
