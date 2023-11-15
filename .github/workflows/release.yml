@@ -41,6 +41,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.VERSORI_REPOS_PAT }}
           HUSKY: 0
       - name: Publish SDK
-        run: gcloud storage rsync ./packages/sdk/dist gs://versori-assets/hubs/sdk/1.0.0/ -r --delete-unmatched-destination-objects
-        # run: gcloud storage rsync ./packages/sdk/dist gs://versori-assets/hubs/sdk/${{ steps.semantic_release.outputs.new_release_version }}/ -r --delete-unmatched-destination-objects
-        # if: steps.semantic_release.outputs.new_release_published == 'true'
+        run: gcloud storage rsync ./packages/sdk/dist gs://versori-assets/hubs/sdk/${{ steps.semantic_release.outputs.new_release_version }}/ -r --delete-unmatched-destination-objects
+        if: steps.semantic_release.outputs.new_release_published == 'true'
