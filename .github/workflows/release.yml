@@ -42,8 +42,7 @@ jobs:
           HUSKY: 0
       - name: Show versions created
         run: |
-          echo ${{ steps.semantic_release.outputs.new_release_version }}
-          echo ${{ steps.semantic_release.outputs.last_release_version }}
+          echo ${{ steps.semantic_release.outputs }}
           echo ${{ steps.semantic_release.outputs.new_release_published }}
       - name: Publish SDK
         run: gcloud storage rsync ./packages/sdk/dist gs://versori-assets/hubs/sdk/${{ steps.semantic_release.outputs.new_release_version }}/ -r --delete-unmatched-destination-objects
