@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/versori/versori-js-sdk/compare/v1.0.0...v1.0.1) (2023-11-20)
+
+
+### Bug Fixes
+
+* endpoint url. Add some basic reset css in sdk. ([151b49a](https://github.com/versori/versori-js-sdk/commit/151b49a7d3933ec186a69c3dc995c0de18019da0))
+
 # 1.0.0 (2023-11-15)
 
 
