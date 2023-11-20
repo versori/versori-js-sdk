@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/versori/versori-js-sdk/compare/v1.0.2...v1.0.3) (2023-11-20)
+
+
+### Bug Fixes
+
+* revert createConnection payload ([e86b8a6](https://github.com/versori/versori-js-sdk/commit/e86b8a65f40658771ecce58b5f8522492b53be52))
+
 ## [1.0.2](https://github.com/versori/versori-js-sdk/compare/v1.0.1...v1.0.2) (2023-11-20)
 
 
