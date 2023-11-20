@@ -400,15 +400,12 @@ class VersoriHubs {
 
     createConnection = async (name: string, formBody: ConnectionData, authType: string) => {
         try {
-            const connectResponse = await this.#hubsClient.createConnection(this.orgId, [
-                {},
-                {
-                    appId: this.#currentlyConnectingInfo.appId,
-                    authType,
-                    data: formBody,
-                    name: name,
-                },
-            ]);
+            const connectResponse = await this.#hubsClient.createConnection(this.orgId, {
+                appId: this.#currentlyConnectingInfo.appId,
+                authType,
+                data: formBody,
+                name: name,
+            });
             if (this.finaliseTo) {
                 await this.handlePostToClient();
             } else if (this.onConnected) {
