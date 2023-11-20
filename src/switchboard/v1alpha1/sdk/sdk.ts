@@ -46,7 +46,8 @@ type CreateUserParams = {
     connection: any;
 };
 
-const HUBS_BASE_PATH = 'https://platform.versori.com/apis/switchboard/v1/';
+// These can be overriden by the user depending on environment
+const HUBS_BASE_PATH = 'https://platform.versori.com/api/switchboard/v1alpha1';
 const USERS_BASE_PATH = 'https://platform.versori.com/apis/hubs-sdk/v1/';
 const ORIGIN_PATH = 'https://switchboard.versori.com/';
 
@@ -206,6 +207,8 @@ class VersoriHubs {
             baseUrl: this.hubsBasePath,
             headers: {
                 Authorization: `Bearer ${this.apiKey}`,
+                origin: '*',
+                mode: 'cors',
             },
         });
         this.#hubsClient = hubsClient.hubs;
