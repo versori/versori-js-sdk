@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/versori/versori-js-sdk/compare/v1.0.1...v1.0.2) (2023-11-20)
+
+
+### Bug Fixes
+
+* log integrations ([f196d59](https://github.com/versori/versori-js-sdk/commit/f196d59d190516dc2df6ec3785ba95a2b9300df3))
+
 ## [1.0.1](https://github.com/versori/versori-js-sdk/compare/v1.0.0...v1.0.1) (2023-11-20)
 
 
