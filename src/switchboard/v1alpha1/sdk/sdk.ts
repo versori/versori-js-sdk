@@ -288,6 +288,7 @@ class VersoriHubs {
             //     (integration) => integration.requiresUserAuth
             // )!;
 
+            console.log(integrations);
             if (!integrations.connections) {
                 this.onError({
                     message: 'No Authentication config found for this Integration',
@@ -399,12 +400,15 @@ class VersoriHubs {
 
     createConnection = async (name: string, formBody: ConnectionData, authType: string) => {
         try {
-            const connectResponse = await this.#hubsClient.createConnection(this.orgId, {
-                appId: this.#currentlyConnectingInfo.appId,
-                authType,
-                data: formBody,
-                name: name,
-            });
+            const connectResponse = await this.#hubsClient.createConnection(this.orgId, [
+                {},
+                {
+                    appId: this.#currentlyConnectingInfo.appId,
+                    authType,
+                    data: formBody,
+                    name: name,
+                },
+            ]);
             if (this.finaliseTo) {
                 await this.handlePostToClient();
             } else if (this.onConnected) {
