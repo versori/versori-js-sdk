@@ -26,3 +26,5 @@ gha-creds-*.json
 *.tgz
 *.svg
 
+
+/.nx/workspace-data
