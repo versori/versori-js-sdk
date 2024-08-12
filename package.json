@@ -41,9 +41,11 @@
     "vite-plugin-dts": "^3.6.0"
   },
   "dependencies": {
+    "@vue/language-core": "^2.0.29",
     "openapi-fetch": "^0.7.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "vue-tsc": "^2.0.29"
   },
   "workspaces": [
     "packages/*",
