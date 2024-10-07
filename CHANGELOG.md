@@ -1,3 +1,10 @@
+# [@versori/js-sdk-monorepo@1.0.0-next.2](https://github.com/versori/versori-js-sdk/compare/@versori/js-sdk-monorepo@1.0.0-next.1...@versori/js-sdk-monorepo@1.0.0-next.2) (2024-10-07)
+
+
+### Bug Fixes
+
+* dummy change to simulate semantic-release ([58b91d0](https://github.com/versori/versori-js-sdk/commit/58b91d0d6be3c0d0bc75b3d55020dee19060ceb0))
+
 # @versori/js-sdk-monorepo@1.0.0-next.1 (2024-10-07)
 
 
