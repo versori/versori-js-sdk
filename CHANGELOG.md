@@ -1,3 +1,19 @@
+# @versori/js-sdk-monorepo@1.0.0-next.1 (2024-10-07)
+
+
+### Features
+
+* add user proxy endpoints. Add base paths ([dbdfc33](https://github.com/versori/versori-js-sdk/commit/dbdfc33596bee7eebb507ad779415d47d58ca44c))
+* initial commit ([abdb499](https://github.com/versori/versori-js-sdk/commit/abdb499fedca8123a9b6d9fd2424529d2a8eef57))
+* initial implementation of Versori's new Embedded API ([631918d](https://github.com/versori/versori-js-sdk/commit/631918d3ebad07fe12356f38f23083139c6ee434))
+* VP-243 - Use env vars for base urls and loading of integrations. Create user onConnection callback ([e2a8895](https://github.com/versori/versori-js-sdk/commit/e2a889529617124176d692d82ed7f8ac93962408))
+
+
+### BREAKING CHANGES
+
+* v1 of this package works with legacy APIs, v2
+provides SDKs for the new Connect and Embedded APIs.
+
 ## [1.0.3](https://github.com/versori/versori-js-sdk/compare/v1.0.2...v1.0.3) (2023-11-20)
 
 
