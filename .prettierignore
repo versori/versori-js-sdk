@@ -3,8 +3,9 @@
 /dist
 /patches
 /public
+/storybook-static
+/server/*.js
 
-.idea
 .dockerignore
 .editorconfig
 .env.example
@@ -25,6 +26,11 @@ CHANGELOG.md
 gha-creds-*.json
 *.tgz
 *.svg
+*.DS_Store
 
+Tiltfile*
+*.woff2
 
-/.nx/workspace-data
+*.png
+*.avif
+*.sh

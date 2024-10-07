@@ -1,22 +1,59 @@
 {
   "name": "@versori/sdk",
-  "description": "SDK for Versori Hubs",
-  "version": "0.0.1",
-  "publishConfig": {
-    "access": "public"
-  },
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "files": ["dist/*"],
-  "license": "Apache License 2.0",
-  "engines": {
-    "node": ">=16.16.0",
-    "npm": ">=8.11.0"
+  "version": "2.0.0-beta.0",
+  "description": "TypeScript SDK to Versori APIs",
+  "files": ["dist"],
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./connect": {
+      "import": "./dist/esm/connect/index.js",
+      "require": "./dist/cjs/connect/index.js",
+      "types": "./dist/types/connect/index.d.ts"
+    },
+    "./embedded": {
+      "import": "./dist/esm/embedded/index.js",
+      "require": "./dist/cjs/embedded/index.js",
+      "types": "./dist/types/embedded/index.d.ts"
+    }
   },
   "scripts": {
-    "build": "vite build",
-    "watch": "vite build --watch"
+    "generate": "run-p generate:*",
+    "generate:connect": "openapi-ts -f openapi-ts.config.connect.ts",
+    "generate:embedded": "openapi-ts -f openapi-ts.config.embedded.ts",
+    "build": "npm-run-all -p build:* -s postbuild",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "postbuild": "./scripts/postbuild.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {}
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/versori/versori-js-sdk.git"
+  },
+  "keywords": ["ipaas", "integrations", "openapi"],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/versori/versori-js-sdk/issues"
+  },
+  "homepage": "https://github.com/versori/versori-js-sdk#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.53.6",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.4.2"
+  },
+  "dependencies": {
+    "@hey-api/client-fetch": "^0.4.0"
+  }
 }

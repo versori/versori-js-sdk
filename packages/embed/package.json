@@ -1,0 +1,43 @@
+{
+  "name": "@versori/embed",
+  "version": "2.0.0-beta.0",
+  "description": "Versori Embedded SDK",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/versori/versori-js-sdk.git"
+  },
+  "keywords": ["ipaas", "integrations", "openapi"],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/versori/versori-js-sdk/issues"
+  },
+  "homepage": "https://github.com/versori/versori-js-sdk#readme",
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.4.2",
+    "vite": "^5.4.8",
+    "vite-plugin-dts": "^4.2.3"
+  },
+  "dependencies": {
+    "@hey-api/client-fetch": "^0.4.0",
+    "@versori/sdk": "*",
+    "debug": "^4.3.7"
+  }
+}
