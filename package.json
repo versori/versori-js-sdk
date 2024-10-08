@@ -1,6 +1,5 @@
 {
   "name": "@versori/js-sdk-monorepo",
-  "version": "1.0.0-next.1",
   "private": true,
   "engines": {
     "node": ">=18",

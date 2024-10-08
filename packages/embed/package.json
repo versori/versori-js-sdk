@@ -1,9 +1,14 @@
 {
   "name": "@versori/embed",
-  "version": "2.0.0-beta.0",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Versori Embedded SDK",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -19,15 +24,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/versori/versori-js-sdk.git"
+    "url": "git+https://github.com/versori/versori-js-sdk.git",
+    "directory": "packages/embed"
   },
-  "keywords": ["ipaas", "integrations", "openapi"],
+  "keywords": [
+    "ipaas",
+    "integrations",
+    "openapi"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/versori/versori-js-sdk/issues"
   },
-  "homepage": "https://github.com/versori/versori-js-sdk#readme",
+  "homepage": "https://github.com/versori/versori-js-sdk/tree/main/packages/embed",
   "devDependencies": {
     "@types/debug": "^4.1.12",
     "npm-run-all": "^4.1.5",
@@ -37,7 +47,7 @@
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.4.0",
-    "@versori/sdk": "*",
+    "@versori/sdk": "1.0.0",
     "debug": "^4.3.7"
   }
 }
