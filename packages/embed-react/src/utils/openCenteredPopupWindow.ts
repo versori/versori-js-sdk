@@ -5,12 +5,7 @@ interface CenteredPopupWindowProps {
     width: number;
 }
 
-export function openCenteredPopupWindow({
-    url,
-    title,
-    width,
-    height,
-}: CenteredPopupWindowProps): Window | null | undefined {
+export function openCenteredPopupWindow({ url, title, width, height }: CenteredPopupWindowProps): Window {
     /* Fixes dual-screen position                             Most browsers      Firefox */
     const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
     const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
@@ -32,20 +27,16 @@ export function openCenteredPopupWindow({
     const top = internalHeight / 2 - height / 2 + dualScreenTop;
     /* Open new window */
 
-    let newWindow: Window | null | undefined;
-    try {
-        newWindow = window.open(
-            url,
-            title,
-            `scrollbars=yes, width=${width}, height=${height}, top=${top}, left=${left}`
-        );
-        if (!newWindow) {
-            throw new Error('Popup was blocked');
-        }
-        newWindow.focus();
-    } catch (error) {
-        console.error('Failed to open popup:', error);
+    const childWindow = window.open(
+        url,
+        title,
+        `scrollbars=yes, width=${width}, height=${height}, top=${top}, left=${left}`
+    );
+    if (!childWindow) {
+        throw new Error('Failed to open popup window');
     }
 
-    return newWindow;
+    childWindow.focus();
+
+    return childWindow;
 }

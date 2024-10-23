@@ -20,15 +20,15 @@ export const Default: Story = {
             <VersoriEmbeddedProvider
                 options={{
                     endUserAuth: {
-                        userId: 'dan',
+                        userId: 'sean',
                         type: 'api-key',
                         location: {
                             in: 'header',
                             name: 'X-Versori-Internal-Token',
                         },
-                        token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImM0Yzk4Nzk5LThjNGMtNDBhZC1iN2U5LTcwMjFiZjNhMjkwYSJ9.eyJleHAiOjE3MzA2Njk1MjgsImlhdCI6MTcyODA0MTUyOCwiaXNzIjoiaHR0cDovL2ludGVybmFsLmFjY291bnRzLnN2Yy5jbHVzdGVyLmxvY2FsIiwianRpIjoiYzY2ZWEzNzMtNGU1NS00MmJhLThmZmItMzVjMzgwN2RlOTZlIiwic3ViIjoidXNlcjowMjZjMDk0OC0xYTA4LTRhM2EtOGM2Mi1hMzJiNWRkZDI0ZGQifQ.jaotWfjg1RbLW45llH9QwDKdYNf4--GEPAKRPv0c0Eyvh0SW8mv6MqtVdwMSNyi0MFLr9-IzwHiki63Hfg6g_56cop5EcBPxaFS58owdevEa4h-EyLFOtkjI2rqUCqsIE2oCeTgW0XcRhWTSPMeKnwtD-T2zS4_XUw4yZfKRRaDXgb_QGxL4uEYV1NiS3K6RkqlKIKH6PQotpRXgga6yqcQ9H6eEGFiVC-Km4FDhN48T-HqWLmlL40-lXK79WS9uVY8ExTGfg---PNpnfclUbfAvB1toE98vqtoyladzRa6RtQUzj5ExTpPz_h8HNSNz2rTNl-Ou7iCS8-pbPK7AdA',
+                        token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImM0Yzk4Nzk5LThjNGMtNDBhZC1iN2U5LTcwMjFiZjNhMjkwYSJ9.eyJleHAiOjE3MzE2NTk2NjgsImlhdCI6MTcyOTAzMTY2OCwiaXNzIjoiaHR0cDovL2ludGVybmFsLmFjY291bnRzLnN2Yy5jbHVzdGVyLmxvY2FsIiwianRpIjoiMjgyNDgyNTQtODM1ZC00MjNlLWJhZjItNDEwZGNlNGRmZTQxIiwic3ViIjoidXNlcjowMjZjMDk0OC0xYTA4LTRhM2EtOGM2Mi1hMzJiNWRkZDI0ZGQifQ.O9Jm0z0AxYz2nY3WuhAkpCJ-i8wEmcYdnKlVd4EGtVaYTC_1a8yDeUIkAlT0ICbCcV7vQp_AoLds5-p2y-diZfu3ocxyRRyb_g9qJaN-CVxbAGEn9jNDan0o-95PqWPrpULqvVX4zRF7PW9pzDjLEiUnsxdrYzlE6xzz0c3kkNiu5-JzpZay1Trw7znStYKhDokzxCf7MGTxVpxU65UFYuZUyEWvU4XGsxT7rW3DCFA3qcFH1XUFsUpL_uRLzMo8dyab-1w165ndeV_P1Fh42Xr_vzJw2pit6lurlXlNuGr6NfGomfNoh_oRK7cvtJEvXMDdRIOQLQ_XquzzQ_H4Xg',
                     },
-                    hubId: '01J9BEH3KMRP7NXJXZP0E7J1MN',
+                    hubId: '01J9SFXXT3Y44JY0HGYCR3YXGH',
                     primaryCredential: {
                         type: 'auto',
                         generate: async () => ({ name: '', type: 'string', data: { value: 'secret-primary' } }),
@@ -36,6 +36,9 @@ export const Default: Story = {
                     sdkOptions: {
                         baseUrl: 'http://localhost:8900/embedded/v1',
                     },
+                    clientOptions: {
+                        oauth2CallbackOrigin: 'http://localhost:3000',
+                    }
                 }}
             >
                 <Story />

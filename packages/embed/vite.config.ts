@@ -21,6 +21,7 @@ export default defineConfig({
             formats: ['es', 'umd'],
             fileName: 'index',
         },
+        sourcemap: true,
         rollupOptions: {
             treeshake: 'safest',
         },

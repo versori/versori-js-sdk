@@ -4,20 +4,21 @@ import {
     Activation,
     ActivationCreate,
     ActivationPage,
+    AuthSchemeConfig,
     ConnectionCreate,
     embeddedApi,
     EmbeddedIntegration,
     EmbeddedIntegrationPage,
     EndUser,
     EndUserCreate,
+    Hub,
     InitialiseOAuth2ConnectionRequest,
     InitialiseOAuth2ConnectionResponse,
     ListEndUserActivationsData,
     ListEndUserIntegrationsData,
 } from '@versori/sdk/embedded';
 import createDebug from 'debug';
-
-const debug = createDebug('versori:embed:EmbedClient');
+import { CredentialSource } from './types';
 
 export type ListIntegrationOptions = ListEndUserIntegrationsData['query'];
 export type ListEndUserActivationOptions = ListEndUserActivationsData['query'];
@@ -35,16 +36,35 @@ type OptionalKeys<T> = Exclude<{ [K in keyof T]: {} extends Pick<T, K> ? K : nev
  */
 type OptionalFields<T extends Record<string, unknown>> = Pick<T, OptionalKeys<T>>;
 
+export type EmbedClientOptions = {
+    oauth2CallbackOrigin?: string;
+}
+
+const debug = createDebug('versori:embed:EmbedClient');
+
 export class EmbedClient {
     readonly userExternalId: string;
+    readonly oauth2CallbackOrigin: string;
+
     readonly #client: Client;
     readonly #hubId: string;
+    readonly #primaryCredentialSource: CredentialSource;
+
     #endUser?: EndUser;
 
-    constructor(client: Client, hubId: string, userExternalId: string) {
+    constructor(client: Client, hubId: string, userExternalId: string, primaryCredentialSource: CredentialSource, opts: EmbedClientOptions = {}) {
+        this.userExternalId = userExternalId;
+
         this.#client = client;
         this.#hubId = hubId;
-        this.userExternalId = userExternalId;
+        this.#primaryCredentialSource = primaryCredentialSource;
+
+        const baseUrl = this.#client.getConfig().baseUrl;
+        if (!baseUrl) {
+            throw new Error('client not initialized with baseUrl');
+        }
+
+        this.oauth2CallbackOrigin = opts.oauth2CallbackOrigin ? opts.oauth2CallbackOrigin : new URL(baseUrl).origin;
     }
 
     get endUser(): EndUser | undefined {
@@ -85,6 +105,22 @@ export class EmbedClient {
         }
 
         this.#endUser = data;
+    }
+
+    async tryCreateEndUser(authSchemeConfig: AuthSchemeConfig): Promise<EndUser> {
+        if (this.#primaryCredentialSource.type !== 'auto') {
+            throw new Error('Cannot create end user when primary credential source is not auto');
+        }
+
+        const credential = await this.#primaryCredentialSource.generate();
+
+        return this.createEndUser({
+            name: `${this.userExternalId}_primary`,
+            variables: [],
+            credentials: {
+                action: [{ authSchemeConfig, credential }],
+            },
+        });
     }
 
     async createEndUser(
@@ -188,6 +224,21 @@ export class EmbedClient {
         });
 
         return data;
+    }
+
+    async getHub(): Promise<Hub> {
+        const { data } = await embeddedApi.getHub({
+            ...this.#defaultOptions(),
+            path: {
+                hub_id: this.#hubId,
+            },
+        });
+
+        return data;
+    }
+
+    get primaryCredentialSource(): CredentialSource {
+        return this.#primaryCredentialSource;
     }
 
     #defaultOptions<T = Record<string, unknown>>(): Options<T, true> {

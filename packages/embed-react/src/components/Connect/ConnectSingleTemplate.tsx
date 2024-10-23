@@ -1,6 +1,6 @@
 import { Button, Flex, Heading, Spinner } from '@radix-ui/themes';
 import { ConnectionCredentialCreate, CredentialCreate, HubConnectionTemplate } from '@versori/sdk/embedded';
-import { SyntheticEvent, useCallback, useState } from 'react';
+import { SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { ulid } from 'ulid';
 import * as yup from 'yup';
 import { useIsMounted } from '../../internal/hooks/useIsMounted';
@@ -31,6 +31,7 @@ export function ConnectSingleTemplate({
     const [credential, setCredential] = useState(newCredentialCreate(authSchemeConfig));
     const [errors, setErrors] = useState<yup.ValidationError[]>([]);
     const isMounted = useIsMounted();
+    const formRef = useRef<HTMLFormElement>(null);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -79,11 +80,36 @@ export function ConnectSingleTemplate({
 
     const onReset = useCallback(() => setCredential(newCredentialCreate(authSchemeConfig)), [authSchemeConfig]);
 
+    useEffect(() => {
+        const connectionCredentialCreate: ConnectionCredentialCreate = {
+            credential,
+            authSchemeConfig,
+        };
+
+        setErrors(validateConnectionCredentialCreate(connectionCredentialCreate))
+    }, [credential, authSchemeConfig]);
+
+    useEffect(() => {
+        if (errors.length > 0) {
+            return;
+        }
+
+        if (authSchemeConfig.schemeType !== 'oauth2') {
+            return;
+        }
+
+        if (authSchemeConfig.grant.grantType !== 'authorization_code') {
+            return;
+        }
+
+        formRef.current?.requestSubmit();
+    }, [errors, authSchemeConfig]);
+
     return (
         <Flex direction="column" gap="4" {...commonProps}>
             <Heading as="h2">Connect to {name}</Heading>
             <Flex direction="column" gap="4" asChild>
-                <form onSubmit={onSubmit} onReset={onReset}>
+                <form ref={formRef} onSubmit={onSubmit} onReset={onReset}>
                     <CredentialInputGroup
                         id={credentialId}
                         connectorId={connectorId}
@@ -97,9 +123,8 @@ export function ConnectSingleTemplate({
                         <Button variant="outline" type="button" onClick={onCancel} disabled={isLoading}>
                             Cancel
                         </Button>
-                        <Button variant="solid" type="submit" disabled={isLoading}>
+                        <Button variant="solid" type="submit" disabled={errors.length > 0} loading={isLoading}>
                             Connect
-                            <Spinner loading={isLoading} />
                         </Button>
                     </Flex>
                 </form>

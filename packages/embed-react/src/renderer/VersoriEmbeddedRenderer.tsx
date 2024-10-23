@@ -1,8 +1,7 @@
 import { Dialog } from '@radix-ui/themes';
 import createDebug from 'debug';
 import { useCallback } from 'react';
-import { DialogContent } from '../components/DialogContent/DialogContent';
-import { IntegrationPage } from '../components/IntegrationPage/IntegrationPage';
+import { DialogContent, IntegrationPage } from '../components';
 import { useDisconnectActivation } from '../hooks/useDisconnectActivation';
 import { useEmbeddedIntegrationPageQuery } from '../hooks/useEmbeddedIntegrationPageQuery';
 import { usePageSelectedState } from '../hooks/usePageSelectedState';
@@ -61,7 +60,7 @@ export function VersoriEmbeddedRenderer() {
         : '';
 
     return (
-        <Dialog.Root open={!!selectedState && !!activeIntegrationId} onOpenChange={onOpenChange}>
+        <>
             <IntegrationPage
                 totalCount={totalCount}
                 totalConnected={totalConnected}
@@ -73,16 +72,19 @@ export function VersoriEmbeddedRenderer() {
                 onConnectClick={onConnectClick}
                 onManageClick={onManageClick}
                 onDisconnectClick={onDisconnectClick}
+                isConnectingId={activeIntegrationId}
             />
-            <DialogContent title="Connect" description="Activate this integration by connecting your account">
-                {selectedState?.method === 'connect' ? (
-                    <ConnectModalContent
-                        integrationId={activeIntegrationId}
-                        onCancel={onCancel}
-                        onComplete={onComplete}
-                    />
-                ) : null}
-            </DialogContent>
-        </Dialog.Root>
+            <Dialog.Root open={!!selectedState && !!activeIntegrationId} onOpenChange={onOpenChange}>
+                <DialogContent title="Connect" description="Activate this integration by connecting your account">
+                    {selectedState?.method === 'connect' ? (
+                        <ConnectModalContent
+                            integrationId={activeIntegrationId}
+                            onCancel={onCancel}
+                            onComplete={onComplete}
+                        />
+                    ) : null}
+                </DialogContent>
+            </Dialog.Root>
+        </>
     );
 }

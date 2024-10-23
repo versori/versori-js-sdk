@@ -36,7 +36,10 @@ const credentialCreateSchema: ObjectSchema<CredentialCreate> = yup.object({
                     });
                 case 'oauth2-code':
                     // not sure what this credential type is actually meant to be?
-                    return schema.shape({});
+                    return schema.shape({
+                        code: yup.string().required('Not connected'),
+                        state: yup.string().required(),
+                    });
                 case 'oauth2-password':
                     return schema.shape({
                         username: yup.string().required(),

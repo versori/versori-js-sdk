@@ -1,7 +1,6 @@
 import { Activation } from '@versori/sdk/embedded';
 import { Connect } from '../../components/Connect/Connect';
 import { useConnectIntegration } from '../../hooks/useConnectIntegration';
-import { useEmbeddedIntegrationQuery } from '../../hooks/useEmbeddedIntegrationQuery';
 import { useVersoriEmbeddedContext } from '../../provider/useVersoriEmbeddedContext';
 
 export type ConnectModalContentProps = {
@@ -12,8 +11,7 @@ export type ConnectModalContentProps = {
 
 export function ConnectModalContent({ integrationId, onCancel, onComplete }: ConnectModalContentProps) {
     const { client } = useVersoriEmbeddedContext();
-    const { isLoading, error, integration } = useEmbeddedIntegrationQuery({ integrationId });
-    const { onConnect } = useConnectIntegration({ onComplete });
+    const { onConnect, isLoading, error, integration, primaryCredentialSource } = useConnectIntegration({ onComplete, integrationId });
 
     if (isLoading) {
         return <div>Loading</div>;
@@ -24,6 +22,6 @@ export function ConnectModalContent({ integrationId, onCancel, onComplete }: Con
     }
 
     return (
-        <Connect userId={client.userExternalId} integration={integration} onConnect={onConnect} onCancel={onCancel} />
+        <Connect userId={client.userExternalId} integration={integration!} onConnect={onConnect} onCancel={onCancel} />
     );
 }

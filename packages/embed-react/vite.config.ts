@@ -26,10 +26,16 @@ export default defineConfig({
             formats: ['es', 'umd'],
             fileName: 'index',
         },
-
+        sourcemap: true,
         rollupOptions: {
             treeshake: 'safest',
-            external: ['react'],
+            external: ['react', '@radix-ui/themes'],
+            output: {
+                globals: {
+                    react: 'React',
+                    '@radix-ui/themes': 'RadixThemes',
+                },
+            },
         },
     },
 });

@@ -10,17 +10,19 @@ export type UseEmbeddedIntegrationQueryParams = {
 
 export type UseEmbeddedIntegrationQueryHookLoading = Record<string, unknown> & {
     isLoading: true;
-    error?: null;
+    error?: ApiError;
+    integration?: EmbeddedIntegration;
 };
 
 export type UseEmbeddedIntegrationQueryHookError = Record<string, unknown> & {
     isLoading: false;
     error: ApiError;
+    integration?: EmbeddedIntegration;
 };
 
 type UseEmbeddedIntegrationQueryHookSuccess = {
     isLoading: false;
-    error?: null;
+    error?: ApiError;
 
     integration: EmbeddedIntegration;
 };

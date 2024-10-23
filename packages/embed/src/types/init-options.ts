@@ -1,5 +1,6 @@
 import { Client } from '@hey-api/client-fetch';
 import { SdkConfig } from '@versori/sdk';
+import { EmbedClientOptions } from '../EmbedClient';
 import { CredentialSource } from './credential-source';
 import { EndUserAuth } from './end-user-auth';
 
@@ -32,4 +33,6 @@ export type InitOptions = {
      * a new client will be created, or a custom client can be provided.
      */
     overrideClient?: boolean | Client;
+
+    clientOptions?: EmbedClientOptions;
 };

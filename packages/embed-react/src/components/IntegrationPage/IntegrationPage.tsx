@@ -16,6 +16,11 @@ export type IntegrationPageProps = EmbeddedIntegrationPage &
         onConnectClick: (integrationId: string) => void;
         onManageClick: (integrationId: string) => void;
         onDisconnectClick: (integrationId: string) => void;
+
+        /**
+         * isConnectingId is an optional integration ID which is currently being connected
+         */
+        isConnectingId?: string;
     };
 
 export function IntegrationPage({
@@ -27,6 +32,7 @@ export function IntegrationPage({
     onConnectClick,
     onManageClick,
     onDisconnectClick,
+    isConnectingId,
 }: IntegrationPageProps) {
     return (
         <Flex id={id} className={cx(className, 'vi-IntegrationPage')} direction="column">
@@ -70,6 +76,7 @@ export function IntegrationPage({
                         onConnectClick={onConnectClick}
                         onManageClick={onManageClick}
                         onDisconnectClick={onDisconnectClick}
+                        isConnecting={isConnectingId === integration.id}
                     />
                 ))}
             </Grid>

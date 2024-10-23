@@ -15,7 +15,7 @@ export function parseEndUserAuth(auth: EndUserAuth): SdkAuth {
                 location: {
                     in: 'header',
                     name: 'Authorization',
-                    prefix: 'Bearer',
+                    prefix: 'JWT',
                 },
             };
         default:

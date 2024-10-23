@@ -46,6 +46,7 @@ export type IntegrationTileProps = CommonComponentProps & {
     onConnectClick: (integrationId: string) => void;
     onManageClick: (integrationId: string) => void;
     onDisconnectClick: (integrationId: string) => void;
+    isConnecting?: boolean;
 };
 
 export function IntegrationTile({
@@ -59,6 +60,7 @@ export function IntegrationTile({
     onConnectClick,
     onManageClick,
     onDisconnectClick,
+    isConnecting,
 }: IntegrationTileProps) {
     const { defaults } = useVersoriEmbeddedContext();
 
@@ -112,7 +114,12 @@ export function IntegrationTile({
                 </Flex>
                 <Flex className="vi-IntegrationTile__Connect" justify="center" align="center" gap="2" width="100%">
                     <Flex flexGrow="1" asChild>
-                        <ConnectButton isActivated={isActivated} isDeployed={isDeployed} onClick={onClick} />
+                        <ConnectButton
+                            isActivated={isActivated}
+                            isDeployed={isDeployed}
+                            onClick={onClick}
+                            loading={isConnecting}
+                        />
                     </Flex>
                     {isActivated && (
                         <DropdownMenu.Root>

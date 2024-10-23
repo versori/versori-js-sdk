@@ -1,4 +1,5 @@
 import { Button, Dialog, Flex, IconButton, Text } from '@radix-ui/themes';
+import { getOAuth2Response } from '@versori/embed';
 import createDebug from 'debug';
 import { SyntheticEvent, useCallback, useEffect, useRef } from 'react';
 import CloseIcon from '../../../assets/close-icon.svg';
@@ -28,12 +29,13 @@ export type OAuth2Error = {
 
 export type OAuth2WindowManagerProps = {
     open: boolean;
-    channelId: string;
     url: string;
 
     onSuccess: (code: string, state: string) => void;
     onError: (info: OAuth2Error, state: string) => void;
     onCancel: () => void;
+
+    callbackOrigin?: string;
 };
 
 /**
@@ -43,60 +45,25 @@ export type OAuth2WindowManagerProps = {
  *
  * @constructor
  */
-export function OAuth2WindowManager({ open, channelId, url, onSuccess, onError, onCancel }: OAuth2WindowManagerProps) {
-    const windowRef = useRef<Window | null | undefined>(null);
+export function OAuth2WindowManager({ open, url, onSuccess, onError, onCancel, callbackOrigin }: OAuth2WindowManagerProps) {
+    const windowRef = useRef<Window | undefined>();
 
     useEffect(() => {
         if (!open) {
-            return () => {};
+            return;
         }
 
         debug('initiating authorization_code flow', url);
 
         const state = new URL(url).searchParams.get('state');
 
-        const sessionKey = `oauth2-state-${state}`;
+        if (!state) {
+            debug('ERROR: missing state in url', url);
 
-        sessionStorage.setItem(sessionKey, channelId);
+            onError({ error: 'internal', error_description: 'state parameter missing from /authorize URL' }, '');
 
-        const channel = new BroadcastChannel(channelId);
-
-        channel.onmessage = (event) => {
-            debug('received message');
-
-            if (typeof event.data !== 'string') {
-                debug('ERROR: received message is not a string', event.data);
-
-                onError({ error: 'internal' }, '');
-
-                return;
-            }
-
-            const params = new URLSearchParams(event.data);
-
-            if (params.has('error')) {
-                onError(
-                    {
-                        error: params.get('error')!,
-                        error_description: params.get('error_description'),
-                        error_uri: params.get('error_uri'),
-                    },
-                    params.get('state') ?? ''
-                );
-
-                return;
-            }
-
-            if (!params.has('code')) {
-                debug('ERROR: missing code in response', event.data);
-
-                onError({ error: 'internal' }, '');
-
-                return;
-            }
-
-            onSuccess(params.get('code')!, params.get('state')!);
-        };
+            return;
+        }
 
         debug('opening authorize window', url);
 
@@ -107,12 +74,26 @@ export function OAuth2WindowManager({ open, channelId, url, onSuccess, onError, 
             height: 600,
         });
 
-        return () => {
-            debug('closing channel');
-            channel.close();
-            sessionStorage.removeItem(sessionKey);
-        };
-    }, [channelId, onError, onSuccess, open, url]);
+        windowRef.current.addEventListener('', onCancel);
+
+        getOAuth2Response(windowRef.current, state, { target: callbackOrigin }).then(response => {
+            if ('code' in response) {
+                onSuccess(response.code, response.state);
+
+                return;
+            }
+
+            if ('error' in response) {
+                onError(response, state);
+
+                return;
+            }
+
+            debug('ERROR: unexpected response from /authorize window', response);
+
+            onError({ error: 'internal', error_description: 'unexpected response from /authorize window' }, state);
+        });
+    }, [onError, onSuccess, onCancel, open, url]);
 
     const onFocusWindow = useCallback((e: SyntheticEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -131,11 +112,19 @@ export function OAuth2WindowManager({ open, channelId, url, onSuccess, onError, 
         [onCancel]
     );
 
+    const onCancelInternal = useCallback((e: SyntheticEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        windowRef.current?.close();
+
+        onCancel();
+    }, [onCancel]);
+
     return (
         <Dialog.Root open={open} onOpenChange={onOpenChange}>
             <Dialog.Content size="1" maxWidth="300px">
                 <Flex justify="end">
-                    <IconButton variant="ghost" onClick={onCancel}>
+                    <IconButton variant="ghost" onClick={onCancelInternal}>
                         <CloseIcon />
                     </IconButton>
                 </Flex>

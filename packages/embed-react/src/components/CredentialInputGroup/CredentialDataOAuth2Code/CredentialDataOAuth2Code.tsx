@@ -1,17 +1,13 @@
-import { Label } from '@radix-ui/react-label';
-import { Box, Button, Flex, TextField, Tooltip } from '@radix-ui/themes';
+import { Button, Flex, Text } from '@radix-ui/themes';
 import { InitialiseOAuth2ConnectionResponse } from '@versori/sdk/connect';
 import createDebug from 'debug';
 import invariant from 'invariant';
-import { startTransition, SyntheticEvent, useCallback, useEffect, useId, useState } from 'react';
-import InfoCircledIcon from '../../../assets/info-circled.svg';
+import { startTransition, SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useVersoriEmbeddedContext } from '../../../provider/useVersoriEmbeddedContext';
 import { CredentialDataProps } from '../types';
 import { OAuth2Error, OAuth2WindowManager } from './OAuth2WindowManager';
 
 const debug = createDebug('embed:credentials:CredentialDataOAuth2Code');
-
-const CODE_HELP = 'Code is automatically populated once the user completes the Authorization flow';
 
 export function CredentialDataOAuth2Code({
     connectorId,
@@ -20,8 +16,7 @@ export function CredentialDataOAuth2Code({
     onDataChange,
 }: CredentialDataProps<'oauth2-code'>) {
     const { client } = useVersoriEmbeddedContext();
-    const channelId = useId();
-    const [isConnecting, setIsConnecting] = useState(false);
+    const [isConnecting, setIsConnecting] = useState(true);
 
     invariant(authSchemeConfig.schemeType === 'oauth2', 'Expected scheme type to be oauth2');
     invariant(
@@ -81,39 +76,30 @@ export function CredentialDataOAuth2Code({
         [onDataChange]
     );
 
-    const onError = useCallback((info: OAuth2Error) => {
-        debug('OAuth2 error', info);
-        setIsConnecting(false);
-    }, []);
+    const onError = useCallback(
+        (info: OAuth2Error) => {
+            debug('OAuth2 error', info);
+            onDataChange({ code: '', state: '' });
+            setIsConnecting(false);
+        },
+        [onDataChange]
+    );
+
     const onCancel = useCallback(() => setIsConnecting(false), []);
 
     return (
-        <Flex align="end" gap="2">
-            <Button variant="solid" disabled={isLoading || isConnecting} onClick={onAuthorize}>
-                Authorize
+        <Flex align="center" justify="end" gap="2">
+            <Text>{data.code ? 'Connected' : 'Not Connected'}</Text>
+            <Button variant="outline" disabled={isLoading || isConnecting} onClick={onAuthorize}>
+                Reauthorize
             </Button>
-            <Flex flexGrow="1">
-                <Box width="100%" asChild>
-                    <Label>
-                        <Flex align="center" gap="1">
-                            Code
-                            <Tooltip content={CODE_HELP}>
-                                <Flex>
-                                    <InfoCircledIcon />
-                                </Flex>
-                            </Tooltip>
-                        </Flex>
-                        <TextField.Root disabled value={data.code ?? ''} />
-                    </Label>
-                </Box>
-            </Flex>
             <OAuth2WindowManager
-                open={isConnecting}
-                channelId={channelId}
+                open={!isLoading && isConnecting}
                 url={initialiseResponse?.url ?? ''}
                 onSuccess={onSuccess}
                 onError={onError}
                 onCancel={onCancel}
+                callbackOrigin={client.oauth2CallbackOrigin}
             />
         </Flex>
     );

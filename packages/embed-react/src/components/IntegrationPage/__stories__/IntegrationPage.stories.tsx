@@ -19,7 +19,7 @@ const meta = {
         (Story) => (
             <VersoriEmbeddedContext.Provider
                 value={{
-                    client: new EmbedClient(embeddedApi.client, 'hubId', 'userId'),
+                    client: new EmbedClient(embeddedApi.client, 'hubId', 'userId', { type: 'manual' }),
                     defaults: DEFAULTS,
                 }}
             >
