@@ -20,7 +20,7 @@ export const Default: Story = {
             <VersoriEmbeddedProvider
                 options={{
                     endUserAuth: {
-                        userId: 'sean',
+                        userId: 'dan',
                         type: 'api-key',
                         location: {
                             in: 'header',
