@@ -18,7 +18,8 @@
     "fmt:prettier": "prettier --write '**/*'",
     "lint": "run-p lint:*",
     "lint:eslint": "eslint .",
-    "lint:prettier": "prettier --check '**/*'"
+    "lint:prettier": "prettier --check '**/*'",
+    "release": "semantic-release-monorepo"
   },
   "dependencies": {
     "react": "^18.3.1",
