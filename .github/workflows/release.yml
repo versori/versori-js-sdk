@@ -28,13 +28,7 @@ jobs:
         with:
           app-id: ${{ vars.VERSORI_RELEASER_APP_ID }}
           private-key: ${{ secrets.VERSORI_RELEASER_PRIVATE_KEY }}
-      - name: Semantic Release
-        id: semantic_release
-        uses: cycjimmy/semantic-release-action@v4
-        with:
-          extra_plugins: |
-            @semantic-release/changelog@^6.0.3
-            @semantic-release/git@^10.0.1
+      - name: Release
+        run: npm run release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          HUSKY: 0
