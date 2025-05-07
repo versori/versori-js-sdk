@@ -1,4 +1,3 @@
-import type { AuthSchemeConfig, CredentialCreate, CredentialType } from '@versori/sdk/connect';
 import { ComponentType, useCallback } from 'react';
 import * as yup from 'yup';
 import { CredentialDataBasicAuth } from './CredentialDataBasicAuth';
@@ -8,6 +7,7 @@ import { CredentialDataOAuth2Code } from './CredentialDataOAuth2Code';
 import { CredentialDataOAuth2Password } from './CredentialDataOAuth2Password';
 import { CredentialDataString } from './CredentialDataString';
 import { CredentialData, CredentialDataProps } from './types';
+import { AuthSchemeConfig, Credential, CredentialType } from '../../../../sdk/src/platform';
 
 type CredentialDataComponentTypes = {
     [K in CredentialType]: ComponentType<CredentialDataProps<K>>;
@@ -22,30 +22,29 @@ const CREDENTIAL_DATA_COMPONENTS: CredentialDataComponentTypes = {
     'oauth2-code': CredentialDataOAuth2Code,
     'oauth2-password': CredentialDataOAuth2Password,
     'oauth2-token': () => <div>OAuth2 Token</div>,
-    'custom-function': () => <div>Custom Function</div>,
-    'jwt-bearer': () => <div>JWT Bearer</div>,
+    'oauth1': () => <div>OAuth1</div>,
     certificate: () => <div>Certificate</div>,
 };
 
 function componentForCredential<T extends CredentialType>(
-    credential: CredentialCreate
+    credential: Credential
 ): [ComponentType<CredentialDataProps<T>>, CredentialData<T>] {
     return [CREDENTIAL_DATA_COMPONENTS[credential.type as T], credential.data as CredentialData<T>];
 }
 
 export type CredentialInputGroupProps = {
     id: string;
-    connectorId: string;
+    systemId: string;
     name: string;
     authSchemeConfig: AuthSchemeConfig;
-    credential: CredentialCreate;
+    credential: Credential;
     errors?: yup.ValidationError[];
-    onChange: (id: string, credential: CredentialCreate) => void;
+    onChange: (id: string, credential: Credential) => void;
 };
 
 export function CredentialInputGroup({
     id,
-    connectorId,
+    systemId,
     name,
     authSchemeConfig,
     credential,
@@ -62,8 +61,8 @@ export function CredentialInputGroup({
     return (
         <Component
             id={id}
-            connectorId={connectorId}
             name={`${name}.data`}
+            systemId={systemId}
             authSchemeConfig={authSchemeConfig}
             data={data}
             onDataChange={onDataChange}

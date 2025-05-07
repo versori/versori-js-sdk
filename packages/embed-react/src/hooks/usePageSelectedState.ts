@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 export type UsePageSelectedStateHookState = {
     method: 'connect' | 'manage';
-    integrationId: string;
+    projectId: string;
 };
 
 export type UsePageSelectedStateHook = {
@@ -18,9 +18,9 @@ export function usePageSelectedState(): UsePageSelectedStateHook {
 
     const onOpenChange = useCallback((open: boolean) => setState((state) => (open ? state : undefined)), []);
 
-    const onConnectClick = useCallback((id: string) => setState({ method: 'connect', integrationId: id }), []);
+    const onConnectClick = useCallback((id: string) => setState({ method: 'connect', projectId: id }), []);
 
-    const onManageClick = useCallback((id: string) => setState({ method: 'manage', integrationId: id }), []);
+    const onManageClick = useCallback((id: string) => setState({ method: 'manage', projectId: id }), []);
 
     return {
         state,

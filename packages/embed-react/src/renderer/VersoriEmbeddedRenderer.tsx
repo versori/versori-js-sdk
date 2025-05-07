@@ -3,9 +3,9 @@ import createDebug from 'debug';
 import { useCallback } from 'react';
 import { DialogContent, IntegrationPage } from '../components';
 import { useDisconnectActivation } from '../hooks/useDisconnectActivation';
-import { useEmbeddedIntegrationPageQuery } from '../hooks/useEmbeddedIntegrationPageQuery';
 import { usePageSelectedState } from '../hooks/usePageSelectedState';
 import { ConnectModalContent } from './ConnectModalContent';
+import { useEmbeddedProjectPageQuery } from '../hooks/useEmbeddedIntegrationPageQuery';
 
 const debug = createDebug('versori:embed:renderer');
 
@@ -13,15 +13,9 @@ export function VersoriEmbeddedRenderer() {
     const {
         isLoading,
         error,
-        totalCount,
-        integrations,
-        hasPreviousPage,
-        onPreviousPage,
-        hasNextPage,
-        onNextPage,
-        totalConnected,
+        projects,
         refresh,
-    } = useEmbeddedIntegrationPageQuery({});
+    } = useEmbeddedProjectPageQuery({});
 
     const { onDisconnectIntegration } = useDisconnectActivation();
 
@@ -55,30 +49,24 @@ export function VersoriEmbeddedRenderer() {
         return <div>Error: {error.message}</div>;
     }
 
-    const activeIntegrationId = selectedState
-        ? (integrations.find((int) => int.id === selectedState?.integrationId)?.id ?? '')
+    const activeProjectId = selectedState
+        ? (projects.find((p) => p.id === selectedState?.projectId)?.id ?? '')
         : '';
 
     return (
         <>
             <IntegrationPage
-                totalCount={totalCount}
-                totalConnected={totalConnected}
-                integrations={integrations}
-                hasPreviousPage={hasPreviousPage}
-                onPreviousPage={onPreviousPage}
-                hasNextPage={hasNextPage}
-                onNextPage={onNextPage}
+                projects={projects}
                 onConnectClick={onConnectClick}
                 onManageClick={onManageClick}
                 onDisconnectClick={onDisconnectClick}
-                isConnectingId={activeIntegrationId}
+                isConnectingId={activeProjectId}
             />
-            <Dialog.Root open={!!selectedState && !!activeIntegrationId} onOpenChange={onOpenChange}>
+            <Dialog.Root open={!!selectedState && !!activeProjectId} onOpenChange={onOpenChange}>
                 <DialogContent title="Connect" description="Activate this integration by connecting your account">
                     {selectedState?.method === 'connect' ? (
                         <ConnectModalContent
-                            integrationId={activeIntegrationId}
+                            projectId={activeProjectId}
                             onCancel={onCancel}
                             onComplete={onComplete}
                         />

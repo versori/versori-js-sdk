@@ -1,9 +1,9 @@
 import { ApiError } from '@versori/sdk';
-import { EmbeddedIntegrationPage, EmbeddedIntegrationSummary } from '@versori/sdk/embedded';
-import { SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useVersoriEmbeddedContext } from '../provider/useVersoriEmbeddedContext';
+import { UserProjectSummary } from '../../../embed/src/PlatformClient';
 
-export type UseEmbeddedIntegrationPageQueryParams = {
+export type UseEmbeddedProjectPageQueryParams = {
     /**
      * Deployed allowing filtering integrations to only return either deployed (`true`) or not deployed (`false`)
      * integrations.
@@ -13,63 +13,49 @@ export type UseEmbeddedIntegrationPageQueryParams = {
     deployed?: boolean;
 };
 
-export type UseEmbeddedIntegrationPageQueryHookLoading = Record<string, unknown> & {
+export type UseEmbeddedProjectPageQueryHookLoading = Record<string, unknown> & {
     isLoading: true;
     error?: null;
+    projects: UserProjectSummary[];
     refresh: () => void;
 };
 
-export type UseEmbeddedIntegrationPageQueryHookError = Record<string, unknown> & {
+export type UseEmbeddedProjectPageQueryHookError = Record<string, unknown> & {
     isLoading: false;
     error: ApiError;
+    projects: UserProjectSummary[];
     refresh: () => void;
 };
 
-type UseEmbeddedIntegrationPageQueryHookSuccess = {
+type UseEmbeddedProjectPageQueryHookSuccess = {
     isLoading: false;
     error?: null;
 
-    integrations: EmbeddedIntegrationSummary[];
-
-    totalConnected: number;
-    totalCount: number;
-
-    hasPreviousPage: boolean;
-    onPreviousPage: (e: SyntheticEvent<HTMLButtonElement>) => void;
-
-    hasNextPage: boolean;
-    onNextPage: (e: SyntheticEvent<HTMLButtonElement>) => void;
-
+    projects: UserProjectSummary[];
     refresh: () => void;
 };
 
-export type UseEmbeddedIntegrationPageQueryHook =
-    | UseEmbeddedIntegrationPageQueryHookLoading
-    | UseEmbeddedIntegrationPageQueryHookError
-    | UseEmbeddedIntegrationPageQueryHookSuccess;
+export type UseEmbeddedProjectPageQueryHook =
+    | UseEmbeddedProjectPageQueryHookLoading
+    | UseEmbeddedProjectPageQueryHookError
+    | UseEmbeddedProjectPageQueryHookSuccess;
 
-export function useEmbeddedIntegrationPageQuery({
+export function useEmbeddedProjectPageQuery({
     deployed,
-}: UseEmbeddedIntegrationPageQueryParams): UseEmbeddedIntegrationPageQueryHook {
+}: UseEmbeddedProjectPageQueryParams): UseEmbeddedProjectPageQueryHook {
     const { client } = useVersoriEmbeddedContext();
 
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<ApiError | null>(null);
 
-    const [{ integrations, totalCount, totalConnected = 0, next, prev }, setPage] = useState<EmbeddedIntegrationPage>({
-        integrations: [],
-        totalCount: 0,
-        totalConnected: 0,
-    });
+    const [projectSummaries, setProjectSummaries] = useState<UserProjectSummary[]>([]);
 
     const fetchPage = useCallback(() => {
         setIsLoading(true);
 
         client
-            .getIntegrations({
-                deployed,
-            })
-            .then(setPage)
+            .getUserProjects(deployed)
+            .then(setProjectSummaries)
             .catch(setError)
             .finally(() => setIsLoading(false));
     }, [client, deployed]);
@@ -79,22 +65,16 @@ export function useEmbeddedIntegrationPageQuery({
     }, [client]);
 
     if (isLoading) {
-        return { isLoading: true, refresh: fetchPage };
+        return { isLoading: true, refresh: fetchPage, projects: [] };
     }
 
     if (error) {
-        return { isLoading: false, error, refresh: fetchPage };
+        return { isLoading: false, error, refresh: fetchPage, projects: [] };
     }
 
     return {
         isLoading,
-        integrations,
-        totalConnected,
-        totalCount,
-        hasPreviousPage: !!prev,
-        onPreviousPage: () => {},
-        hasNextPage: !!next,
-        onNextPage: () => {},
+        projects: projectSummaries,
         refresh: fetchPage,
     };
 }

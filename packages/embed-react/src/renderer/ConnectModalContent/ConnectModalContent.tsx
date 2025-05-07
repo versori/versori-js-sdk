@@ -1,17 +1,17 @@
-import { Activation } from '@versori/sdk/embedded';
+import { Activation } from '../../../../sdk/src/platform';
 import { Connect } from '../../components/Connect/Connect';
 import { useConnectIntegration } from '../../hooks/useConnectIntegration';
 import { useVersoriEmbeddedContext } from '../../provider/useVersoriEmbeddedContext';
 
 export type ConnectModalContentProps = {
-    integrationId: string;
+    projectId: string;
     onCancel: () => void;
     onComplete: (activation: Activation) => void;
 };
 
-export function ConnectModalContent({ integrationId, onCancel, onComplete }: ConnectModalContentProps) {
+export function ConnectModalContent({ projectId, onCancel, onComplete }: ConnectModalContentProps) {
     const { client } = useVersoriEmbeddedContext();
-    const { onConnect, isLoading, error, integration, primaryCredentialSource } = useConnectIntegration({ onComplete, integrationId });
+    const { onConnect, isLoading, error, project, connectionTemplates } = useConnectIntegration({ onComplete, projectId });
 
     if (isLoading) {
         return <div>Loading</div>;
@@ -22,6 +22,6 @@ export function ConnectModalContent({ integrationId, onCancel, onComplete }: Con
     }
 
     return (
-        <Connect userId={client.userExternalId} integration={integration!} onConnect={onConnect} onCancel={onCancel} />
+        <Connect userId={client.userExternalId} orgId={client.orgId} project={project!} connectionTemplates={connectionTemplates!} onConnect={onConnect} onCancel={onCancel} />
     );
 }

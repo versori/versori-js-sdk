@@ -19,24 +19,28 @@ export function CredentialDataBinary({ name, data, onDataChange, errors }: Crede
             startTransition(() => {
                 setBase64(checked);
                 onDataChange({
-                    valueBase64: checked ? btoa(data.valueBase64) : atob(data.valueBase64),
+                    binary: {
+                        valueBase64: checked ? btoa(data.binary.valueBase64) : atob(data.binary.valueBase64),
+                    },
                 });
             });
         },
-        [data.valueBase64, isBase64, onDataChange]
+        [data.binary.valueBase64, isBase64, onDataChange]
     );
 
     const onChange = useCallback(
         (e: SyntheticEvent<HTMLInputElement>) =>
             onDataChange({
-                valueBase64: isBase64 ? e.currentTarget.value : btoa(e.currentTarget.value),
+                binary: {
+                    valueBase64: isBase64 ? e.currentTarget.value : btoa(e.currentTarget.value),
+                },
             }),
         [onDataChange, isBase64]
     );
 
     return (
         <Flex align="center" gap="2">
-            <TextField.Root value={data.valueBase64} onChange={onChange} aria-label="value" />
+            <TextField.Root value={data.binary.valueBase64} onChange={onChange} aria-label="value" />
             <Label>
                 <Checkbox checked={isBase64} onCheckedChange={onBase64Change} />
                 Data is base64 encoded

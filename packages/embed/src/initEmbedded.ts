@@ -1,21 +1,23 @@
 import { createClient, createConfig } from '@hey-api/client-fetch';
-import { configureEmbeddedSdk, embeddedApi } from '@versori/sdk/embedded';
-import { EmbedClient } from './EmbedClient';
 import { parseEndUserAuth } from './internal/parseEndUserAuth';
 import { parseJwtSub } from './internal/parseJwtSub';
 import { InitOptions } from './types';
+import { PlatformClient } from './PlatformClient';
 
-export async function initEmbedded(opts: InitOptions): Promise<EmbedClient> {
+// TODO: this import needs changing
+import { platformApi, configurePlatformSdk } from '../../sdk/src/platform';
+
+export async function initEmbedded(opts: InitOptions): Promise<PlatformClient> {
     const { endUserAuth, sdkOptions = {} } = opts;
 
-    let client = embeddedApi.client;
+    let client = platformApi.client;
     if (opts.overrideClient) {
         // opts.overrideClient is truthy, so if it's a boolean then we create a new client, otherwise the value
         // must be a client instance.
         client = typeof opts.overrideClient === 'boolean' ? createClient(createConfig()) : opts.overrideClient;
     }
 
-    configureEmbeddedSdk(
+    configurePlatformSdk(
         {
             ...sdkOptions,
             auth: parseEndUserAuth(endUserAuth),
@@ -25,9 +27,9 @@ export async function initEmbedded(opts: InitOptions): Promise<EmbedClient> {
 
     const userId = endUserAuth.type === 'api-key' ? endUserAuth.userId : parseJwtSub(endUserAuth.token);
 
-    const embedClient = new EmbedClient(embeddedApi.client, opts.hubId, userId, opts.primaryCredential, opts.clientOptions);
+    const platformClient = new PlatformClient(platformApi.client, opts.orgId, userId, opts.primaryCredential, opts.clientOptions);
 
-    await embedClient.tryGetEndUser();
+    await platformClient.tryGetEndUser();
 
-    return embedClient;
+    return platformClient;
 }

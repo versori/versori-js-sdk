@@ -3,6 +3,7 @@ import { Box, Flex, TextField } from '@radix-ui/themes';
 import { SyntheticEvent, useCallback } from 'react';
 import { FieldError } from '../../form/FieldError';
 import { CredentialDataProps } from './types';
+import { CredentialDataOAuth2Client } from '../../../../sdk/src/platform';
 
 export function CredentialDataOAuth2ClientCredentials({
     id,
@@ -14,8 +15,10 @@ export function CredentialDataOAuth2ClientCredentials({
     const onClientIdChange = useCallback(
         (e: SyntheticEvent<HTMLInputElement>) =>
             onDataChange({
-                ...data,
-                clientId: e.currentTarget.value,
+                oauth2Client: {
+                    ...data.oauth2Client,
+                    clientId: e.currentTarget.value,
+                },
             }),
         [data, onDataChange]
     );
@@ -23,8 +26,10 @@ export function CredentialDataOAuth2ClientCredentials({
     const onClientSecretChange = useCallback(
         (e: SyntheticEvent<HTMLInputElement>) =>
             onDataChange({
-                ...data,
-                clientSecret: e.currentTarget.value,
+                oauth2Client: {
+                    ...data.oauth2Client,
+                    clientSecret: e.currentTarget.value,
+                },
             }),
         [data, onDataChange]
     );
@@ -39,7 +44,7 @@ export function CredentialDataOAuth2ClientCredentials({
                 <Flex flexGrow="1" asChild>
                     <TextField.Root
                         id={`credential-oauth2client-clientId-${id}`}
-                        value={data.clientId}
+                        value={data.oauth2Client.clientId}
                         onChange={onClientIdChange}
                     />
                 </Flex>
@@ -52,7 +57,7 @@ export function CredentialDataOAuth2ClientCredentials({
                 <Flex flexGrow="1" asChild>
                     <TextField.Root
                         id={`credential-oauth2client-clientSecret-${id}`}
-                        value={data.clientSecret}
+                        value={data.oauth2Client.clientSecret}
                         onChange={onClientSecretChange}
                     />
                 </Flex>

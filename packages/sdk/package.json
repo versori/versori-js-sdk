@@ -33,6 +33,7 @@
     "generate": "run-p generate:*",
     "generate:connect": "openapi-ts -f openapi-ts.config.connect.ts",
     "generate:embedded": "openapi-ts -f openapi-ts.config.embedded.ts",
+    "generate:platform": "openapi-ts -f openapi-ts.config.platform.ts",
     "build": "npm-run-all -p build:* -s postbuild",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
