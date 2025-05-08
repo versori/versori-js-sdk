@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { useVersoriEmbeddedContext } from '../../provider/useVersoriEmbeddedContext';
 import { ConnectSingleTemplate } from './ConnectSingleTemplate';
 import { ConnectProps } from './types';
-import { ActivationCreate } from '../../../../sdk/src/platform';
+import { ActivationCreate } from '@versori/sdk/platform';
 
 /**
  * Connect to an integration. This component is the entrypoint for connecting to an integration,
@@ -34,13 +34,28 @@ export function Connect(props: ConnectProps) {
     );
 
     if (connectionTemplates.length === 1) {
-        return <ConnectSingleTemplate {...props} orgId={orgId} template={connectionTemplates[0]} onConnect={onConnectInternal} />;
+        return (
+            <ConnectSingleTemplate
+                {...props}
+                orgId={orgId}
+                template={connectionTemplates[0]}
+                onConnect={onConnectInternal}
+            />
+        );
     }
 
-    // TODO: support multiple connection templates
     return (
-        <div {...commonProps} className={cx(className, 'vi-Connect')}>
-            Multiple connection templates not supported
-        </div>
+        <Flex className={cx('Connect', className)} {...commonProps}>
+            {connectionTemplates.map((template) => (
+                <ConnectSingleTemplate
+                    {...props}
+                    key={template.id}
+                    orgId={orgId}
+                    template={template}
+                    onConnect={onConnectInternal}
+                    className={cx('ConnectSingleTemplate', className)}
+                />
+            ))}
+        </Flex>
     );
 }

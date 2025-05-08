@@ -3,7 +3,7 @@ import { Box, Flex, TextField } from '@radix-ui/themes';
 import { SyntheticEvent, useCallback } from 'react';
 import { FieldError } from '../../form/FieldError';
 import { CredentialDataProps } from './types';
-import { AuthSchemeType } from '../../../../sdk/src/platform';
+import { AuthSchemeType } from '@versori/sdk/platform';
 
 const LABELS: { [K in AuthSchemeType]?: string } = {
     'api-key': 'API Key',

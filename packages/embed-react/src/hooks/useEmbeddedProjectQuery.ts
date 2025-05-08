@@ -2,7 +2,7 @@ import { ApiError } from '@versori/sdk';
 import invariant from 'invariant';
 import { useEffect, useState } from 'react';
 import { useVersoriEmbeddedContext } from '../provider/useVersoriEmbeddedContext';
-import { ConnectionTemplate, Project } from '../../../sdk/src/platform';
+import { ConnectionTemplate, Project } from '@versori/sdk/platform';
 
 export type UseEmbeddedProjectQueryParams = {
     projectId: string;

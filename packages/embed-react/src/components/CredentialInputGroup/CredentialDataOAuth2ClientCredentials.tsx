@@ -3,7 +3,6 @@ import { Box, Flex, TextField } from '@radix-ui/themes';
 import { SyntheticEvent, useCallback } from 'react';
 import { FieldError } from '../../form/FieldError';
 import { CredentialDataProps } from './types';
-import { CredentialDataOAuth2Client } from '../../../../sdk/src/platform';
 
 export function CredentialDataOAuth2ClientCredentials({
     id,

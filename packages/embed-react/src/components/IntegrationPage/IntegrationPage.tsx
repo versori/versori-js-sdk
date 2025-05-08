@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { SyntheticEvent, useCallback } from 'react';
 import { CommonComponentProps } from '../../types/CommonComponentProps';
 import { IntegrationTile } from '../IntegrationTile/IntegrationTile';
-import { ProjectSummary } from '../../../../sdk/src/platform';
+import { ProjectSummary } from '@versori/sdk/platform';
 import { UserProjectSummary } from '@versori/embed';
 
 export type IntegrationPageProps = {projects: UserProjectSummary[]} &

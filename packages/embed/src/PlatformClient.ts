@@ -1,6 +1,5 @@
 import { Client, Options } from '@hey-api/client-fetch';
 import { ApiError, ErrorType, isErrorType } from '@versori/sdk';
-// TODO: the import needs to be changes to @versori/sdk at some point but this works for now with typing
 import {
     Activation,
     ActivationCreate,
@@ -11,15 +10,13 @@ import {
     InitialiseOAuth2ConnectionResponse,
     ListEndUsersData,
     ListProjectConnectionTemplatesData,
-    ListProjectsResponse,
     ListUserActivationsResponse,
     platformApi,
     Project,
     ProjectSummary,
-} from '../../sdk/src/platform';
+} from '@versori/sdk/platform';
 import createDebug from 'debug';
 import { CredentialSource } from './types';
-import { ListEndUserActivationsResponse } from '../../sdk/src/embedded';
 
 export type ListEndUserActivationOptions = ListEndUsersData['query'];
 export type ListConnectionTemplateOptions = ListProjectConnectionTemplatesData['query'];

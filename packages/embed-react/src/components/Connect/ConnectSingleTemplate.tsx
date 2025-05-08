@@ -7,7 +7,7 @@ import { CredentialInputGroup } from '../CredentialInputGroup/CredentialInputGro
 import { newCredentialCreate } from '../CredentialInputGroup/helpers/newCredential';
 import { validateConnectionCredentialCreate } from './helpers/validation';
 import { ConnectProps } from './types';
-import { ConnectionCredential, ConnectionTemplate, Credential } from '../../../../sdk/src/platform';
+import { ConnectionCredential, ConnectionTemplate, Credential } from '@versori/sdk/platform';
 
 export type ConnectSingleTemplateProps = ConnectProps & {
     template: ConnectionTemplate;
@@ -23,13 +23,14 @@ export function ConnectSingleTemplate({
     template,
     onConnect,
     onCancel,
+    connectionTemplates,
     ...commonProps
 }: ConnectSingleTemplateProps) {
-    const { id: projectId, name } = project;
+    const { name } = project;
 
     const environmentId = useMemo(() => project.environments[0].id, [project]);
 
-    const { authSchemeConfigs, id: templateId } = template;
+    const { authSchemeConfigs, connectionTemplateId, id: systemId } = template;
     const [credentialId] = useState(ulid());
     const [credential, setCredential] = useState(newCredentialCreate(authSchemeConfigs[0], orgId));
     const [errors, setErrors] = useState<yup.ValidationError[]>([]);
@@ -64,7 +65,7 @@ export function ConnectSingleTemplate({
                 environmentId,
                 connections: [
                     {
-                        connectionTemplateId: templateId,
+                        connectionTemplateId: connectionTemplateId!,
                         connection: {
                             name,
                             credentials: [connectionCredentialCreate],
@@ -78,7 +79,7 @@ export function ConnectSingleTemplate({
                 }
             });
         },
-        [onConnect, environmentId, templateId, name, credential, authSchemeConfigs]
+        [onConnect, environmentId, connectionTemplateId, name, credential, authSchemeConfigs]
     );
 
     const onReset = useCallback(() => setCredential(newCredentialCreate(authSchemeConfigs[0], orgId)), [authSchemeConfigs]);
@@ -116,7 +117,7 @@ export function ConnectSingleTemplate({
                 <form ref={formRef} onSubmit={onSubmit} onReset={onReset}>
                     <CredentialInputGroup
                         id={credentialId}
-                        systemId={template.id} // this is the system id its confusing af tho
+                        systemId={systemId}
                         name="credential"
                         authSchemeConfig={authSchemeConfigs[0]}
                         credential={credential}

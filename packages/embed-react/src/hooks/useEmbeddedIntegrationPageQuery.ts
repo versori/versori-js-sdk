@@ -1,7 +1,7 @@
 import { ApiError } from '@versori/sdk';
 import { useCallback, useEffect, useState } from 'react';
 import { useVersoriEmbeddedContext } from '../provider/useVersoriEmbeddedContext';
-import { UserProjectSummary } from '../../../embed/src/PlatformClient';
+import { UserProjectSummary } from '@versori/embed';
 
 export type UseEmbeddedProjectPageQueryParams = {
     /**

@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import { ObjectSchema } from 'yup';
 import { validate } from '../../../validation/validate';
-import { AuthSchemeConfig, ConnectionCredential, Credential, CredentialType } from '../../../../../sdk/src/platform';
+import { AuthSchemeConfig, ConnectionCredential, Credential, CredentialType } from '@versori/sdk/platform';
 
 const credentialCreateSchema: ObjectSchema<Credential> = yup.object({
     id: yup.string().required(),

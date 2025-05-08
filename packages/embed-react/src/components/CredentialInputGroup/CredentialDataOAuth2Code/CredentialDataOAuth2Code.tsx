@@ -5,7 +5,7 @@ import { startTransition, SyntheticEvent, useCallback, useEffect, useMemo, useSt
 import { useVersoriEmbeddedContext } from '../../../provider/useVersoriEmbeddedContext';
 import { CredentialDataProps } from '../types';
 import { OAuth2Error, OAuth2WindowManager } from './OAuth2WindowManager';
-import { InitialiseOAuth2ConnectionResponse } from '../../../../../sdk/src/platform';
+import { InitialiseOAuth2ConnectionResponse } from '@versori/sdk/platform';
 
 const debug = createDebug('embed:credentials:CredentialDataOAuth2Code');
 

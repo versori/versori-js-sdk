@@ -1,6 +1,6 @@
 import { Client } from '@hey-api/client-fetch';
 import { SdkConfig } from '@versori/sdk';
-import { PlatformClientOptions } from 'src/PlatformClient';
+import { PlatformClientOptions } from '../PlatformClient';
 import { CredentialSource } from './credential-source';
 import { EndUserAuth } from './end-user-auth';
 

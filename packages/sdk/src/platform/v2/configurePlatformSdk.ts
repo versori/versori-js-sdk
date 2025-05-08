@@ -4,7 +4,7 @@ import { configureErrorHandling } from '../../internal/configureErrorHandling';
 import { Production, SdkConfig } from '../../util';
 import { client as globalClient } from './generated';
 
-export const PathPrefix = `/platform/v2`;
+export const PathPrefix = `/v2`;
 
 const defaults: Config = {
     throwOnError: true,

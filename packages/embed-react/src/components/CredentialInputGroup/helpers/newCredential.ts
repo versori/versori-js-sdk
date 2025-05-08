@@ -4,7 +4,7 @@ import {
     AuthSchemeConfigOAuth2,
     CredentialDataNone,
     Credential,
-} from '../../../../../sdk/src/platform';
+} from '@versori/sdk/platform';
 
 import createDebug from 'debug';
 

@@ -1,4 +1,4 @@
-import { Activation } from '../../../../sdk/src/platform';
+import { Activation } from '@versori/sdk/platform';
 import { Connect } from '../../components/Connect/Connect';
 import { useConnectIntegration } from '../../hooks/useConnectIntegration';
 import { useVersoriEmbeddedContext } from '../../provider/useVersoriEmbeddedContext';

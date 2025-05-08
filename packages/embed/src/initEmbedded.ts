@@ -3,9 +3,7 @@ import { parseEndUserAuth } from './internal/parseEndUserAuth';
 import { parseJwtSub } from './internal/parseJwtSub';
 import { InitOptions } from './types';
 import { PlatformClient } from './PlatformClient';
-
-// TODO: this import needs changing
-import { platformApi, configurePlatformSdk } from '../../sdk/src/platform';
+import { platformApi, configurePlatformSdk } from '@versori/sdk/platform';
 
 export async function initEmbedded(opts: InitOptions): Promise<PlatformClient> {
     const { endUserAuth, sdkOptions = {} } = opts;

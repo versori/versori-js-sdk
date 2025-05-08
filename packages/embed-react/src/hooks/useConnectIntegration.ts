@@ -1,6 +1,6 @@
 import { CredentialSource } from '@versori/embed';
 import { ApiError } from '@versori/sdk';
-import { Activation, ActivationCreate, ConnectionTemplate, Project } from '../../../sdk/src/platform';
+import { Activation, ActivationCreate, ConnectionTemplate, Project } from '@versori/sdk/platform';
 import { useCallback, useEffect, useState } from 'react';
 import { useVersoriEmbeddedContext } from '../provider/useVersoriEmbeddedContext';
 import { useEmbeddedProjectQuery } from './useEmbeddedProjectQuery';

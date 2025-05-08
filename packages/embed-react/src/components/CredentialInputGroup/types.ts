@@ -10,7 +10,7 @@ import {
     CredentialDataOAuth2Token,
     CredentialDataString,
     CredentialType,
-} from '../../../../sdk/src/platform';
+} from '@versori/sdk/platform';
 
 type CredentialDataEnumeration = {
     none: {none: CredentialDataNone};

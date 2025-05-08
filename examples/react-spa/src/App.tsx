@@ -17,7 +17,7 @@ function App() {
         content = (
             <VersoriEmbeddedProvider
                 options={{
-                    hubId: import.meta.env.VITE_HUB_ID,
+                    orgId: import.meta.env.VITE_ORG_ID,
                     endUserAuth: import.meta.env.VITE_END_USER_AUTH_TYPE_API_KEY ? {
                         type: 'api-key',
                         token: import.meta.env.VITE_END_USER_AUTH_TYPE_API_KEY,

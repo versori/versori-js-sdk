@@ -7,7 +7,7 @@ import { CredentialDataOAuth2Code } from './CredentialDataOAuth2Code';
 import { CredentialDataOAuth2Password } from './CredentialDataOAuth2Password';
 import { CredentialDataString } from './CredentialDataString';
 import { CredentialData, CredentialDataProps } from './types';
-import { AuthSchemeConfig, Credential, CredentialType } from '../../../../sdk/src/platform';
+import { AuthSchemeConfig, Credential, CredentialType } from '@versori/sdk/platform';
 
 type CredentialDataComponentTypes = {
     [K in CredentialType]: ComponentType<CredentialDataProps<K>>;
