@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Spinner } from '@radix-ui/themes';
+import { Button, Flex, Heading } from '@radix-ui/themes';
 import { SyntheticEvent, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ulid } from 'ulid';
 import * as yup from 'yup';
@@ -27,6 +27,8 @@ export function ConnectSingleTemplate({
     ...commonProps
 }: ConnectSingleTemplateProps) {
     const { name } = project;
+
+    const connName = ulid();
 
     const environmentId = useMemo(() => project.environments[0].id, [project]);
 
@@ -67,7 +69,7 @@ export function ConnectSingleTemplate({
                     {
                         connectionTemplateId: connectionTemplateId!,
                         connection: {
-                            name,
+                            name: connName, // this sucks but its ok for now, name needs to be unique on a connectior :)))
                             credentials: [connectionCredentialCreate],
                             variables: []
                         }

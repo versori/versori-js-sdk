@@ -1,6 +1,6 @@
 import { ApiError } from '@versori/sdk';
 import invariant from 'invariant';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useVersoriEmbeddedContext } from '../provider/useVersoriEmbeddedContext';
 import { ConnectionTemplate, Project } from '@versori/sdk/platform';
 
@@ -44,6 +44,10 @@ export function useEmbeddedProjectQuery({ projectId }: UseEmbeddedProjectQueryPa
     const [project, setProject] = useState<Project | undefined>(undefined);
     const [connectionTemplates, setConnectionTemplates] = useState<ConnectionTemplate[]>([]);
 
+    const environmentId = useMemo(() => {
+        return project?.environments[0].id ?? '';
+    }, [project]);
+
     useEffect(() => {
         if (!client) {
             return;
@@ -57,8 +61,12 @@ export function useEmbeddedProjectQuery({ projectId }: UseEmbeddedProjectQueryPa
     }, [client, projectId]);
 
     useEffect(() => {
+        if (!environmentId) {
+            return;
+        }
+
         client
-            .getConnectionTemplates(projectId, { env_id: project?.environments[0].id })
+            .getConnectionTemplates(projectId, environmentId)
             .then((templates) => {
                 setConnectionTemplates(templates.filter((t) => t.dynamic === true));
             })

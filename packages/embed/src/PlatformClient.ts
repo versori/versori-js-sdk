@@ -234,7 +234,7 @@ export class PlatformClient {
 
     async getConnectionTemplates(
         projectId: string,
-        opts?: ListConnectionTemplateOptions
+        environmentId: string
     ): Promise<ConnectionTemplate[]> {
         const { data } = await platformApi.listProjectConnectionTemplates({
             ...this.#defaultOptions(),
@@ -242,7 +242,9 @@ export class PlatformClient {
                 organisation_id: this.#orgId,
                 project_id: projectId,
             },
-            query: opts,
+            query: {
+                env_id: environmentId,
+            },
         });
 
         return data.items;
