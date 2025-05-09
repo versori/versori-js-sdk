@@ -16,8 +16,8 @@ import { ActivationCreate } from '@versori/sdk/platform';
  */
 export function Connect(props: ConnectProps) {
     const { client } = useVersoriEmbeddedContext();
-    const { endUser, orgId } = client;
-    const { project, connectionTemplates, onConnect, className, ...commonProps } = props;
+    const { endUser } = client;
+    const { project, connectionTemplates, onConnect, className, userId, orgId, ...commonProps } = props;
 
     const onConnectInternal = useCallback(
         (payload: ActivationCreate) => {

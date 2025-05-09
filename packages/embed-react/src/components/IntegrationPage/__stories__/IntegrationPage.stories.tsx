@@ -3,7 +3,7 @@ import { fn } from '@storybook/test';
 import { PlatformClient } from '@versori/embed';
 import { DEFAULTS, VersoriEmbeddedContext } from '../../../provider';
 import { IntegrationPage } from '../IntegrationPage';
-import { embeddedApi } from '@versori/sdk/embedded';
+import { platformApi } from '@versori/sdk/platform';
 
 const meta = {
     title: 'IntegrationPage',
@@ -17,7 +17,7 @@ const meta = {
         (Story) => (
             <VersoriEmbeddedContext.Provider
                 value={{
-                    client: new PlatformClient(embeddedApi.client, 'orgId', 'userId', { type: 'manual' }),
+                    client: new PlatformClient(platformApi.client, 'orgId', 'userId', { type: 'manual' }),
                     defaults: DEFAULTS,
                 }}
             >
