@@ -16,15 +16,15 @@
       "require": "./dist/cjs/index.js",
       "types": "./dist/types/index.d.ts"
     },
-    "./connect": {
-      "import": "./dist/esm/connect/index.js",
-      "require": "./dist/cjs/connect/index.js",
-      "types": "./dist/types/connect/index.d.ts"
-    },
     "./embedded": {
       "import": "./dist/esm/embedded/index.js",
       "require": "./dist/cjs/embedded/index.js",
       "types": "./dist/types/embedded/index.d.ts"
+    },
+    "./platform": {
+      "import": "./dist/esm/platform/index.js",
+      "require": "./dist/cjs/platform/index.js",
+      "types": "./dist/types/platform/index.d.ts"
     }
   },
   "scripts": {
