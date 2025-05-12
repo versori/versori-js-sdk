@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { setLocale } from 'yup';
 import { ConnectSingleTemplate } from '../ConnectSingleTemplate';
-import { basicAuthTemplate, primaryTemplate, shopifyTemplate } from './testdata';
+import { basicAuthTemplate, shopifyTemplate } from './testdata';
 
 const meta = {
     title: 'Connect/ConnectSingleTemplate',

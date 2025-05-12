@@ -1,6 +1,6 @@
-import { Flex, Spinner } from '@radix-ui/themes';
+import { Flex } from '@radix-ui/themes';
 import cx from 'classnames';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useVersoriEmbeddedContext } from '../../provider/useVersoriEmbeddedContext';
 import { ConnectSingleTemplate } from './ConnectSingleTemplate';
 import { ConnectProps } from './types';
