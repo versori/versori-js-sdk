@@ -45,7 +45,14 @@ export type OAuth2WindowManagerProps = {
  *
  * @constructor
  */
-export function OAuth2WindowManager({ open, url, onSuccess, onError, onCancel, callbackOrigin }: OAuth2WindowManagerProps) {
+export function OAuth2WindowManager({
+    open,
+    url,
+    onSuccess,
+    onError,
+    onCancel,
+    callbackOrigin,
+}: OAuth2WindowManagerProps) {
     const windowRef = useRef<Window | undefined>();
 
     useEffect(() => {
@@ -76,7 +83,7 @@ export function OAuth2WindowManager({ open, url, onSuccess, onError, onCancel, c
 
         windowRef.current.addEventListener('', onCancel);
 
-        getOAuth2Response(windowRef.current, state, { target: callbackOrigin }).then(response => {
+        getOAuth2Response(windowRef.current, state, { target: callbackOrigin }).then((response) => {
             if ('code' in response) {
                 onSuccess(response.code, response.state);
 
@@ -112,13 +119,16 @@ export function OAuth2WindowManager({ open, url, onSuccess, onError, onCancel, c
         [onCancel]
     );
 
-    const onCancelInternal = useCallback((e: SyntheticEvent<HTMLButtonElement>) => {
-        e.preventDefault();
+    const onCancelInternal = useCallback(
+        (e: SyntheticEvent<HTMLButtonElement>) => {
+            e.preventDefault();
 
-        windowRef.current?.close();
+            windowRef.current?.close();
 
-        onCancel();
-    }, [onCancel]);
+            onCancel();
+        },
+        [onCancel]
+    );
 
     return (
         <Dialog.Root open={open} onOpenChange={onOpenChange}>

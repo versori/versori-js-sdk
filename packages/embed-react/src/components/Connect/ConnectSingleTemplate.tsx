@@ -1,6 +1,5 @@
-import { Button, Flex, Heading, Spinner } from '@radix-ui/themes';
-import { ConnectionCredentialCreate, CredentialCreate, HubConnectionTemplate } from '@versori/sdk/embedded';
-import { SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { Button, Flex, Heading } from '@radix-ui/themes';
+import { SyntheticEvent, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { ulid } from 'ulid';
 import * as yup from 'yup';
 import { useIsMounted } from '../../internal/hooks/useIsMounted';
@@ -8,9 +7,10 @@ import { CredentialInputGroup } from '../CredentialInputGroup/CredentialInputGro
 import { newCredentialCreate } from '../CredentialInputGroup/helpers/newCredential';
 import { validateConnectionCredentialCreate } from './helpers/validation';
 import { ConnectProps } from './types';
+import { ConnectionCredential, ConnectionTemplate, Credential } from '@versori/sdk/platform';
 
 export type ConnectSingleTemplateProps = ConnectProps & {
-    template: HubConnectionTemplate;
+    template: ConnectionTemplate;
 };
 
 /**
@@ -18,32 +18,39 @@ export type ConnectSingleTemplateProps = ConnectProps & {
  */
 export function ConnectSingleTemplate({
     userId,
-    integration,
+    orgId,
+    project,
     template,
     onConnect,
     onCancel,
+    connectionTemplates,
     ...commonProps
 }: ConnectSingleTemplateProps) {
-    const { id: integrationId, name } = integration;
+    const { name } = project;
 
-    const { connectorId, authSchemeConfig, id: templateId } = template;
+    const connName = ulid();
+
+    const environmentId = useMemo(() => project.environments[0].id, [project]);
+
+    const { authSchemeConfigs, connectionTemplateId, id: systemId } = template;
     const [credentialId] = useState(ulid());
-    const [credential, setCredential] = useState(newCredentialCreate(authSchemeConfig));
+    const [credential, setCredential] = useState(newCredentialCreate(authSchemeConfigs[0], orgId));
     const [errors, setErrors] = useState<yup.ValidationError[]>([]);
     const isMounted = useIsMounted();
     const formRef = useRef<HTMLFormElement>(null);
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const onChange = useCallback((_: string, credential: CredentialCreate) => setCredential(credential), []);
+    const onChange = useCallback((_: string, credential: Credential) => setCredential(credential), []);
 
     const onSubmit = useCallback(
         (e: SyntheticEvent<HTMLFormElement>) => {
             e.preventDefault();
 
-            const connectionCredentialCreate: ConnectionCredentialCreate = {
+            const connectionCredentialCreate: ConnectionCredential = {
+                id: credentialId,
                 credential,
-                authSchemeConfig,
+                authSchemeConfig: authSchemeConfigs[0],
             };
 
             const errors = validateConnectionCredentialCreate(connectionCredentialCreate);
@@ -57,15 +64,14 @@ export function ConnectSingleTemplate({
 
             onConnect({
                 userId,
-                integrationId,
-                variables: [],
+                environmentId,
                 connections: [
                     {
-                        templateId,
-                        name,
-                        variables: [],
-                        credentials: {
-                            action: [connectionCredentialCreate],
+                        connectionTemplateId: connectionTemplateId!,
+                        connection: {
+                            name: connName, // this sucks but its ok for now, name needs to be unique on a connectior :)))
+                            credentials: [connectionCredentialCreate],
+                            variables: [],
                         },
                     },
                 ],
@@ -75,35 +81,39 @@ export function ConnectSingleTemplate({
                 }
             });
         },
-        [onConnect, integrationId, templateId, name, credential, authSchemeConfig]
+        [onConnect, environmentId, connectionTemplateId, name, credential, authSchemeConfigs]
     );
 
-    const onReset = useCallback(() => setCredential(newCredentialCreate(authSchemeConfig)), [authSchemeConfig]);
+    const onReset = useCallback(
+        () => setCredential(newCredentialCreate(authSchemeConfigs[0], orgId)),
+        [authSchemeConfigs]
+    );
 
     useEffect(() => {
-        const connectionCredentialCreate: ConnectionCredentialCreate = {
+        const connectionCredentialCreate: ConnectionCredential = {
+            id: credentialId,
             credential,
-            authSchemeConfig,
+            authSchemeConfig: authSchemeConfigs[0],
         };
 
-        setErrors(validateConnectionCredentialCreate(connectionCredentialCreate))
-    }, [credential, authSchemeConfig]);
+        setErrors(validateConnectionCredentialCreate(connectionCredentialCreate));
+    }, [credential, authSchemeConfigs]);
 
     useEffect(() => {
         if (errors.length > 0) {
             return;
         }
 
-        if (authSchemeConfig.schemeType !== 'oauth2') {
+        if (authSchemeConfigs[0].type !== 'oauth2') {
             return;
         }
 
-        if (authSchemeConfig.grant.grantType !== 'authorization_code') {
+        if (authSchemeConfigs[0].oauth2?.grant.type !== 'authorizationCode') {
             return;
         }
 
         formRef.current?.requestSubmit();
-    }, [errors, authSchemeConfig]);
+    }, [errors, authSchemeConfigs]);
 
     return (
         <Flex direction="column" gap="4" {...commonProps}>
@@ -112,9 +122,9 @@ export function ConnectSingleTemplate({
                 <form ref={formRef} onSubmit={onSubmit} onReset={onReset}>
                     <CredentialInputGroup
                         id={credentialId}
-                        connectorId={connectorId}
+                        systemId={systemId}
                         name="credential"
-                        authSchemeConfig={authSchemeConfig}
+                        authSchemeConfig={authSchemeConfigs[0]}
                         credential={credential}
                         onChange={onChange}
                         errors={errors}

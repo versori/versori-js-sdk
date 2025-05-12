@@ -3,11 +3,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "TypeScript SDK to Versori APIs",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -33,6 +31,7 @@
     "generate": "run-p generate:*",
     "generate:connect": "openapi-ts -f openapi-ts.config.connect.ts",
     "generate:embedded": "openapi-ts -f openapi-ts.config.embedded.ts",
+    "generate:platform": "openapi-ts -f openapi-ts.config.platform.ts",
     "build": "npm-run-all -p build:* -s postbuild",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
@@ -44,11 +43,7 @@
     "url": "git+https://github.com/versori/versori-js-sdk.git",
     "directory": "packages/sdk"
   },
-  "keywords": [
-    "ipaas",
-    "integrations",
-    "openapi"
-  ],
+  "keywords": ["ipaas", "integrations", "openapi"],
   "author": "",
   "license": "MIT",
   "bugs": {

@@ -1,14 +1,12 @@
 {
   "name": "@versori/embed-react",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "publishConfig": {
     "access": "public"
   },
   "description": "Versori React Embedded SDK",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -24,12 +22,7 @@
     "url": "git+https://github.com/versori/versori-js-sdk.git",
     "directory": "packages/embed-react"
   },
-  "keywords": [
-    "ipaas",
-    "integrations",
-    "openapi",
-    "react"
-  ],
+  "keywords": ["ipaas", "integrations", "openapi", "react"],
   "author": "",
   "license": "MIT",
   "bugs": {
@@ -52,8 +45,8 @@
   "dependencies": {
     "@hey-api/client-fetch": "^0.4.0",
     "@radix-ui/react-label": "^2.1.0",
-    "@versori/embed": "1.0.0",
-    "@versori/sdk": "1.0.0",
+    "@versori/embed": "^2.0.0",
+    "@versori/sdk": "^2.0.0",
     "debug": "^4.3.7",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",

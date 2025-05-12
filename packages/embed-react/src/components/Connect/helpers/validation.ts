@@ -1,10 +1,12 @@
-import { CredentialType } from '@versori/sdk/connect';
-import { AuthSchemeConfig, ConnectionCredentialCreate, CredentialCreate } from '@versori/sdk/embedded';
 import * as yup from 'yup';
 import { ObjectSchema } from 'yup';
 import { validate } from '../../../validation/validate';
+import { AuthSchemeConfig, ConnectionCredential, Credential, CredentialType } from '@versori/sdk/platform';
 
-const credentialCreateSchema: ObjectSchema<CredentialCreate> = yup.object({
+const credentialCreateSchema: ObjectSchema<Credential> = yup.object({
+    id: yup.string().required(),
+    organisationId: yup.string().required(),
+    expiresAt: yup.date().optional(),
     name: yup.string().defined(),
     type: yup.string<CredentialType>().defined(),
     data: yup
@@ -13,51 +15,64 @@ const credentialCreateSchema: ObjectSchema<CredentialCreate> = yup.object({
         .when('type', ([type], schema) => {
             switch (type) {
                 case 'none':
-                    return schema.shape({});
+                    return schema.shape({
+                        none: yup.object().optional(),
+                    });
                 case 'string':
                     return schema.shape({
-                        value: yup.string().required(),
+                        string: yup.object().shape({
+                            value: yup.string().required('Value is required'),
+                        }),
                     });
                 case 'binary':
                     return schema.shape({
-                        valueBase64: yup.string().required(),
+                        binary: yup.object().shape({
+                            valueBase64: yup.string().required(),
+                        }),
                     });
                 case 'basic-auth':
                     return schema.shape({
-                        username: yup.string().required('Username is required'),
-                        password: yup.string(),
+                        basicAuth: yup.object().shape({
+                            username: yup.string().required('Username is required'),
+                            password: yup.string(),
+                        }),
                     });
                 case 'oauth2-client':
                     return schema.shape({
-                        clientId: yup.string().required('Client ID is required'),
-                        clientSecret: yup.string().required('Client Secret is required'),
-                        tokenUrl: yup.string().required('Token URL is required'),
-                        scopes: yup.array().of(yup.string().required()).optional(),
+                        oauth2Client: yup.object().shape({
+                            clientId: yup.string().required('Client ID is required'),
+                            clientSecret: yup.string().required('Client Secret is required'),
+                            tokenUrl: yup.string().required('Token URL is required'),
+                            scopes: yup.array().of(yup.string().required()).optional(),
+                        }),
                     });
                 case 'oauth2-code':
                     // not sure what this credential type is actually meant to be?
                     return schema.shape({
-                        code: yup.string().required('Not connected'),
-                        state: yup.string().required(),
+                        oauth2Code: yup.object().shape({
+                            code: yup.string().required('Not connected'),
+                            state: yup.string().required(),
+                        }),
                     });
                 case 'oauth2-password':
                     return schema.shape({
-                        username: yup.string().required(),
-                        password: yup.string().required(),
+                        oauth2Password: yup.object().shape({
+                            username: yup.string().required(),
+                            password: yup.string().required(),
+                        }),
                     });
                 case 'oauth2-token':
                     return schema.shape({
-                        clientId: yup.string().required(),
-                        clientSecret: yup.string().required(),
-                        authorizeUrl: yup.string().required(),
-                        tokenUrl: yup.string().required(),
-                        scopes: yup.array().of(yup.string().required()).optional(),
+                        oauth2Token: yup.object().shape({
+                            clientId: yup.string().required(),
+                            clientSecret: yup.string().required(),
+                            authorizeUrl: yup.string().required(),
+                            tokenUrl: yup.string().required(),
+                            scopes: yup.array().of(yup.string().required()).optional(),
+                        }),
                     });
                 case 'custom-function':
-                    return schema.shape({
-                        functionUrl: yup.string().required(),
-                        data: yup.string().defined(),
-                    });
+                    return schema.test('custom-function', 'Custom function credentials are not supported', () => false);
                 case 'jwt-bearer':
                     return schema.test('jwt-bearer', 'JWT Bearer credentials are not supported', () => false);
                 default:
@@ -65,10 +80,11 @@ const credentialCreateSchema: ObjectSchema<CredentialCreate> = yup.object({
                     return schema.test('unknown-type', 'Unknown credential type', () => false);
             }
         }),
-});
+}) as ObjectSchema<Credential>;
 
-const connectionCredentialSchema: ObjectSchema<ConnectionCredentialCreate> = yup.object({
+const connectionCredentialSchema: ObjectSchema<ConnectionCredential> = yup.object({
     // this is not provided by the user, the API will error if this is not valid
+    id: yup.string().required(),
     authSchemeConfig: yup.object<AuthSchemeConfig>({}).required() as unknown as ObjectSchema<AuthSchemeConfig>,
     credential: credentialCreateSchema.defined(),
 });
@@ -94,6 +110,6 @@ const connectionCredentialSchema: ObjectSchema<ConnectionCredentialCreate> = yup
 //     variables: yup.array().of(connectionVariableSchema).required(),
 // });
 
-export function validateConnectionCredentialCreate(values: ConnectionCredentialCreate): yup.ValidationError[] {
+export function validateConnectionCredentialCreate(values: ConnectionCredential): yup.ValidationError[] {
     return validate(connectionCredentialSchema, values);
 }

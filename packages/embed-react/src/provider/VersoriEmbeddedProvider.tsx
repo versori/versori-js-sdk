@@ -1,5 +1,5 @@
 import { Flex, Spinner } from '@radix-ui/themes';
-import { EmbedClient, initEmbedded, InitOptions } from '@versori/embed';
+import { PlatformClient, initEmbedded, InitOptions } from '@versori/embed';
 import merge from 'lodash/merge';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { LocaleObject, setLocale } from 'yup';
@@ -33,10 +33,10 @@ export function VersoriEmbeddedProvider({
     validation = {},
     options,
 }: VersoriEmbeddedProviderProps) {
-    const [embeddedClient, setEmbeddedClient] = useState<EmbedClient | undefined>(undefined);
+    const [platformClient, setPlatformClient] = useState<PlatformClient | undefined>(undefined);
 
     useEffect(() => {
-        initEmbedded(options).then(setEmbeddedClient);
+        initEmbedded(options).then(setPlatformClient);
     }, []);
 
     useEffect(() => {
@@ -49,12 +49,12 @@ export function VersoriEmbeddedProvider({
             ...defaults,
         };
 
-        if (!embeddedClient) {
+        if (!platformClient) {
             return null;
         }
 
-        return { client: embeddedClient, defaults: mergedDefaults };
-    }, [embeddedClient, defaults]);
+        return { client: platformClient, defaults: mergedDefaults };
+    }, [platformClient, defaults]);
 
     if (!value) {
         return (

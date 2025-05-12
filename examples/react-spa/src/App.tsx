@@ -17,15 +17,17 @@ function App() {
         content = (
             <VersoriEmbeddedProvider
                 options={{
-                    hubId: import.meta.env.VITE_HUB_ID,
-                    endUserAuth: import.meta.env.VITE_END_USER_AUTH_TYPE_API_KEY ? {
-                        type: 'api-key',
-                        token: import.meta.env.VITE_END_USER_AUTH_TYPE_API_KEY,
-                        userId: externalId,
-                    } : {
-                        type: 'jwt',
-                        token,
-                    },
+                    orgId: import.meta.env.VITE_ORG_ID,
+                    endUserAuth: import.meta.env.VITE_END_USER_AUTH_TYPE_API_KEY
+                        ? {
+                              type: 'api-key',
+                              token: import.meta.env.VITE_END_USER_AUTH_TYPE_API_KEY,
+                              userId: externalId,
+                          }
+                        : {
+                              type: 'jwt',
+                              token,
+                          },
                     primaryCredential: {
                         type: 'auto',
                         generate: generateToken,

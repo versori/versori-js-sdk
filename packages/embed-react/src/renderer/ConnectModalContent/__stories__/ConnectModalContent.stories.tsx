@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { EmbedClient } from '@versori/embed';
-import { embeddedApi } from '@versori/sdk/embedded';
+import { PlatformClient } from '@versori/embed';
+import { platformApi } from '@versori/sdk/platform';
 import { DEFAULTS, VersoriEmbeddedContext } from '../../../provider';
 import { ConnectModalContent } from '../ConnectModalContent';
 
@@ -16,7 +16,7 @@ const meta = {
         (Story) => (
             <VersoriEmbeddedContext.Provider
                 value={{
-                    client: new EmbedClient(embeddedApi.client, 'hubId', 'userId', { type: 'manual' }),
+                    client: new PlatformClient(platformApi.client, 'orgId', 'userId', { type: 'manual' }),
                     defaults: DEFAULTS,
                 }}
             >
@@ -32,6 +32,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
     args: {
-        integrationId: '123',
+        projectId: '123',
     },
 };

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { EmbedClient } from '@versori/embed';
-import { embeddedApi } from '@versori/sdk/embedded';
+import { PlatformClient } from '@versori/embed';
+import { platformApi } from '@versori/sdk/platform';
 import { DEFAULTS, VersoriEmbeddedContext } from '../../../provider';
 // import '../IntegrationTile.scss';
 import { IntegrationTile } from '../IntegrationTile';
@@ -14,7 +14,7 @@ const meta = {
         (Story) => (
             <VersoriEmbeddedContext.Provider
                 value={{
-                    client: new EmbedClient(embeddedApi.client, 'hubId', 'userId', { type: 'manual' }),
+                    client: new PlatformClient(platformApi.client, 'orgId', 'userId', { type: 'manual' }),
                     defaults: DEFAULTS,
                 }}
             >
@@ -30,7 +30,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
     args: {
-        integrationId: '123',
+        projectId: '123',
         name: 'Integrate Dis',
         description: 'Integrate Dis is a great integration',
         isActivated: false,
@@ -40,7 +40,7 @@ export const Default: Story = {
 
 export const Connected: Story = {
     args: {
-        integrationId: '123',
+        projectId: '123',
         name: 'Integrate Dis',
         description: 'Integrate Dis is a great integration',
         isActivated: true,
@@ -50,7 +50,7 @@ export const Connected: Story = {
 
 export const ComingSoon: Story = {
     args: {
-        integrationId: '123',
+        projectId: '123',
         name: 'Integrate Dis',
         description: 'Integrate Dis is a great integration',
         isActivated: false,

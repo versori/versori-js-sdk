@@ -1,6 +1,6 @@
 import { Client } from '@hey-api/client-fetch';
 import { SdkConfig } from '@versori/sdk';
-import { EmbedClientOptions } from '../EmbedClient';
+import { PlatformClientOptions } from '../PlatformClient';
 import { CredentialSource } from './credential-source';
 import { EndUserAuth } from './end-user-auth';
 
@@ -18,10 +18,10 @@ export type InitOptions = {
     primaryCredential: CredentialSource;
 
     /**
-     * hubId is the unique identifier of the Embedded Integration Hub, this can be found from
+     * orgId is the unique identifier of the Organisation which owns the integrations, this can be found from
      * the Versori platform.
      */
-    hubId: string;
+    orgId: string;
 
     /**
      * sdkOptions allows configuring the underlying SDK that is used to communicate to Versori APIs.
@@ -34,5 +34,5 @@ export type InitOptions = {
      */
     overrideClient?: boolean | Client;
 
-    clientOptions?: EmbedClientOptions;
+    clientOptions?: PlatformClientOptions;
 };

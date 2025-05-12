@@ -8,19 +8,23 @@ export function CredentialDataBasicAuth({ id, name, data, onDataChange, errors }
     const onUserChange = useCallback(
         (e: SyntheticEvent<HTMLInputElement>) =>
             onDataChange({
-                username: e.currentTarget.value,
-                password: data.password,
+                basicAuth: {
+                    username: e.currentTarget.value,
+                    password: data.basicAuth.password,
+                },
             }),
-        [data.password, onDataChange]
+        [data.basicAuth, onDataChange]
     );
 
     const onPasswordChange = useCallback(
         (e: SyntheticEvent<HTMLInputElement>) =>
             onDataChange({
-                username: data.username,
-                password: e.currentTarget.value,
+                basicAuth: {
+                    username: data.basicAuth.username,
+                    password: e.currentTarget.value,
+                },
             }),
-        [data.username, onDataChange]
+        [data.basicAuth, onDataChange]
     );
 
     return (
@@ -30,7 +34,7 @@ export function CredentialDataBasicAuth({ id, name, data, onDataChange, errors }
                 <Flex flexGrow="1" asChild>
                     <TextField.Root
                         id={`credential-basicAuth-username-${id}`}
-                        value={data.username}
+                        value={data.basicAuth.username}
                         onChange={onUserChange}
                     />
                 </Flex>
@@ -41,7 +45,7 @@ export function CredentialDataBasicAuth({ id, name, data, onDataChange, errors }
                 <Flex flexGrow="1" asChild>
                     <TextField.Root
                         id={`credential-basicAuth-password-${id}`}
-                        value={data.password}
+                        value={data.basicAuth.password}
                         onChange={onPasswordChange}
                     />
                 </Flex>

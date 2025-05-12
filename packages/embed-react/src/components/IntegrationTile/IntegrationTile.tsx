@@ -10,7 +10,7 @@ export type IntegrationTileProps = CommonComponentProps & {
     /**
      * integrationId is the unique identifier for this integration.
      */
-    integrationId: string;
+    projectId: string;
 
     /**
      * Name is a short name for the integration, this is typically the name of the Connector being integrated to.
@@ -52,7 +52,7 @@ export type IntegrationTileProps = CommonComponentProps & {
 export function IntegrationTile({
     id,
     className,
-    integrationId,
+    projectId,
     name,
     imageUrl,
     isActivated,
@@ -69,22 +69,19 @@ export function IntegrationTile({
             e.preventDefault();
 
             if (isActivated) {
-                onManageClick(integrationId);
+                onManageClick(projectId);
 
                 return;
             }
 
-            onConnectClick(integrationId);
+            onConnectClick(projectId);
         },
-        [integrationId, onConnectClick, onManageClick, isActivated]
+        [projectId, onConnectClick, onManageClick, isActivated]
     );
 
-    const onDropdownManageClick = useCallback(() => onManageClick(integrationId), [integrationId, onManageClick]);
+    const onDropdownManageClick = useCallback(() => onManageClick(projectId), [projectId, onManageClick]);
 
-    const onDropdownDisconnectClick = useCallback(
-        () => onDisconnectClick(integrationId),
-        [integrationId, onDisconnectClick]
-    );
+    const onDropdownDisconnectClick = useCallback(() => onDisconnectClick(projectId), [projectId, onDisconnectClick]);
 
     return (
         <Card id={id} className={cx(className, 'vi-IntegrationTile')}>

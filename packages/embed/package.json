@@ -1,14 +1,12 @@
 {
   "name": "@versori/embed",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "publishConfig": {
     "access": "public"
   },
   "description": "Versori Embedded SDK",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -28,11 +26,7 @@
     "url": "git+https://github.com/versori/versori-js-sdk.git",
     "directory": "packages/embed"
   },
-  "keywords": [
-    "ipaas",
-    "integrations",
-    "openapi"
-  ],
+  "keywords": ["ipaas", "integrations", "openapi"],
   "author": "",
   "license": "MIT",
   "bugs": {
@@ -48,7 +42,7 @@
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.4.0",
-    "@versori/sdk": "1.0.0",
+    "@versori/sdk": "^2.0.0",
     "debug": "^4.3.7"
   }
 }

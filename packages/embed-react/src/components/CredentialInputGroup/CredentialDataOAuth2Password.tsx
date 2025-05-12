@@ -14,19 +14,23 @@ export function CredentialDataOAuth2Password({
     const onUserChange = useCallback(
         (e: SyntheticEvent<HTMLInputElement>) =>
             onDataChange({
-                username: e.currentTarget.value,
-                password: data.password,
+                oauth2Password: {
+                    username: e.currentTarget.value,
+                    password: data.oauth2Password.password,
+                },
             }),
-        [data.password, onDataChange]
+        [data.oauth2Password, onDataChange]
     );
 
     const onPasswordChange = useCallback(
         (e: SyntheticEvent<HTMLInputElement>) =>
             onDataChange({
-                username: data.username,
-                password: e.currentTarget.value,
+                oauth2Password: {
+                    username: data.oauth2Password.username,
+                    password: e.currentTarget.value,
+                },
             }),
-        [data.username, onDataChange]
+        [data.oauth2Password, onDataChange]
     );
 
     return (
@@ -39,7 +43,7 @@ export function CredentialDataOAuth2Password({
                 <Flex flexGrow="1" asChild>
                     <TextField.Root
                         id={`credential-oauth2password-username-${id}`}
-                        value={data.username}
+                        value={data.oauth2Password.username}
                         onChange={onUserChange}
                     />
                 </Flex>
@@ -52,7 +56,7 @@ export function CredentialDataOAuth2Password({
                 <Flex flexGrow="1" asChild>
                     <TextField.Root
                         id={`credential-oauth2password-password-${id}`}
-                        value={data.password}
+                        value={data.oauth2Password.password}
                         onChange={onPasswordChange}
                     />
                 </Flex>

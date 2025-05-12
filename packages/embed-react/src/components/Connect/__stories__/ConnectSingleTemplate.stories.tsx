@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 import { setLocale } from 'yup';
 import { ConnectSingleTemplate } from '../ConnectSingleTemplate';
-import { basicAuthTemplate, primaryTemplate, shopifyTemplate } from './testdata';
+import { basicAuthTemplate, shopifyTemplate } from './testdata';
 
 const meta = {
     title: 'Connect/ConnectSingleTemplate',
@@ -34,15 +34,28 @@ export const APIKey: Story = {
     name: 'API Key',
     args: {
         userId: 'dan',
-        integration: {
+        orgId: '1234',
+        project: {
             id: '1234',
             name: 'Shopify',
-            description: 'Connect your Shopify store to Versori',
-            imageUrl: 'https://via.placeholder.com/100x150',
-            isActivated: false,
-            isDeployed: true,
-            connectionTemplates: [primaryTemplate, shopifyTemplate],
+            currentFiles: {
+                files: [],
+                labels: {},
+            },
+            createdAt: new Date().toISOString(),
+            // imageUrl: 'https://via.placeholder.com/100x150',
+            environments: [
+                {
+                    id: '1234',
+                    name: 'production',
+                    status: 'running',
+                    publicUrl: 'https://example.com',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                },
+            ],
         },
+        connectionTemplates: [],
         template: shopifyTemplate,
     },
 };
@@ -51,15 +64,27 @@ export const BasicAuth: Story = {
     name: 'Basic Auth',
     args: {
         userId: 'dan',
-        integration: {
+        orgId: '1234',
+        project: {
             id: '1234',
-            name: 'Shopify',
-            description: 'Connect your Shopify store to Versori',
-            imageUrl: 'https://via.placeholder.com/100x150',
-            isActivated: false,
-            isDeployed: true,
-            connectionTemplates: [primaryTemplate, basicAuthTemplate],
+            name: 'Basic Auth',
+            currentFiles: {
+                files: [],
+                labels: {},
+            },
+            createdAt: new Date().toISOString(),
+            environments: [
+                {
+                    id: '1234',
+                    name: 'production',
+                    status: 'running',
+                    publicUrl: 'https://example.com',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                },
+            ],
         },
+        connectionTemplates: [],
         template: basicAuthTemplate,
     },
 };

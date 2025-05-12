@@ -1,9 +1,11 @@
-import { ActivationCreate, EmbeddedIntegration } from '@versori/sdk/embedded';
 import { CommonComponentProps } from '../../types/CommonComponentProps';
+import { Project, ActivationCreate, ConnectionTemplate } from '@versori/sdk/platform';
 
 export type ConnectProps = CommonComponentProps & {
     userId: string;
-    integration: EmbeddedIntegration;
+    orgId: string;
+    project: Project;
+    connectionTemplates: ConnectionTemplate[];
     onConnect: (payload: ActivationCreate) => Promise<void>;
     onCancel: () => void;
 };

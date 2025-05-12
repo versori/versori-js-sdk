@@ -1,4 +1,4 @@
-import { EmbedClient } from '@versori/embed';
+import { PlatformClient } from '@versori/embed';
 import { createContext } from 'react';
 
 export type VersoriEmbeddedDefaults = {
@@ -6,7 +6,7 @@ export type VersoriEmbeddedDefaults = {
 };
 
 export type VersoriEmbeddedContextType = {
-    client: EmbedClient;
+    client: PlatformClient;
     defaults: VersoriEmbeddedDefaults;
 };
 
