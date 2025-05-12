@@ -14,7 +14,7 @@ export const primaryTemplate: ConnectionTemplate = {
             basicAuth: {
                 id: 'basic-auth-123',
                 description: 'Basic Auth',
-            }
+            },
         },
     ],
 };
@@ -35,7 +35,7 @@ export const shopifyTemplate: ConnectionTemplate = {
                 name: 'x-shopify-access-token',
                 in: 'header',
                 description: 'API Key',
-            }
+            },
         },
     ],
 };
@@ -54,7 +54,7 @@ export const basicAuthTemplate: ConnectionTemplate = {
             basicAuth: {
                 id: 'basic-auth-123',
                 description: 'Basic Auth',
-            }
+            },
         },
     ],
 };

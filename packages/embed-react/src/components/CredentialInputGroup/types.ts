@@ -13,14 +13,14 @@ import {
 } from '@versori/sdk/platform';
 
 type CredentialDataEnumeration = {
-    none: {none: CredentialDataNone};
-    string: {string: CredentialDataString};
-    binary: {binary: CredentialDataBinary};
-    'basic-auth': {basicAuth: CredentialDataBasicAuth};
-    'oauth2-client': {oauth2Client: CredentialDataOAuth2Client};
-    'oauth2-code': {oauth2Code: CredentialDataOAuth2Code};
-    'oauth2-password': {oauth2Password: CredentialDataOAuth2Password};
-    'oauth2-token': {oauth2Token: CredentialDataOAuth2Token};
+    none: { none: CredentialDataNone };
+    string: { string: CredentialDataString };
+    binary: { binary: CredentialDataBinary };
+    'basic-auth': { basicAuth: CredentialDataBasicAuth };
+    'oauth2-client': { oauth2Client: CredentialDataOAuth2Client };
+    'oauth2-code': { oauth2Code: CredentialDataOAuth2Code };
+    'oauth2-password': { oauth2Password: CredentialDataOAuth2Password };
+    'oauth2-token': { oauth2Token: CredentialDataOAuth2Token };
     // These aren't implemented yet
     'custom-function': never;
     oauth1: never;

@@ -29,7 +29,19 @@ export type Error = {
     details?: string;
 };
 
-export type Category = 'Development & IT' | 'ERP' | 'Supply Chain & Logistics' | 'Communication' | 'Accounting' | 'Hospitality' | 'Productivity' | 'HR' | 'CRM' | 'AI/LLMs' | 'eCommerce' | 'Business Operations';
+export type Category =
+    | 'Development & IT'
+    | 'ERP'
+    | 'Supply Chain & Logistics'
+    | 'Communication'
+    | 'Accounting'
+    | 'Hospitality'
+    | 'Productivity'
+    | 'HR'
+    | 'CRM'
+    | 'AI/LLMs'
+    | 'eCommerce'
+    | 'Business Operations';
 
 export type PageInfo = {
     totalCount: number;
@@ -64,7 +76,7 @@ export type Message = {
      * to provide more information about the message, such as a list of validation errors.
      *
      */
-    detail?: Array<(string)>;
+    detail?: Array<string>;
 };
 
 export type AuthSchemeConfigBase = {
@@ -97,7 +109,7 @@ export type AuthSchemeConfigBase = {
  *
  */
 export type AuthSchemeConfigNone = AuthSchemeConfigBase & {
-    schemeType: "none";
+    schemeType: 'none';
 };
 
 /**
@@ -111,7 +123,7 @@ export type AuthSchemeConfigAPIKeyIn = 'query' | 'header' | 'cookie';
  *
  */
 export type AuthSchemeConfigAPIKey = AuthSchemeConfigBase & {
-    schemeType: "api-key";
+    schemeType: 'api-key';
     /**
      * Name is the query parameter/header/cookie name which will be used to send the API key.
      */
@@ -125,7 +137,7 @@ export type AuthSchemeConfigAPIKey = AuthSchemeConfigBase & {
  *
  */
 export type AuthSchemeConfigBasicAuth = AuthSchemeConfigBase & {
-    schemeType: "basic-auth";
+    schemeType: 'basic-auth';
 };
 
 /**
@@ -234,7 +246,10 @@ export type AuthSchemeConfigOAuth2GrantPassword = {
     clientSecret?: string;
 };
 
-export type AuthSchemeConfigOAuth2Grant = AuthSchemeConfigOAuth2GrantAuthorizationCode | AuthSchemeConfigOAuth2GrantClientCredentials | AuthSchemeConfigOAuth2GrantPassword;
+export type AuthSchemeConfigOAuth2Grant =
+    | AuthSchemeConfigOAuth2GrantAuthorizationCode
+    | AuthSchemeConfigOAuth2GrantClientCredentials
+    | AuthSchemeConfigOAuth2GrantPassword;
 
 /**
  * AuthSchemeConfigOAuth2 defines how a Connector uses an OAuth2 credential to authenticate
@@ -246,7 +261,7 @@ export type AuthSchemeConfigOAuth2Grant = AuthSchemeConfigOAuth2GrantAuthorizati
  *
  */
 export type AuthSchemeConfigOAuth2 = AuthSchemeConfigBase & {
-    schemeType: "oauth2";
+    schemeType: 'oauth2';
     /**
      * AuthorizeURL is the URL which the user will be redirected to in order to authorize
      * the application.
@@ -270,7 +285,7 @@ export type AuthSchemeConfigOAuth2 = AuthSchemeConfigBase & {
      * of scopes to function correctly.
      *
      */
-    defaultScopes: Array<(string)>;
+    defaultScopes: Array<string>;
     /**
      * AdditionalAuthorizeParams is a URL-encoded query string which should be attached to
      * the AuthorizeURL when the user is redirected to the OAuth 2.0 authorization
@@ -321,7 +336,7 @@ export type AuthSchemeConfigHMACIn = 'query' | 'header' | 'cookie';
  *
  */
 export type AuthSchemeConfigHMAC = AuthSchemeConfigBase & {
-    schemeType: "hmac";
+    schemeType: 'hmac';
     /**
      * Name is the query parameter/header/cookie name which will be used to send the signature.
      */
@@ -337,7 +352,7 @@ export type AuthSchemeConfigHMAC = AuthSchemeConfigBase & {
      * defines the order in which the input is fed into the hashing function.
      *
      */
-    digestInputs: Array<('body' | 'url')>;
+    digestInputs: Array<'body' | 'url'>;
 };
 
 /**
@@ -351,7 +366,7 @@ export type algorithm = 'sha1' | 'sha256' | 'sha512';
  *
  */
 export type AuthSchemeConfigCertificate = AuthSchemeConfigBase & {
-    schemeType: "certificate";
+    schemeType: 'certificate';
 };
 
 /**
@@ -361,7 +376,13 @@ export type AuthSchemeConfigCertificate = AuthSchemeConfigBase & {
  * authenticate.
  *
  */
-export type AuthSchemeConfig = AuthSchemeConfigNone | AuthSchemeConfigAPIKey | AuthSchemeConfigBasicAuth | AuthSchemeConfigOAuth2 | AuthSchemeConfigHMAC | AuthSchemeConfigCertificate;
+export type AuthSchemeConfig =
+    | AuthSchemeConfigNone
+    | AuthSchemeConfigAPIKey
+    | AuthSchemeConfigBasicAuth
+    | AuthSchemeConfigOAuth2
+    | AuthSchemeConfigHMAC
+    | AuthSchemeConfigCertificate;
 
 /**
  * ConnectionVariable denotes an arbitrary key/value pair which can be used to configure a connector.
@@ -394,7 +415,18 @@ export type ConnectionVariable = {
  * - certificate: The credential is a PEM encoded certificate, key and CA to be used for TLS client authentication.
  *
  */
-export type CredentialType = 'none' | 'string' | 'binary' | 'basic-auth' | 'oauth2-client' | 'oauth2-code' | 'oauth2-password' | 'oauth2-token' | 'custom-function' | 'certificate' | 'jwt-bearer';
+export type CredentialType =
+    | 'none'
+    | 'string'
+    | 'binary'
+    | 'basic-auth'
+    | 'oauth2-client'
+    | 'oauth2-code'
+    | 'oauth2-password'
+    | 'oauth2-token'
+    | 'custom-function'
+    | 'certificate'
+    | 'jwt-bearer';
 
 /**
  * ConnectorSummaryBase exposes a summary of a Connector irrespective of protocol.
@@ -560,7 +592,7 @@ export type CredentialDataOAuth2Client = {
      * requested scopes come from the `CredentialDataOAuth2Token` credential.
      *
      */
-    scopes?: Array<(string)>;
+    scopes?: Array<string>;
     /**
      * AdditionalParams is a URL-encoded query string which can be used to pass additional
      * parameters to the OAuth 2.0 token endpoint. These parameters are attached to the body
@@ -596,7 +628,7 @@ export type CredentialDataOAuth2Token = {
     /**
      * Scopes is a list of scopes which the user has granted consent for.
      */
-    scopes: Array<(string)>;
+    scopes: Array<string>;
     /**
      * AccessToken is the OAuth2 access token which can be used to authenticate with the Connector. This
      * information is redacted when read from the API.
@@ -695,8 +727,17 @@ export type Credential = {
      * Credential is valid or not. An empty array indicates that the Credential is valid.
      *
      */
-    errors?: Array<(string)>;
-    data: (CredentialDataNone | CredentialDataString | CredentialDataBinary | CredentialDataBasicAuth | CredentialDataOAuth2Client | CredentialDataOAuth2Token | CredentialDataOAuth2Code | CredentialDataOAuth2Password | CredentialDataCertificate);
+    errors?: Array<string>;
+    data:
+        | CredentialDataNone
+        | CredentialDataString
+        | CredentialDataBinary
+        | CredentialDataBasicAuth
+        | CredentialDataOAuth2Client
+        | CredentialDataOAuth2Token
+        | CredentialDataOAuth2Code
+        | CredentialDataOAuth2Password
+        | CredentialDataCertificate;
     /**
      * ExpiresAt denotes the time this credential should be automatically deleted. External systems can subscribe
      * to deletion events and if the reason is "expired", can trigger the correct notifications to interested
@@ -799,7 +840,7 @@ export type ConnectorVersion = {
      * PublishedAt is the time at which the ConnectorVersion was published.
      *
      */
-    publishedAt: (string) | null;
+    publishedAt: string | null;
     messages?: Array<Message>;
 };
 
@@ -859,7 +900,7 @@ export type ConnectorBase = {
  * HTTPConnector represents a connector to an external system over HTTP.
  */
 export type HTTPConnector = ConnectorBase & {
-    protocol: "http";
+    protocol: 'http';
     /**
      * BaseURL is the base URL of all HTTP Actions within the Connector.
      */
@@ -871,7 +912,7 @@ export type HTTPConnector = ConnectorBase & {
  * BigQueryConnector represents a connector to a Google BigQuery dataset.
  */
 export type BigQueryConnector = ConnectorBase & {
-    protocol: "bigquery";
+    protocol: 'bigquery';
     /**
      * DatasetID is the ID of the BigQuery dataset, in the format "<project_id>.<dataset_name>"
      */
@@ -918,7 +959,7 @@ export type ConnectorUpdateBase = {
      * AuthSchemeConfigs are not edited.
      *
      */
-    authSchemeConfigIds?: Array<(string)>;
+    authSchemeConfigIds?: Array<string>;
     public?: boolean;
     /**
      * Hold an optional link to the documentation for the API.
@@ -936,7 +977,7 @@ export type ConnectorUpdateBase = {
  *
  */
 export type HTTPConnectorUpdate = ConnectorUpdateBase & {
-    protocol: "http";
+    protocol: 'http';
     /**
      * BaseURL is the base URL of all HTTP Actions within the Connector.
      */
@@ -1009,7 +1050,7 @@ export type InitialiseOAuth2ConnectionRequest = {
      * `offline_access` scope in addition to the ones provided here.
      *
      */
-    scopes?: Array<(string)>;
+    scopes?: Array<string>;
     /**
      * DisableOfflineAccess is a flag which can be set to true to disable the inclusion of the
      * standard `offline_access` scope in the list of scopes. This is defined separately to
@@ -1098,7 +1139,16 @@ export type CredentialCreate = {
      */
     name: string;
     type: CredentialType;
-    data: (CredentialDataNone | CredentialDataString | CredentialDataBinary | CredentialDataBasicAuth | CredentialDataOAuth2Client | CredentialDataOAuth2Code | CredentialDataOAuth2Token | CredentialDataOAuth2Password | CredentialDataCertificate);
+    data:
+        | CredentialDataNone
+        | CredentialDataString
+        | CredentialDataBinary
+        | CredentialDataBasicAuth
+        | CredentialDataOAuth2Client
+        | CredentialDataOAuth2Code
+        | CredentialDataOAuth2Token
+        | CredentialDataOAuth2Password
+        | CredentialDataCertificate;
 };
 
 /**
@@ -1401,7 +1451,7 @@ export type DefinitionCommon = {
      * `schema.contentType` will be `application/schema+yaml`.
      *
      */
-    accept: Array<(string)>;
+    accept: Array<string>;
     /**
      * Description is a human-friendly description of the Definition. This is typically used to describe the
      * purpose of the Definition and how it should be used.
@@ -1441,22 +1491,22 @@ export type Definition = {
      */
     id: string;
 } & DefinitionCommon & {
-    /**
-     * URL is the location of the actual Schema definition for this Definition entity.
-     *
-     * The structure of this URL will be consistent across all media types for each connection, for example:
-     *
-     * - `https://platform.versori.com/api/schemas/v1/o/{organisation_id}/{connector_id}/{connector_version}/{definition_slug}.{media_type_ext}`
-     *
-     */
-    url: string;
-    /**
-     * ReferencedBy is a list of DefinitionReference objects which defines what other entities are
-     * referencing the this Definition.
-     *
-     */
-    referencedBy?: Array<DefinitionReference>;
-};
+        /**
+         * URL is the location of the actual Schema definition for this Definition entity.
+         *
+         * The structure of this URL will be consistent across all media types for each connection, for example:
+         *
+         * - `https://platform.versori.com/api/schemas/v1/o/{organisation_id}/{connector_id}/{connector_version}/{definition_slug}.{media_type_ext}`
+         *
+         */
+        url: string;
+        /**
+         * ReferencedBy is a list of DefinitionReference objects which defines what other entities are
+         * referencing the this Definition.
+         *
+         */
+        referencedBy?: Array<DefinitionReference>;
+    };
 
 /**
  * ActionDefinition links a Definition to an Action.
@@ -1520,7 +1570,7 @@ export type ActionHTTPResponse = ActionHTTPResponseCommon & {
  * ActionHTTPCommon defines the common fields for all HTTP Actions.
  */
 export type ActionHTTPCommon = {
-    type: "http";
+    type: 'http';
     method: HTTPMethod;
     path: ActionPath;
     parameters: Array<ActionHTTPParameter>;
@@ -1615,7 +1665,7 @@ export type ActionHTTPResponseCreate = ActionHTTPResponseCommon & {
  * ActionHTTPCommon defines the common fields for creating a HTTP Action.
  */
 export type ActionHTTPCommonCreate = {
-    type: "http";
+    type: 'http';
     method: HTTPMethod;
     path: ActionPath;
     parameters: Array<ActionHTTPParameter>;
@@ -1807,7 +1857,7 @@ export type TriggerHTTPResponse = TriggerHTTPResponseCommon & {
  * TriggerHTTPCommon defines the common fields for all HTTP Triggers.
  */
 export type TriggerHTTPCommon = {
-    type: "http";
+    type: 'http';
     method: HTTPMethod;
     parameters: Array<TriggerHTTPParameter>;
     requestBody?: TriggerHTTPRequestBody;
@@ -1876,7 +1926,7 @@ export type TriggerHTTPResponseCreate = TriggerHTTPResponseCommon & {
  * TriggerHTTPCommon defines the common fields for creating a HTTP Trigger.
  */
 export type TriggerHTTPCommonCreate = {
-    type: "http";
+    type: 'http';
     method: HTTPMethod;
     parameters: Array<TriggerHTTPParameter>;
     requestBody?: TriggerHTTPRequestBodyCreate;
@@ -1989,8 +2039,8 @@ export type Definitions = {
  *
  */
 export type DefinitionsDelete = {
-    ids?: Array<(string)>;
-    names?: Array<(string)>;
+    ids?: Array<string>;
+    names?: Array<string>;
     /**
      * All is a flag which indicates that all Definitions should be deleted. This is mutually exclusive with the
      * `ids` and `names` fields.
@@ -2028,8 +2078,8 @@ export type DefinitionUpdate = {
      */
     id: string;
 } & DefinitionCommon & {
-    schema?: InlineSchema;
-};
+        schema?: InlineSchema;
+    };
 
 /**
  * Protocol describes a protocol which is supported by Versori and can be used to communicate with an external
@@ -2075,7 +2125,16 @@ export type ProtocolPage = PageInfo & {
  * enum values for possible options.
  *
  */
-export type AuthSchemeType = 'none' | 'api-key' | 'basic-auth' | 'oauth2' | 'google-service-account' | 'hmac' | 'jwt-bearer' | 'custom-function' | 'certificate';
+export type AuthSchemeType =
+    | 'none'
+    | 'api-key'
+    | 'basic-auth'
+    | 'oauth2'
+    | 'google-service-account'
+    | 'hmac'
+    | 'jwt-bearer'
+    | 'custom-function'
+    | 'certificate';
 
 /**
  * AuthScheme describes an authentication scheme which is supported by Versori and can be used
@@ -2290,9 +2349,9 @@ export type Parametertrigger_name = string;
 
 export type Parameterdefinition_name = string;
 
-export type ListCategoriesResponse = (Array<Category>);
+export type ListCategoriesResponse = Array<Category>;
 
-export type ListCategoriesError = (Error);
+export type ListCategoriesError = Error;
 
 export type ListPublicConnectorsData = {
     query?: {
@@ -2329,9 +2388,9 @@ export type ListPublicConnectorsData = {
     };
 };
 
-export type ListPublicConnectorsResponse = (ConnectorPage);
+export type ListPublicConnectorsResponse = ConnectorPage;
 
-export type ListPublicConnectorsError = (Error);
+export type ListPublicConnectorsError = Error;
 
 export type ListConnectorsData = {
     path: {
@@ -2371,9 +2430,9 @@ export type ListConnectorsData = {
     };
 };
 
-export type ListConnectorsResponse = (ConnectorPage);
+export type ListConnectorsResponse = ConnectorPage;
 
-export type ListConnectorsError = (Error);
+export type ListConnectorsError = Error;
 
 export type GetConnectorData = {
     path: {
@@ -2385,9 +2444,9 @@ export type GetConnectorData = {
     };
 };
 
-export type GetConnectorResponse = (Connector);
+export type GetConnectorResponse = Connector;
 
-export type GetConnectorError = (Error);
+export type GetConnectorError = Error;
 
 export type UpdateConnectorData = {
     body: ConnectorUpdate;
@@ -2400,9 +2459,9 @@ export type UpdateConnectorData = {
     };
 };
 
-export type UpdateConnectorResponse = (Connector);
+export type UpdateConnectorResponse = Connector;
 
-export type UpdateConnectorError = (Error);
+export type UpdateConnectorError = Error;
 
 export type DeleteConnectorData = {
     path: {
@@ -2420,7 +2479,7 @@ export type DeleteConnectorData = {
     };
 };
 
-export type DeleteConnectorResponse = (void);
+export type DeleteConnectorResponse = void;
 
 export type DeleteConnectorError = unknown;
 
@@ -2437,9 +2496,9 @@ export type UpdateConnectorTagsData = {
     };
 };
 
-export type UpdateConnectorTagsResponse = (void);
+export type UpdateConnectorTagsResponse = void;
 
-export type UpdateConnectorTagsError = (Error);
+export type UpdateConnectorTagsError = Error;
 
 export type UpdateConnectorCategoriesData = {
     body: {
@@ -2454,9 +2513,9 @@ export type UpdateConnectorCategoriesData = {
     };
 };
 
-export type UpdateConnectorCategoriesResponse = (void);
+export type UpdateConnectorCategoriesResponse = void;
 
-export type UpdateConnectorCategoriesError = (Error);
+export type UpdateConnectorCategoriesError = Error;
 
 export type UpsertAuthSchemeConfigData = {
     body: AuthSchemeConfig;
@@ -2470,9 +2529,9 @@ export type UpsertAuthSchemeConfigData = {
     };
 };
 
-export type UpsertAuthSchemeConfigResponse = (Connector);
+export type UpsertAuthSchemeConfigResponse = Connector;
 
-export type UpsertAuthSchemeConfigError = (Error);
+export type UpsertAuthSchemeConfigError = Error;
 
 export type DeleteAuthSchemeConfigData = {
     path: {
@@ -2485,9 +2544,9 @@ export type DeleteAuthSchemeConfigData = {
     };
 };
 
-export type DeleteAuthSchemeConfigResponse = (Connector);
+export type DeleteAuthSchemeConfigResponse = Connector;
 
-export type DeleteAuthSchemeConfigError = (Error);
+export type DeleteAuthSchemeConfigError = Error;
 
 export type InitialiseOauth2ConnectionData = {
     body?: InitialiseOAuth2ConnectionRequest;
@@ -2500,9 +2559,9 @@ export type InitialiseOauth2ConnectionData = {
     };
 };
 
-export type InitialiseOauth2ConnectionResponse = (InitialiseOAuth2ConnectionResponse);
+export type InitialiseOauth2ConnectionResponse = InitialiseOAuth2ConnectionResponse;
 
-export type InitialiseOauth2ConnectionError = (Error);
+export type InitialiseOauth2ConnectionError = Error;
 
 export type ListConnectorConnectionsData = {
     path: {
@@ -2519,9 +2578,9 @@ export type ListConnectorConnectionsData = {
     };
 };
 
-export type ListConnectorConnectionsResponse = (ConnectorConnectionPage);
+export type ListConnectorConnectionsResponse = ConnectorConnectionPage;
 
-export type ListConnectorConnectionsError = (Error);
+export type ListConnectorConnectionsError = Error;
 
 export type CreateConnectorConnectionData = {
     body?: ConnectionCreate;
@@ -2534,9 +2593,9 @@ export type CreateConnectorConnectionData = {
     };
 };
 
-export type CreateConnectorConnectionResponse = (Connection);
+export type CreateConnectorConnectionResponse = Connection;
 
-export type CreateConnectorConnectionError = (Error);
+export type CreateConnectorConnectionError = Error;
 
 export type GetConnectionData = {
     path: {
@@ -2549,9 +2608,9 @@ export type GetConnectionData = {
     };
 };
 
-export type GetConnectionResponse = (Connection);
+export type GetConnectionResponse = Connection;
 
-export type GetConnectionError = (Error);
+export type GetConnectionError = Error;
 
 export type UpdateConnectionData = {
     body: ConnectionUpdate;
@@ -2565,9 +2624,9 @@ export type UpdateConnectionData = {
     };
 };
 
-export type UpdateConnectionResponse = (Connection);
+export type UpdateConnectionResponse = Connection;
 
-export type UpdateConnectionError = (Error);
+export type UpdateConnectionError = Error;
 
 export type DeleteConnectionData = {
     path: {
@@ -2587,9 +2646,9 @@ export type DeleteConnectionData = {
     };
 };
 
-export type DeleteConnectionResponse = (void);
+export type DeleteConnectionResponse = void;
 
-export type DeleteConnectionError = (Error);
+export type DeleteConnectionError = Error;
 
 export type CreateConnectorVersionData = {
     body: ConnectorVersionCreate;
@@ -2602,9 +2661,9 @@ export type CreateConnectorVersionData = {
     };
 };
 
-export type CreateConnectorVersionResponse = (ConnectorVersion);
+export type CreateConnectorVersionResponse = ConnectorVersion;
 
-export type CreateConnectorVersionError = (Error);
+export type CreateConnectorVersionError = Error;
 
 export type ListConnectorVersionsData = {
     path: {
@@ -2621,9 +2680,9 @@ export type ListConnectorVersionsData = {
     };
 };
 
-export type ListConnectorVersionsResponse = (ConnectorVersionsPage);
+export type ListConnectorVersionsResponse = ConnectorVersionsPage;
 
-export type ListConnectorVersionsError = (Error);
+export type ListConnectorVersionsError = Error;
 
 export type GetConnectorVersionData = {
     path: {
@@ -2641,9 +2700,9 @@ export type GetConnectorVersionData = {
     };
 };
 
-export type GetConnectorVersionResponse = (ConnectorVersion);
+export type GetConnectorVersionResponse = ConnectorVersion;
 
-export type GetConnectorVersionError = (Error);
+export type GetConnectorVersionError = Error;
 
 export type UpdateConnectorVersionData = {
     body: ConnectorVersion;
@@ -2662,9 +2721,9 @@ export type UpdateConnectorVersionData = {
     };
 };
 
-export type UpdateConnectorVersionResponse = (ConnectorVersion);
+export type UpdateConnectorVersionResponse = ConnectorVersion;
 
-export type UpdateConnectorVersionError = (Error);
+export type UpdateConnectorVersionError = Error;
 
 export type DeleteConnectorVersionData = {
     path: {
@@ -2689,9 +2748,9 @@ export type DeleteConnectorVersionData = {
     };
 };
 
-export type DeleteConnectorVersionResponse = (void);
+export type DeleteConnectorVersionResponse = void;
 
-export type DeleteConnectorVersionError = (Error);
+export type DeleteConnectorVersionError = Error;
 
 export type ImportPublicConnectorVersionData = {
     path: {
@@ -2709,9 +2768,9 @@ export type ImportPublicConnectorVersionData = {
     };
 };
 
-export type ImportPublicConnectorVersionResponse = (Connector);
+export type ImportPublicConnectorVersionResponse = Connector;
 
-export type ImportPublicConnectorVersionError = (Error);
+export type ImportPublicConnectorVersionError = Error;
 
 export type PublishConnectorData = {
     path: {
@@ -2729,9 +2788,9 @@ export type PublishConnectorData = {
     };
 };
 
-export type PublishConnectorResponse2 = (PublishConnectorResponse);
+export type PublishConnectorResponse2 = PublishConnectorResponse;
 
-export type PublishConnectorError = (Error);
+export type PublishConnectorError = Error;
 
 export type UnpublishConnectorData = {
     path: {
@@ -2749,9 +2808,9 @@ export type UnpublishConnectorData = {
     };
 };
 
-export type UnpublishConnectorResponse2 = (UnpublishConnectorResponse);
+export type UnpublishConnectorResponse2 = UnpublishConnectorResponse;
 
-export type UnpublishConnectorError = (Error);
+export type UnpublishConnectorError = Error;
 
 export type GetActionsData = {
     path: {
@@ -2779,9 +2838,9 @@ export type GetActionsData = {
     };
 };
 
-export type GetActionsResponse = (ActionPage);
+export type GetActionsResponse = ActionPage;
 
-export type GetActionsError = (Error);
+export type GetActionsError = Error;
 
 export type CreateActionData = {
     body: ActionCreate;
@@ -2800,9 +2859,9 @@ export type CreateActionData = {
     };
 };
 
-export type CreateActionResponse = (Action);
+export type CreateActionResponse = Action;
 
-export type CreateActionError = (Error);
+export type CreateActionError = Error;
 
 export type GetActionData = {
     path: {
@@ -2821,9 +2880,9 @@ export type GetActionData = {
     };
 };
 
-export type GetActionResponse = (Action);
+export type GetActionResponse = Action;
 
-export type GetActionError = (Error);
+export type GetActionError = Error;
 
 export type UpdateActionData = {
     body: Action;
@@ -2843,9 +2902,9 @@ export type UpdateActionData = {
     };
 };
 
-export type UpdateActionResponse = (Action);
+export type UpdateActionResponse = Action;
 
-export type UpdateActionError = (Error);
+export type UpdateActionError = Error;
 
 export type DeleteActionData = {
     path: {
@@ -2864,9 +2923,9 @@ export type DeleteActionData = {
     };
 };
 
-export type DeleteActionResponse = (void);
+export type DeleteActionResponse = void;
 
-export type DeleteActionError = (Error);
+export type DeleteActionError = Error;
 
 export type GetTriggersData = {
     path: {
@@ -2894,9 +2953,9 @@ export type GetTriggersData = {
     };
 };
 
-export type GetTriggersResponse = (TriggerPage);
+export type GetTriggersResponse = TriggerPage;
 
-export type GetTriggersError = (Error);
+export type GetTriggersError = Error;
 
 export type CreateTriggerData = {
     body: TriggerCreate;
@@ -2915,9 +2974,9 @@ export type CreateTriggerData = {
     };
 };
 
-export type CreateTriggerResponse = (Trigger);
+export type CreateTriggerResponse = Trigger;
 
-export type CreateTriggerError = (Error);
+export type CreateTriggerError = Error;
 
 export type GetTriggerData = {
     path: {
@@ -2936,9 +2995,9 @@ export type GetTriggerData = {
     };
 };
 
-export type GetTriggerResponse = (Trigger);
+export type GetTriggerResponse = Trigger;
 
-export type GetTriggerError = (Error);
+export type GetTriggerError = Error;
 
 export type UpdateTriggerData = {
     body: Trigger;
@@ -2958,9 +3017,9 @@ export type UpdateTriggerData = {
     };
 };
 
-export type UpdateTriggerResponse = (Trigger);
+export type UpdateTriggerResponse = Trigger;
 
-export type UpdateTriggerError = (Error);
+export type UpdateTriggerError = Error;
 
 export type DeleteTriggerData = {
     path: {
@@ -2979,9 +3038,9 @@ export type DeleteTriggerData = {
     };
 };
 
-export type DeleteTriggerResponse = (void);
+export type DeleteTriggerResponse = void;
 
-export type DeleteTriggerError = (Error);
+export type DeleteTriggerError = Error;
 
 export type GetDefinitionsData = {
     path: {
@@ -3009,9 +3068,9 @@ export type GetDefinitionsData = {
     };
 };
 
-export type GetDefinitionsResponse = (DefinitionPage);
+export type GetDefinitionsResponse = DefinitionPage;
 
-export type GetDefinitionsError = (Error);
+export type GetDefinitionsError = Error;
 
 export type CreateDefinitionsData = {
     body: DefinitionsCreate;
@@ -3030,9 +3089,9 @@ export type CreateDefinitionsData = {
     };
 };
 
-export type CreateDefinitionsResponse = (Definitions);
+export type CreateDefinitionsResponse = Definitions;
 
-export type CreateDefinitionsError = (Error);
+export type CreateDefinitionsError = Error;
 
 export type DeleteDefinitionsData = {
     body: DefinitionsDelete;
@@ -3059,9 +3118,9 @@ export type DeleteDefinitionsData = {
     };
 };
 
-export type DeleteDefinitionsResponse = (void);
+export type DeleteDefinitionsResponse = void;
 
-export type DeleteDefinitionsError = (DefinitionDeletePreconditionFailed | Error);
+export type DeleteDefinitionsError = DefinitionDeletePreconditionFailed | Error;
 
 export type GetDefinitionData = {
     path: {
@@ -3080,9 +3139,9 @@ export type GetDefinitionData = {
     };
 };
 
-export type GetDefinitionResponse = (Definition);
+export type GetDefinitionResponse = Definition;
 
-export type GetDefinitionError = (Error);
+export type GetDefinitionError = Error;
 
 export type UpdateDefinitionData = {
     body: DefinitionUpdate;
@@ -3102,9 +3161,9 @@ export type UpdateDefinitionData = {
     };
 };
 
-export type UpdateDefinitionResponse = (Definition);
+export type UpdateDefinitionResponse = Definition;
 
-export type UpdateDefinitionError = (Error);
+export type UpdateDefinitionError = Error;
 
 export type DeleteDefinitionData = {
     path: {
@@ -3131,9 +3190,9 @@ export type DeleteDefinitionData = {
     };
 };
 
-export type DeleteDefinitionResponse = (void);
+export type DeleteDefinitionResponse = void;
 
-export type DeleteDefinitionError = (DefinitionDeletePreconditionFailed | Error);
+export type DeleteDefinitionError = DefinitionDeletePreconditionFailed | Error;
 
 export type ListProtocolsData = {
     path: {
@@ -3146,9 +3205,9 @@ export type ListProtocolsData = {
     };
 };
 
-export type ListProtocolsResponse = (ProtocolPage);
+export type ListProtocolsResponse = ProtocolPage;
 
-export type ListProtocolsError = (Error);
+export type ListProtocolsError = Error;
 
 export type ListAuthSchemesData = {
     path: {
@@ -3157,9 +3216,9 @@ export type ListAuthSchemesData = {
     };
 };
 
-export type ListAuthSchemesResponse = (AuthSchemePage);
+export type ListAuthSchemesResponse = AuthSchemePage;
 
-export type ListAuthSchemesError = (Error);
+export type ListAuthSchemesError = Error;
 
 export type GetProtocolUploadUrlData = {
     path: {
@@ -3168,9 +3227,9 @@ export type GetProtocolUploadUrlData = {
     };
 };
 
-export type GetProtocolUploadUrlResponse = (SignedURL);
+export type GetProtocolUploadUrlResponse = SignedURL;
 
-export type GetProtocolUploadUrlError = (Error);
+export type GetProtocolUploadUrlError = Error;
 
 export type CreateHttpConnectorData = {
     body: HTTPConnectorCreate;
@@ -3179,16 +3238,16 @@ export type CreateHttpConnectorData = {
     };
 };
 
-export type CreateHttpConnectorResponse = (HTTPConnector);
+export type CreateHttpConnectorResponse = HTTPConnector;
 
-export type CreateHttpConnectorError = (Error);
+export type CreateHttpConnectorError = Error;
 
 export type ImportHttpConnectorVersionData = {
     body: {
         /**
          * The file to be imported.
          */
-        file?: (Blob | File);
+        file?: Blob | File;
         metadata?: ImportHTTPConnectorVersionMetadata;
     };
     path: {
@@ -3200,16 +3259,16 @@ export type ImportHttpConnectorVersionData = {
     };
 };
 
-export type ImportHttpConnectorVersionResponse = (ImportHTTPConnectorResult);
+export type ImportHttpConnectorVersionResponse = ImportHTTPConnectorResult;
 
-export type ImportHttpConnectorVersionError = (ImportHTTPConnectorError | Error);
+export type ImportHttpConnectorVersionError = ImportHTTPConnectorError | Error;
 
 export type ImportHttpConnectorData = {
     body: {
         /**
          * The file to be imported.
          */
-        file?: (Blob | File);
+        file?: Blob | File;
         metadata?: ImportHTTPConnectorMetadata;
     };
     path: {
@@ -3217,9 +3276,9 @@ export type ImportHttpConnectorData = {
     };
 };
 
-export type ImportHttpConnectorResponse = (ImportHTTPConnectorResult);
+export type ImportHttpConnectorResponse = ImportHTTPConnectorResult;
 
-export type ImportHttpConnectorError = (ImportHTTPConnectorError | Error);
+export type ImportHttpConnectorError = ImportHTTPConnectorError | Error;
 
 export type CreateBigQueryConnectorData = {
     body: BigQueryConnectorCreate;
@@ -3228,9 +3287,9 @@ export type CreateBigQueryConnectorData = {
     };
 };
 
-export type CreateBigQueryConnectorResponse = (BigQueryConnector);
+export type CreateBigQueryConnectorResponse = BigQueryConnector;
 
-export type CreateBigQueryConnectorError = (Error);
+export type CreateBigQueryConnectorError = Error;
 
 export type GetRawSchemaData = {
     path: {
@@ -3249,8 +3308,10 @@ export type GetRawSchemaData = {
     };
 };
 
-export type GetRawSchemaResponse = (({
-    [key: string]: unknown;
-} | boolean));
+export type GetRawSchemaResponse =
+    | {
+          [key: string]: unknown;
+      }
+    | boolean;
 
-export type GetRawSchemaError = (Error);
+export type GetRawSchemaError = Error;

@@ -81,10 +81,7 @@ export function IntegrationTile({
 
     const onDropdownManageClick = useCallback(() => onManageClick(projectId), [projectId, onManageClick]);
 
-    const onDropdownDisconnectClick = useCallback(
-        () => onDisconnectClick(projectId),
-        [projectId, onDisconnectClick]
-    );
+    const onDropdownDisconnectClick = useCallback(() => onDisconnectClick(projectId), [projectId, onDisconnectClick]);
 
     return (
         <Card id={id} className={cx(className, 'vi-IntegrationTile')}>

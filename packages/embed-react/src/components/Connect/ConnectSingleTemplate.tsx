@@ -71,8 +71,8 @@ export function ConnectSingleTemplate({
                         connection: {
                             name: connName, // this sucks but its ok for now, name needs to be unique on a connectior :)))
                             credentials: [connectionCredentialCreate],
-                            variables: []
-                        }
+                            variables: [],
+                        },
                     },
                 ],
             }).then(() => {
@@ -84,7 +84,10 @@ export function ConnectSingleTemplate({
         [onConnect, environmentId, connectionTemplateId, name, credential, authSchemeConfigs]
     );
 
-    const onReset = useCallback(() => setCredential(newCredentialCreate(authSchemeConfigs[0], orgId)), [authSchemeConfigs]);
+    const onReset = useCallback(
+        () => setCredential(newCredentialCreate(authSchemeConfigs[0], orgId)),
+        [authSchemeConfigs]
+    );
 
     useEffect(() => {
         const connectionCredentialCreate: ConnectionCredential = {

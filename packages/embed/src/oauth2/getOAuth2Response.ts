@@ -21,7 +21,7 @@ export type OAuth2Response = OAuth2ResponseSuccess | OAuth2ResponseError;
 export type GetOAuth2ResponseOptions = {
     target: string;
     pollMs: number;
-}
+};
 
 const DEFAULT_OPTIONS: GetOAuth2ResponseOptions = {
     target: 'https://platform.versori.com',
@@ -30,7 +30,11 @@ const DEFAULT_OPTIONS: GetOAuth2ResponseOptions = {
 
 const debug = createDebug('versori:embed:getOAuth2Response');
 
-export async function getOAuth2Response(child: Window, state: string, opts: Partial<GetOAuth2ResponseOptions> = {}): Promise<OAuth2Response> {
+export async function getOAuth2Response(
+    child: Window,
+    state: string,
+    opts: Partial<GetOAuth2ResponseOptions> = {}
+): Promise<OAuth2Response> {
     const { target, pollMs } = { ...DEFAULT_OPTIONS, ...opts };
 
     const hello: PostMessageOAuth2Hello = {
@@ -57,7 +61,7 @@ export async function getOAuth2Response(child: Window, state: string, opts: Part
             }
 
             window.removeEventListener('message', onEvent);
-            
+
             clearInterval(interval);
 
             resolve(event.data);

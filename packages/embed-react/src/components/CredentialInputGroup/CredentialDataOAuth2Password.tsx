@@ -17,7 +17,7 @@ export function CredentialDataOAuth2Password({
                 oauth2Password: {
                     username: e.currentTarget.value,
                     password: data.oauth2Password.password,
-                }
+                },
             }),
         [data.oauth2Password, onDataChange]
     );
@@ -28,7 +28,7 @@ export function CredentialDataOAuth2Password({
                 oauth2Password: {
                     username: data.oauth2Password.username,
                     password: e.currentTarget.value,
-                }
+                },
             }),
         [data.oauth2Password, onDataChange]
     );

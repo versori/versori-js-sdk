@@ -47,8 +47,8 @@ export const Default: Story = {
                         createdAt: '2023-10-01T00:00:00Z',
                         updatedAt: '2023-10-01T00:00:00Z',
                         publicUrl: 'https://example.com',
-                    }
-                ]
+                    },
+                ],
             },
             {
                 id: '456',
@@ -63,8 +63,8 @@ export const Default: Story = {
                         createdAt: '2023-10-01T00:00:00Z',
                         updatedAt: '2023-10-01T00:00:00Z',
                         publicUrl: 'https://example.com',
-                    }
-                ]
+                    },
+                ],
             },
             {
                 id: '789',
@@ -79,8 +79,8 @@ export const Default: Story = {
                         createdAt: '2023-10-01T00:00:00Z',
                         updatedAt: '2023-10-01T00:00:00Z',
                         publicUrl: 'https://example.com',
-                    }
-                ]
+                    },
+                ],
             },
             {
                 id: '321',
@@ -95,8 +95,8 @@ export const Default: Story = {
                         createdAt: '2023-10-01T00:00:00Z',
                         updatedAt: '2023-10-01T00:00:00Z',
                         publicUrl: 'https://example.com',
-                    }
-                ]
+                    },
+                ],
             },
             {
                 id: '654',
@@ -111,8 +111,8 @@ export const Default: Story = {
                         createdAt: '2023-10-01T00:00:00Z',
                         updatedAt: '2023-10-01T00:00:00Z',
                         publicUrl: 'https://example.com',
-                    }
-                ]
+                    },
+                ],
             },
         ],
     },

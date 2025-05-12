@@ -11,7 +11,10 @@ export type ConnectModalContentProps = {
 
 export function ConnectModalContent({ projectId, onCancel, onComplete }: ConnectModalContentProps) {
     const { client } = useVersoriEmbeddedContext();
-    const { onConnect, isLoading, error, project, connectionTemplates } = useConnectIntegration({ onComplete, projectId });
+    const { onConnect, isLoading, error, project, connectionTemplates } = useConnectIntegration({
+        onComplete,
+        projectId,
+    });
 
     if (isLoading) {
         return <div>Loading</div>;
@@ -22,6 +25,13 @@ export function ConnectModalContent({ projectId, onCancel, onComplete }: Connect
     }
 
     return (
-        <Connect userId={client.userExternalId} orgId={client.orgId} project={project!} connectionTemplates={connectionTemplates!} onConnect={onConnect} onCancel={onCancel} />
+        <Connect
+            userId={client.userExternalId}
+            orgId={client.orgId}
+            project={project!}
+            connectionTemplates={connectionTemplates!}
+            onConnect={onConnect}
+            onCancel={onCancel}
+        />
     );
 }

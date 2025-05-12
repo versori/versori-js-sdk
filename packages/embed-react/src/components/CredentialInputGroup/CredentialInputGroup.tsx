@@ -22,7 +22,7 @@ const CREDENTIAL_DATA_COMPONENTS: CredentialDataComponentTypes = {
     'oauth2-code': CredentialDataOAuth2Code,
     'oauth2-password': CredentialDataOAuth2Password,
     'oauth2-token': () => <div>OAuth2 Token</div>,
-    'oauth1': () => <div>OAuth1</div>,
+    oauth1: () => <div>OAuth1</div>,
     certificate: () => <div>Certificate</div>,
 };
 

@@ -17,7 +17,7 @@ export function useDisconnectActivation(): UseDisconnectActivationHook {
             }
 
             const activations = await client.getActivations({ environment_id: envId });
-            
+
             if (activations.length === 0) {
                 throw new Error('No activations found');
             }

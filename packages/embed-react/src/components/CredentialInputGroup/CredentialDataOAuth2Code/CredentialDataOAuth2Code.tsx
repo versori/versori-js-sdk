@@ -9,7 +9,12 @@ import { InitialiseOAuth2ConnectionResponse } from '@versori/sdk/platform';
 
 const debug = createDebug('embed:credentials:CredentialDataOAuth2Code');
 
-export function CredentialDataOAuth2Code({ authSchemeConfig, systemId, data, onDataChange }: CredentialDataProps<'oauth2-code'>) {
+export function CredentialDataOAuth2Code({
+    authSchemeConfig,
+    systemId,
+    data,
+    onDataChange,
+}: CredentialDataProps<'oauth2-code'>) {
     const { client } = useVersoriEmbeddedContext();
     const [isConnecting, setIsConnecting] = useState(true);
 
@@ -21,12 +26,8 @@ export function CredentialDataOAuth2Code({ authSchemeConfig, systemId, data, onD
 
     const { oauth2 } = authSchemeConfig;
 
-    const {
-        additionalAuthorizeParams,
-        authorizeUrl,
-        defaultScopes,
-    } = oauth2;
-    
+    const { additionalAuthorizeParams, authorizeUrl, defaultScopes } = oauth2;
+
     if (!oauth2.grant.authorizationCode) {
         throw new Error('Expected grant type to be authorization_code');
     }
@@ -44,13 +45,13 @@ export function CredentialDataOAuth2Code({ authSchemeConfig, systemId, data, onD
     const [isLoading, setIsLoading] = useState(true);
     const [initialiseResponse, setInitialiseResponse] = useState<InitialiseOAuth2ConnectionResponse | undefined>();
 
-    const disableOfflineAccess =  useMemo(() => {
+    const disableOfflineAccess = useMemo(() => {
         if (!authSchemeConfig.oauth2) {
             return false;
         }
 
-        return authSchemeConfig.oauth2?.scopes.some((scope) => scope.name === 'offline_access')
-    }, [authSchemeConfig.oauth2] );
+        return authSchemeConfig.oauth2?.scopes.some((scope) => scope.name === 'offline_access');
+    }, [authSchemeConfig.oauth2]);
 
     useEffect(() => {
         client

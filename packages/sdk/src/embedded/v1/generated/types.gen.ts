@@ -25,7 +25,7 @@ export type HubConnectionTemplateCreate = {
  * HubMetadata is used to define metadata for a hub.
  */
 export type IntegrationMetadata = {
-    usedConnectionTemplates?: Array<(string)>;
+    usedConnectionTemplates?: Array<string>;
 };
 
 /**
@@ -637,7 +637,7 @@ export type Message = {
      * to provide more information about the message, such as a list of validation errors.
      *
      */
-    detail?: Array<(string)>;
+    detail?: Array<string>;
 };
 
 export type AuthSchemeConfigBase = {
@@ -670,7 +670,7 @@ export type AuthSchemeConfigBase = {
  *
  */
 export type AuthSchemeConfigNone = AuthSchemeConfigBase & {
-    schemeType: "none";
+    schemeType: 'none';
 };
 
 /**
@@ -684,7 +684,7 @@ export type AuthSchemeConfigAPIKeyIn = 'query' | 'header' | 'cookie';
  *
  */
 export type AuthSchemeConfigAPIKey = AuthSchemeConfigBase & {
-    schemeType: "api-key";
+    schemeType: 'api-key';
     /**
      * Name is the query parameter/header/cookie name which will be used to send the API key.
      */
@@ -698,7 +698,7 @@ export type AuthSchemeConfigAPIKey = AuthSchemeConfigBase & {
  *
  */
 export type AuthSchemeConfigBasicAuth = AuthSchemeConfigBase & {
-    schemeType: "basic-auth";
+    schemeType: 'basic-auth';
 };
 
 /**
@@ -807,7 +807,10 @@ export type AuthSchemeConfigOAuth2GrantPassword = {
     clientSecret?: string;
 };
 
-export type AuthSchemeConfigOAuth2Grant = AuthSchemeConfigOAuth2GrantAuthorizationCode | AuthSchemeConfigOAuth2GrantClientCredentials | AuthSchemeConfigOAuth2GrantPassword;
+export type AuthSchemeConfigOAuth2Grant =
+    | AuthSchemeConfigOAuth2GrantAuthorizationCode
+    | AuthSchemeConfigOAuth2GrantClientCredentials
+    | AuthSchemeConfigOAuth2GrantPassword;
 
 /**
  * AuthSchemeConfigOAuth2 defines how a Connector uses an OAuth2 credential to authenticate
@@ -819,7 +822,7 @@ export type AuthSchemeConfigOAuth2Grant = AuthSchemeConfigOAuth2GrantAuthorizati
  *
  */
 export type AuthSchemeConfigOAuth2 = AuthSchemeConfigBase & {
-    schemeType: "oauth2";
+    schemeType: 'oauth2';
     /**
      * AuthorizeURL is the URL which the user will be redirected to in order to authorize
      * the application.
@@ -843,7 +846,7 @@ export type AuthSchemeConfigOAuth2 = AuthSchemeConfigBase & {
      * of scopes to function correctly.
      *
      */
-    defaultScopes: Array<(string)>;
+    defaultScopes: Array<string>;
     /**
      * AdditionalAuthorizeParams is a URL-encoded query string which should be attached to
      * the AuthorizeURL when the user is redirected to the OAuth 2.0 authorization
@@ -894,7 +897,7 @@ export type AuthSchemeConfigHMACIn = 'query' | 'header' | 'cookie';
  *
  */
 export type AuthSchemeConfigHMAC = AuthSchemeConfigBase & {
-    schemeType: "hmac";
+    schemeType: 'hmac';
     /**
      * Name is the query parameter/header/cookie name which will be used to send the signature.
      */
@@ -910,7 +913,7 @@ export type AuthSchemeConfigHMAC = AuthSchemeConfigBase & {
      * defines the order in which the input is fed into the hashing function.
      *
      */
-    digestInputs: Array<('body' | 'url')>;
+    digestInputs: Array<'body' | 'url'>;
 };
 
 /**
@@ -924,7 +927,7 @@ export type algorithm = 'sha1' | 'sha256' | 'sha512';
  *
  */
 export type AuthSchemeConfigCertificate = AuthSchemeConfigBase & {
-    schemeType: "certificate";
+    schemeType: 'certificate';
 };
 
 /**
@@ -934,7 +937,13 @@ export type AuthSchemeConfigCertificate = AuthSchemeConfigBase & {
  * authenticate.
  *
  */
-export type AuthSchemeConfig = AuthSchemeConfigNone | AuthSchemeConfigAPIKey | AuthSchemeConfigBasicAuth | AuthSchemeConfigOAuth2 | AuthSchemeConfigHMAC | AuthSchemeConfigCertificate;
+export type AuthSchemeConfig =
+    | AuthSchemeConfigNone
+    | AuthSchemeConfigAPIKey
+    | AuthSchemeConfigBasicAuth
+    | AuthSchemeConfigOAuth2
+    | AuthSchemeConfigHMAC
+    | AuthSchemeConfigCertificate;
 
 /**
  * CredentialType denotes the type of the credential which determines what the Credential's `data` property will
@@ -953,7 +962,18 @@ export type AuthSchemeConfig = AuthSchemeConfigNone | AuthSchemeConfigAPIKey | A
  * - certificate: The credential is a PEM encoded certificate, key and CA to be used for TLS client authentication.
  *
  */
-export type CredentialType = 'none' | 'string' | 'binary' | 'basic-auth' | 'oauth2-client' | 'oauth2-code' | 'oauth2-password' | 'oauth2-token' | 'custom-function' | 'certificate' | 'jwt-bearer';
+export type CredentialType =
+    | 'none'
+    | 'string'
+    | 'binary'
+    | 'basic-auth'
+    | 'oauth2-client'
+    | 'oauth2-code'
+    | 'oauth2-password'
+    | 'oauth2-token'
+    | 'custom-function'
+    | 'certificate'
+    | 'jwt-bearer';
 
 /**
  * CredentialDataNone contains no data as no credential is required to authenticate with the Connector. It is used
@@ -1045,7 +1065,7 @@ export type CredentialDataOAuth2Client = {
      * requested scopes come from the `CredentialDataOAuth2Token` credential.
      *
      */
-    scopes?: Array<(string)>;
+    scopes?: Array<string>;
     /**
      * AdditionalParams is a URL-encoded query string which can be used to pass additional
      * parameters to the OAuth 2.0 token endpoint. These parameters are attached to the body
@@ -1102,7 +1122,7 @@ export type CredentialDataOAuth2Token = {
     /**
      * Scopes is a list of scopes which the user has granted consent for.
      */
-    scopes: Array<(string)>;
+    scopes: Array<string>;
     /**
      * AccessToken is the OAuth2 access token which can be used to authenticate with the Connector. This
      * information is redacted when read from the API.
@@ -1163,7 +1183,16 @@ export type CredentialCreate = {
      */
     name: string;
     type: CredentialType;
-    data: (CredentialDataNone | CredentialDataString | CredentialDataBinary | CredentialDataBasicAuth | CredentialDataOAuth2Client | CredentialDataOAuth2Code | CredentialDataOAuth2Token | CredentialDataOAuth2Password | CredentialDataCertificate);
+    data:
+        | CredentialDataNone
+        | CredentialDataString
+        | CredentialDataBinary
+        | CredentialDataBasicAuth
+        | CredentialDataOAuth2Client
+        | CredentialDataOAuth2Code
+        | CredentialDataOAuth2Token
+        | CredentialDataOAuth2Password
+        | CredentialDataCertificate;
 };
 
 /**
@@ -1321,8 +1350,17 @@ export type Credential = {
      * Credential is valid or not. An empty array indicates that the Credential is valid.
      *
      */
-    errors?: Array<(string)>;
-    data: (CredentialDataNone | CredentialDataString | CredentialDataBinary | CredentialDataBasicAuth | CredentialDataOAuth2Client | CredentialDataOAuth2Token | CredentialDataOAuth2Code | CredentialDataOAuth2Password | CredentialDataCertificate);
+    errors?: Array<string>;
+    data:
+        | CredentialDataNone
+        | CredentialDataString
+        | CredentialDataBinary
+        | CredentialDataBasicAuth
+        | CredentialDataOAuth2Client
+        | CredentialDataOAuth2Token
+        | CredentialDataOAuth2Code
+        | CredentialDataOAuth2Password
+        | CredentialDataCertificate;
     /**
      * ExpiresAt denotes the time this credential should be automatically deleted. External systems can subscribe
      * to deletion events and if the reason is "expired", can trigger the correct notifications to interested
@@ -1444,7 +1482,7 @@ export type InitialiseOAuth2ConnectionRequest = {
      * `offline_access` scope in addition to the ones provided here.
      *
      */
-    scopes?: Array<(string)>;
+    scopes?: Array<string>;
     /**
      * DisableOfflineAccess is a flag which can be set to true to disable the inclusion of the
      * standard `offline_access` scope in the list of scopes. This is defined separately to
@@ -1541,17 +1579,17 @@ export type ListHubsData = {
     };
 };
 
-export type ListHubsResponse = (HubsPage);
+export type ListHubsResponse = HubsPage;
 
-export type ListHubsError = (Error);
+export type ListHubsError = Error;
 
 export type CreateHubData = {
     body?: HubCreate;
 };
 
-export type CreateHubResponse = (Hub);
+export type CreateHubResponse = Hub;
 
-export type CreateHubError = (Error);
+export type CreateHubError = Error;
 
 export type GetHubData = {
     path: {
@@ -1559,9 +1597,9 @@ export type GetHubData = {
     };
 };
 
-export type GetHubResponse = (Hub);
+export type GetHubResponse = Hub;
 
-export type GetHubError = (Error);
+export type GetHubError = Error;
 
 export type CreateEndUserData = {
     body?: EndUserCreate;
@@ -1570,9 +1608,9 @@ export type CreateEndUserData = {
     };
 };
 
-export type CreateEndUserResponse = (EndUser);
+export type CreateEndUserResponse = EndUser;
 
-export type CreateEndUserError = (Error);
+export type CreateEndUserError = Error;
 
 export type ListEndUsersData = {
     path: {
@@ -1591,9 +1629,9 @@ export type ListEndUsersData = {
     };
 };
 
-export type ListEndUsersResponse = (EndUserPage);
+export type ListEndUsersResponse = EndUserPage;
 
-export type ListEndUsersError = (Error);
+export type ListEndUsersError = Error;
 
 export type GetEndUserData = {
     path: {
@@ -1619,9 +1657,9 @@ export type GetEndUserData = {
     };
 };
 
-export type GetEndUserResponse = (EndUser);
+export type GetEndUserResponse = EndUser;
 
-export type GetEndUserError = (Error);
+export type GetEndUserError = Error;
 
 export type CreateEndUserConnectionData = {
     body?: {
@@ -1651,9 +1689,9 @@ export type CreateEndUserConnectionData = {
     };
 };
 
-export type CreateEndUserConnectionResponse = (Connection);
+export type CreateEndUserConnectionResponse = Connection;
 
-export type CreateEndUserConnectionError = (Error);
+export type CreateEndUserConnectionError = Error;
 
 export type ListEndUserConnectionsData = {
     path: {
@@ -1677,7 +1715,7 @@ export type ListEndUserConnectionsData = {
          * name.
          *
          */
-        hub_connector_id?: Array<(string)>;
+        hub_connector_id?: Array<string>;
         /**
          * IdentifierType indicates whether the `user_id` path parameter is a internal identifier created by Versori, or an
          * external identifier. If the value is `external`, some endpoints also require the `hub` query parameter to
@@ -1688,9 +1726,9 @@ export type ListEndUserConnectionsData = {
     };
 };
 
-export type ListEndUserConnectionsResponse = (EndUserConnectionsPage);
+export type ListEndUserConnectionsResponse = EndUserConnectionsPage;
 
-export type ListEndUserConnectionsError = (Error);
+export type ListEndUserConnectionsError = Error;
 
 export type CreateIntegrationData = {
     body?: IntegrationCreate;
@@ -1699,9 +1737,9 @@ export type CreateIntegrationData = {
     };
 };
 
-export type CreateIntegrationResponse = (Integration);
+export type CreateIntegrationResponse = Integration;
 
-export type CreateIntegrationError = (Error);
+export type CreateIntegrationError = Error;
 
 export type ListIntegrationsData = {
     path: {
@@ -1720,9 +1758,9 @@ export type ListIntegrationsData = {
     };
 };
 
-export type ListIntegrationsResponse = (ListIntegrations);
+export type ListIntegrationsResponse = ListIntegrations;
 
-export type ListIntegrationsError = (Error);
+export type ListIntegrationsError = Error;
 
 export type DeleteIntegrationData = {
     path: {
@@ -1730,9 +1768,9 @@ export type DeleteIntegrationData = {
     };
 };
 
-export type DeleteIntegrationResponse = (void);
+export type DeleteIntegrationResponse = void;
 
-export type DeleteIntegrationError = (Error);
+export type DeleteIntegrationError = Error;
 
 export type CreateHubConnectionTemplateData = {
     body?: HubConnectionTemplateCreate;
@@ -1741,9 +1779,9 @@ export type CreateHubConnectionTemplateData = {
     };
 };
 
-export type CreateHubConnectionTemplateResponse = (HubConnectionTemplate);
+export type CreateHubConnectionTemplateResponse = HubConnectionTemplate;
 
-export type CreateHubConnectionTemplateError = (Error);
+export type CreateHubConnectionTemplateError = Error;
 
 export type ListIntegrationConnectionTemplatesData = {
     path: {
@@ -1756,9 +1794,9 @@ export type ListIntegrationConnectionTemplatesData = {
     };
 };
 
-export type ListIntegrationConnectionTemplatesResponse = (HubConnectionTemplatePage);
+export type ListIntegrationConnectionTemplatesResponse = HubConnectionTemplatePage;
 
-export type ListIntegrationConnectionTemplatesError = (Error);
+export type ListIntegrationConnectionTemplatesError = Error;
 
 export type UpdateIntegrationMetadataData = {
     body?: IntegrationMetadata;
@@ -1767,9 +1805,9 @@ export type UpdateIntegrationMetadataData = {
     };
 };
 
-export type UpdateIntegrationMetadataResponse = (void);
+export type UpdateIntegrationMetadataResponse = void;
 
-export type UpdateIntegrationMetadataError = (Error);
+export type UpdateIntegrationMetadataError = Error;
 
 export type GetEndUserConnectionData = {
     path: {
@@ -1790,9 +1828,9 @@ export type GetEndUserConnectionData = {
     };
 };
 
-export type GetEndUserConnectionResponse = (Connection);
+export type GetEndUserConnectionResponse = Connection;
 
-export type GetEndUserConnectionError = (Error);
+export type GetEndUserConnectionError = Error;
 
 export type ListEndUserIntegrationsData = {
     path: {
@@ -1826,9 +1864,9 @@ export type ListEndUserIntegrationsData = {
     };
 };
 
-export type ListEndUserIntegrationsResponse = (EmbeddedIntegrationPage);
+export type ListEndUserIntegrationsResponse = EmbeddedIntegrationPage;
 
-export type ListEndUserIntegrationsError = (Error);
+export type ListEndUserIntegrationsError = Error;
 
 export type GetEmbeddedIntegrationData = {
     path: {
@@ -1855,9 +1893,9 @@ export type GetEmbeddedIntegrationData = {
     };
 };
 
-export type GetEmbeddedIntegrationResponse = (EmbeddedIntegration);
+export type GetEmbeddedIntegrationResponse = EmbeddedIntegration;
 
-export type GetEmbeddedIntegrationError = (Error);
+export type GetEmbeddedIntegrationError = Error;
 
 export type InitialiseOauth2EmbeddedConnectionData = {
     body?: InitialiseOAuth2ConnectionRequest;
@@ -1867,9 +1905,9 @@ export type InitialiseOauth2EmbeddedConnectionData = {
     };
 };
 
-export type InitialiseOauth2EmbeddedConnectionResponse = (InitialiseOAuth2ConnectionResponse);
+export type InitialiseOauth2EmbeddedConnectionResponse = InitialiseOAuth2ConnectionResponse;
 
-export type InitialiseOauth2EmbeddedConnectionError = (Error);
+export type InitialiseOauth2EmbeddedConnectionError = Error;
 
 export type ListEndUserActivationsData = {
     path: {
@@ -1896,17 +1934,17 @@ export type ListEndUserActivationsData = {
     };
 };
 
-export type ListEndUserActivationsResponse = (ActivationPage);
+export type ListEndUserActivationsResponse = ActivationPage;
 
-export type ListEndUserActivationsError = (Error);
+export type ListEndUserActivationsError = Error;
 
 export type ActivateIntegrationData = {
     body?: ActivationCreate;
 };
 
-export type ActivateIntegrationResponse = (Activation);
+export type ActivateIntegrationResponse = Activation;
 
-export type ActivateIntegrationError = (Error);
+export type ActivateIntegrationError = Error;
 
 export type GetActivationData = {
     path: {
@@ -1914,9 +1952,9 @@ export type GetActivationData = {
     };
 };
 
-export type GetActivationResponse = (Activation);
+export type GetActivationResponse = Activation;
 
-export type GetActivationError = (Error);
+export type GetActivationError = Error;
 
 export type DeleteActivationData = {
     path: {
@@ -1924,10 +1962,10 @@ export type DeleteActivationData = {
     };
 };
 
-export type DeleteActivationResponse = (void);
+export type DeleteActivationResponse = void;
 
-export type DeleteActivationError = (Error);
+export type DeleteActivationError = Error;
 
-export type HealthCheckResponse = (HealthResponse);
+export type HealthCheckResponse = HealthResponse;
 
 export type HealthCheckError = unknown;

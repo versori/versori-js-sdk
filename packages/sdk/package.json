@@ -5,9 +5,7 @@
   },
   "version": "2.0.0",
   "description": "TypeScript SDK to Versori APIs",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "type": "module",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -45,11 +43,7 @@
     "url": "git+https://github.com/versori/versori-js-sdk.git",
     "directory": "packages/sdk"
   },
-  "keywords": [
-    "ipaas",
-    "integrations",
-    "openapi"
-  ],
+  "keywords": ["ipaas", "integrations", "openapi"],
   "author": "",
   "license": "MIT",
   "bugs": {

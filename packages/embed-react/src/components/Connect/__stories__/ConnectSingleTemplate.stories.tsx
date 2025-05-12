@@ -40,7 +40,7 @@ export const APIKey: Story = {
             name: 'Shopify',
             currentFiles: {
                 files: [],
-                labels: {}
+                labels: {},
             },
             createdAt: new Date().toISOString(),
             // imageUrl: 'https://via.placeholder.com/100x150',
@@ -52,8 +52,8 @@ export const APIKey: Story = {
                     publicUrl: 'https://example.com',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
-                }
-            ]
+                },
+            ],
         },
         connectionTemplates: [],
         template: shopifyTemplate,
@@ -70,7 +70,7 @@ export const BasicAuth: Story = {
             name: 'Basic Auth',
             currentFiles: {
                 files: [],
-                labels: {}
+                labels: {},
             },
             createdAt: new Date().toISOString(),
             environments: [
@@ -81,8 +81,8 @@ export const BasicAuth: Story = {
                     publicUrl: 'https://example.com',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString(),
-                }
-            ]
+                },
+            ],
         },
         connectionTemplates: [],
         template: basicAuthTemplate,

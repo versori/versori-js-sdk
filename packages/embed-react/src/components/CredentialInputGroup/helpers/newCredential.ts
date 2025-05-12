@@ -1,10 +1,5 @@
 import { ulid } from 'ulid';
-import {
-    AuthSchemeConfig,
-    AuthSchemeConfigOAuth2,
-    CredentialDataNone,
-    Credential,
-} from '@versori/sdk/platform';
+import { AuthSchemeConfig, AuthSchemeConfigOAuth2, CredentialDataNone, Credential } from '@versori/sdk/platform';
 
 import createDebug from 'debug';
 

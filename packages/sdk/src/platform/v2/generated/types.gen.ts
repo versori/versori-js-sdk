@@ -409,7 +409,7 @@ export type Credential = {
      * Credential is valid or not. An empty array indicates that the Credential is valid.
      *
      */
-    errors?: Array<(string)>;
+    errors?: Array<string>;
     data?: CredentialData;
     /**
      * ExpiresAt denotes the time this credential should be automatically deleted. External systems can subscribe
@@ -449,7 +449,17 @@ export type CredentialData = {
  * - certificate: The credential is a PEM encoded certificate, key and CA to be used for TLS client authentication.
  *
  */
-export type CredentialType = 'none' | 'string' | 'binary' | 'basic-auth' | 'oauth2-client' | 'oauth1' | 'oauth2-code' | 'oauth2-password' | 'oauth2-token' | 'certificate';
+export type CredentialType =
+    | 'none'
+    | 'string'
+    | 'binary'
+    | 'basic-auth'
+    | 'oauth2-client'
+    | 'oauth1'
+    | 'oauth2-code'
+    | 'oauth2-password'
+    | 'oauth2-token'
+    | 'certificate';
 
 /**
  * CredentialDataNone contains no data as no credential is required to authenticate with the Connector. It is used
@@ -590,7 +600,7 @@ export type CredentialDataOAuth2Client = {
      * requested scopes come from the `CredentialDataOAuth2Token` credential.
      *
      */
-    scopes?: Array<(string)>;
+    scopes?: Array<string>;
     /**
      * AdditionalParams is a URL-encoded query string which can be used to pass additional
      * parameters to the OAuth 2.0 token endpoint. These parameters are attached to the body
@@ -626,7 +636,7 @@ export type CredentialDataOAuth2Token = {
     /**
      * Scopes is a list of scopes which the user has granted consent for.
      */
-    scopes: Array<(string)>;
+    scopes: Array<string>;
     /**
      * AccessToken is the OAuth2 access token which can be used to authenticate with the Connector. This
      * information is redacted when read from the API.
@@ -734,7 +744,15 @@ export type AuthSchemeConfigAPIKeyIn = 'query' | 'header' | 'cookie';
  * enum values for possible options.
  *
  */
-export type AuthSchemeType = 'none' | 'api-key' | 'basic-auth' | 'oauth2' | 'hmac' | 'jwt-bearer' | 'certificate' | 'oauth1';
+export type AuthSchemeType =
+    | 'none'
+    | 'api-key'
+    | 'basic-auth'
+    | 'oauth2'
+    | 'hmac'
+    | 'jwt-bearer'
+    | 'certificate'
+    | 'oauth1';
 
 /**
  * OAuth2Scope represents a single scope which can be requested by an OAuth2 application.
@@ -927,7 +945,7 @@ export type AuthSchemeConfigOAuth2 = AuthSchemeConfigBase & {
      * of scopes to function correctly.
      *
      */
-    defaultScopes: Array<(string)>;
+    defaultScopes: Array<string>;
     /**
      * AdditionalAuthorizeParams is a URL-encoded query string which should be attached to
      * the AuthorizeURL when the user is redirected to the OAuth 2.0 authorization
@@ -995,7 +1013,13 @@ export type ParameterConfig = {
      * Override name for the parameter in endpoint requests
      */
     targetName?: string;
-    location: 'LOCATION_IGNORE' | 'LOCATION_BODY' | 'LOCATION_HEADER' | 'LOCATION_QUERY' | 'LOCATION_ENDPOINT' | 'LOCATION_HEADER_PARAMETER';
+    location:
+        | 'LOCATION_IGNORE'
+        | 'LOCATION_BODY'
+        | 'LOCATION_HEADER'
+        | 'LOCATION_QUERY'
+        | 'LOCATION_ENDPOINT'
+        | 'LOCATION_HEADER_PARAMETER';
     usages?: 'USAGE_UNKNOWN' | 'USAGE_TEMP_CREDENTIAL_ENDPOINT' | 'USAGE_TOKEN_REQUEST_ENDPOINT';
     /**
      * Whether parameter is required in requests
@@ -1007,7 +1031,13 @@ export type ParameterConfig = {
     modifiable: boolean;
 };
 
-export type location = 'LOCATION_IGNORE' | 'LOCATION_BODY' | 'LOCATION_HEADER' | 'LOCATION_QUERY' | 'LOCATION_ENDPOINT' | 'LOCATION_HEADER_PARAMETER';
+export type location =
+    | 'LOCATION_IGNORE'
+    | 'LOCATION_BODY'
+    | 'LOCATION_HEADER'
+    | 'LOCATION_QUERY'
+    | 'LOCATION_ENDPOINT'
+    | 'LOCATION_HEADER_PARAMETER';
 
 export type usages = 'USAGE_UNKNOWN' | 'USAGE_TEMP_CREDENTIAL_ENDPOINT' | 'USAGE_TOKEN_REQUEST_ENDPOINT';
 
@@ -1039,7 +1069,7 @@ export type AuthSchemeConfigHMAC = AuthSchemeConfigBase & {
      * defines the order in which the input is fed into the hashing function.
      *
      */
-    digestInputs: Array<('body' | 'url')>;
+    digestInputs: Array<'body' | 'url'>;
 };
 
 /**
@@ -1063,7 +1093,7 @@ export type Message = {
      * to provide more information about the message, such as a list of validation errors.
      *
      */
-    detail?: Array<(string)>;
+    detail?: Array<string>;
 };
 
 export type MessageSeverity = 'info' | 'warning' | 'error';
@@ -1108,7 +1138,7 @@ export type InitialiseOAuth2ConnectionRequest = {
      * `offline_access` scope in addition to the ones provided here.
      *
      */
-    scopes?: Array<(string)>;
+    scopes?: Array<string>;
     /**
      * DisableOfflineAccess is a flag which can be set to true to disable the inclusion of the
      * standard `offline_access` scope in the list of scopes. This is defined separately to
@@ -1381,7 +1411,7 @@ export type ActivateUserData = {
     };
 };
 
-export type ActivateUserResponse = (Activation);
+export type ActivateUserResponse = Activation;
 
 export type ActivateUserError = unknown;
 
@@ -1391,9 +1421,9 @@ export type ListProjectsData = {
     };
 };
 
-export type ListProjectsResponse = (ProjectsList);
+export type ListProjectsResponse = ProjectsList;
 
-export type ListProjectsError = (Error);
+export type ListProjectsError = Error;
 
 export type CreateProjectData = {
     body?: ProjectCreate;
@@ -1402,9 +1432,9 @@ export type CreateProjectData = {
     };
 };
 
-export type CreateProjectResponse = (Project);
+export type CreateProjectResponse = Project;
 
-export type CreateProjectError = (Error);
+export type CreateProjectError = Error;
 
 export type GetProjectData = {
     path: {
@@ -1413,9 +1443,9 @@ export type GetProjectData = {
     };
 };
 
-export type GetProjectResponse = (Project);
+export type GetProjectResponse = Project;
 
-export type GetProjectError = (Error);
+export type GetProjectError = Error;
 
 export type DeleteProjectData = {
     path: {
@@ -1424,9 +1454,9 @@ export type DeleteProjectData = {
     };
 };
 
-export type DeleteProjectResponse = (void);
+export type DeleteProjectResponse = void;
 
-export type DeleteProjectError = (Error);
+export type DeleteProjectError = Error;
 
 export type UpdateProjectData = {
     body: ProjectUpdate;
@@ -1436,9 +1466,9 @@ export type UpdateProjectData = {
     };
 };
 
-export type UpdateProjectResponse = (Project);
+export type UpdateProjectResponse = Project;
 
-export type UpdateProjectError = (Error);
+export type UpdateProjectError = Error;
 
 export type SetProjectVariablesSchemaData = {
     body: DynamicVariablesSchema;
@@ -1448,9 +1478,9 @@ export type SetProjectVariablesSchemaData = {
     };
 };
 
-export type SetProjectVariablesSchemaResponse = (DynamicVariablesSchema);
+export type SetProjectVariablesSchemaResponse = DynamicVariablesSchema;
 
-export type SetProjectVariablesSchemaError = (Error);
+export type SetProjectVariablesSchemaError = Error;
 
 export type PatchProjectVariablesSchemaData = {
     body: DynamicVariablesSchemaPatch;
@@ -1460,9 +1490,9 @@ export type PatchProjectVariablesSchemaData = {
     };
 };
 
-export type PatchProjectVariablesSchemaResponse = (DynamicVariablesSchema);
+export type PatchProjectVariablesSchemaResponse = DynamicVariablesSchema;
 
-export type PatchProjectVariablesSchemaError = (Error);
+export type PatchProjectVariablesSchemaError = Error;
 
 export type GetFilesData = {
     path: {
@@ -1471,9 +1501,9 @@ export type GetFilesData = {
     };
 };
 
-export type GetFilesResponse = (Files);
+export type GetFilesResponse = Files;
 
-export type GetFilesError = (Error);
+export type GetFilesError = Error;
 
 export type UpdateFilesData = {
     body: Files;
@@ -1483,9 +1513,9 @@ export type UpdateFilesData = {
     };
 };
 
-export type UpdateFilesResponse = (Files);
+export type UpdateFilesResponse = Files;
 
-export type UpdateFilesError = (Error);
+export type UpdateFilesError = Error;
 
 export type DeployProjectData = {
     body: Files;
@@ -1499,9 +1529,9 @@ export type DeployProjectData = {
     };
 };
 
-export type DeployProjectResponse = (Project);
+export type DeployProjectResponse = Project;
 
-export type DeployProjectError = (Error);
+export type DeployProjectError = Error;
 
 export type GetProjectLogsData = {
     path: {
@@ -1518,9 +1548,9 @@ export type GetProjectLogsData = {
     };
 };
 
-export type GetProjectLogsResponse = (Logs);
+export type GetProjectLogsResponse = Logs;
 
-export type GetProjectLogsError = (Error);
+export type GetProjectLogsError = Error;
 
 export type SuspendProjectData = {
     path: {
@@ -1532,9 +1562,9 @@ export type SuspendProjectData = {
     };
 };
 
-export type SuspendProjectResponse = (Project);
+export type SuspendProjectResponse = Project;
 
-export type SuspendProjectError = (Error);
+export type SuspendProjectError = Error;
 
 export type ListConnectionsData = {
     path: {
@@ -1549,9 +1579,9 @@ export type ListConnectionsData = {
     };
 };
 
-export type ListConnectionsResponse = (ConnectionPage);
+export type ListConnectionsResponse = ConnectionPage;
 
-export type ListConnectionsError = (Error);
+export type ListConnectionsError = Error;
 
 export type CreateConnectionData = {
     body?: EnvSystemConnectionCreate;
@@ -1560,9 +1590,9 @@ export type CreateConnectionData = {
     };
 };
 
-export type CreateConnectionResponse = (Connection);
+export type CreateConnectionResponse = Connection;
 
-export type CreateConnectionError = (Error);
+export type CreateConnectionError = Error;
 
 export type GetConnectionData = {
     path: {
@@ -1571,9 +1601,9 @@ export type GetConnectionData = {
     };
 };
 
-export type GetConnectionResponse = (Connection);
+export type GetConnectionResponse = Connection;
 
-export type GetConnectionError = (Error);
+export type GetConnectionError = Error;
 
 export type UpdateConnectionData = {
     body: ConnectionUpdate;
@@ -1583,9 +1613,9 @@ export type UpdateConnectionData = {
     };
 };
 
-export type UpdateConnectionResponse = (Connection);
+export type UpdateConnectionResponse = Connection;
 
-export type UpdateConnectionError = (Error);
+export type UpdateConnectionError = Error;
 
 export type LinkConnectionToEnvironmentData = {
     body?: LinkConnectionEnvironment;
@@ -1595,9 +1625,9 @@ export type LinkConnectionToEnvironmentData = {
     };
 };
 
-export type LinkConnectionToEnvironmentResponse = (unknown);
+export type LinkConnectionToEnvironmentResponse = unknown;
 
-export type LinkConnectionToEnvironmentError = (Error);
+export type LinkConnectionToEnvironmentError = Error;
 
 export type CreateEndUserData = {
     body?: EndUserCreate;
@@ -1606,9 +1636,9 @@ export type CreateEndUserData = {
     };
 };
 
-export type CreateEndUserResponse = (EndUser);
+export type CreateEndUserResponse = EndUser;
 
-export type CreateEndUserError = (Error);
+export type CreateEndUserError = Error;
 
 export type ListEndUsersData = {
     path: {
@@ -1638,9 +1668,9 @@ export type ListEndUsersData = {
     };
 };
 
-export type ListEndUsersResponse = (EndUserPage);
+export type ListEndUsersResponse = EndUserPage;
 
-export type ListEndUsersError = (Error);
+export type ListEndUsersError = Error;
 
 export type ListAutomationsData = {
     path: {
@@ -1648,9 +1678,9 @@ export type ListAutomationsData = {
     };
 };
 
-export type ListAutomationsResponse = (Array<Automation>);
+export type ListAutomationsResponse = Array<Automation>;
 
-export type ListAutomationsError = (Error);
+export type ListAutomationsError = Error;
 
 export type CreateAutomationData = {
     body?: AutomationCreate;
@@ -1659,9 +1689,9 @@ export type CreateAutomationData = {
     };
 };
 
-export type CreateAutomationResponse = (Automation);
+export type CreateAutomationResponse = Automation;
 
-export type CreateAutomationError = (Error);
+export type CreateAutomationError = Error;
 
 export type RunAutomationData = {
     body?: AutomationRun;
@@ -1671,7 +1701,7 @@ export type RunAutomationData = {
     };
 };
 
-export type RunAutomationResponse = (AutomationRunResponse);
+export type RunAutomationResponse = AutomationRunResponse;
 
 export type RunAutomationError = unknown;
 
@@ -1682,9 +1712,9 @@ export type GetAutomationData = {
     };
 };
 
-export type GetAutomationResponse = (Automation);
+export type GetAutomationResponse = Automation;
 
-export type GetAutomationError = (Error);
+export type GetAutomationError = Error;
 
 export type ListActivationsData = {
     path: {
@@ -1693,9 +1723,9 @@ export type ListActivationsData = {
     };
 };
 
-export type ListActivationsResponse = (Activation);
+export type ListActivationsResponse = Activation;
 
-export type ListActivationsError = (Error);
+export type ListActivationsError = Error;
 
 export type GetActivationData = {
     path: {
@@ -1705,9 +1735,9 @@ export type GetActivationData = {
     };
 };
 
-export type GetActivationResponse = (Activation);
+export type GetActivationResponse = Activation;
 
-export type GetActivationError = (Error);
+export type GetActivationError = Error;
 
 export type DeleteActivationData = {
     path: {
@@ -1717,9 +1747,9 @@ export type DeleteActivationData = {
     };
 };
 
-export type DeleteActivationResponse = (void);
+export type DeleteActivationResponse = void;
 
-export type DeleteActivationError = (Error);
+export type DeleteActivationError = Error;
 
 export type SetDynamicVariableData = {
     body: {
@@ -1741,9 +1771,9 @@ export type SetDynamicVariableData = {
     };
 };
 
-export type SetDynamicVariableResponse = (DynamicVariables);
+export type SetDynamicVariableResponse = DynamicVariables;
 
-export type SetDynamicVariableError = (Error);
+export type SetDynamicVariableError = Error;
 
 export type ListUserActivationsData = {
     path: {
@@ -1756,9 +1786,9 @@ export type ListUserActivationsData = {
     };
 };
 
-export type ListUserActivationsResponse = (Array<Activation>);
+export type ListUserActivationsResponse = Array<Activation>;
 
-export type ListUserActivationsError = (Error);
+export type ListUserActivationsError = Error;
 
 export type GetEndUserData = {
     path: {
@@ -1770,9 +1800,9 @@ export type GetEndUserData = {
     };
 };
 
-export type GetEndUserResponse = (EndUser);
+export type GetEndUserResponse = EndUser;
 
-export type GetEndUserError = (Error);
+export type GetEndUserError = Error;
 
 export type DeleteEndUserData = {
     path: {
@@ -1784,9 +1814,9 @@ export type DeleteEndUserData = {
     };
 };
 
-export type DeleteEndUserResponse = (void);
+export type DeleteEndUserResponse = void;
 
-export type DeleteEndUserError = (Error);
+export type DeleteEndUserError = Error;
 
 export type GetActivationConnectionData = {
     path: {
@@ -1796,7 +1826,7 @@ export type GetActivationConnectionData = {
     };
 };
 
-export type GetActivationConnectionResponse = (Connection);
+export type GetActivationConnectionResponse = Connection;
 
 export type GetActivationConnectionError = unknown;
 
@@ -1807,9 +1837,9 @@ export type CreateSystemData = {
     };
 };
 
-export type CreateSystemResponse = (System);
+export type CreateSystemResponse = System;
 
-export type CreateSystemError = (Error);
+export type CreateSystemError = Error;
 
 export type ListSystemsData = {
     path: {
@@ -1823,7 +1853,7 @@ export type ListSystemsData = {
     };
 };
 
-export type ListSystemsResponse = (SystemPage);
+export type ListSystemsResponse = SystemPage;
 
 export type ListSystemsError = unknown;
 
@@ -1835,9 +1865,9 @@ export type UpdateSystemData = {
     };
 };
 
-export type UpdateSystemResponse = (System);
+export type UpdateSystemResponse = System;
 
-export type UpdateSystemError = (Error);
+export type UpdateSystemError = Error;
 
 export type DeleteAuthSchemeConfigData = {
     path: {
@@ -1847,9 +1877,9 @@ export type DeleteAuthSchemeConfigData = {
     };
 };
 
-export type DeleteAuthSchemeConfigResponse = (void);
+export type DeleteAuthSchemeConfigResponse = void;
 
-export type DeleteAuthSchemeConfigError = (Error);
+export type DeleteAuthSchemeConfigError = Error;
 
 export type UpsertAuthSchemeConfigData = {
     body?: AuthSchemeConfig;
@@ -1860,9 +1890,9 @@ export type UpsertAuthSchemeConfigData = {
     };
 };
 
-export type UpsertAuthSchemeConfigResponse = (AuthSchemeConfig);
+export type UpsertAuthSchemeConfigResponse = AuthSchemeConfig;
 
-export type UpsertAuthSchemeConfigError = (Error);
+export type UpsertAuthSchemeConfigError = Error;
 
 export type ListEnvironmentConnectionsData = {
     path: {
@@ -1874,9 +1904,9 @@ export type ListEnvironmentConnectionsData = {
     };
 };
 
-export type ListEnvironmentConnectionsResponse = (ConnectionPage);
+export type ListEnvironmentConnectionsResponse = ConnectionPage;
 
-export type ListEnvironmentConnectionsError = (Error);
+export type ListEnvironmentConnectionsError = Error;
 
 export type LinkSystemData = {
     body?: LinkSystem;
@@ -1886,9 +1916,9 @@ export type LinkSystemData = {
     };
 };
 
-export type LinkSystemResponse = (void);
+export type LinkSystemResponse = void;
 
-export type LinkSystemError = (Error);
+export type LinkSystemError = Error;
 
 export type ListProjectSystemsData = {
     path: {
@@ -1900,7 +1930,7 @@ export type ListProjectSystemsData = {
     };
 };
 
-export type ListProjectSystemsResponse = (EnvironmentSystemPage);
+export type ListProjectSystemsResponse = EnvironmentSystemPage;
 
 export type ListProjectSystemsError = unknown;
 
@@ -1912,7 +1942,7 @@ export type UnlinkSystemData = {
     };
 };
 
-export type UnlinkSystemResponse = (void);
+export type UnlinkSystemResponse = void;
 
 export type UnlinkSystemError = unknown;
 
@@ -1924,9 +1954,9 @@ export type CreateConnectionTemplateData = {
     };
 };
 
-export type CreateConnectionTemplateResponse = (ConnectionTemplate);
+export type CreateConnectionTemplateResponse = ConnectionTemplate;
 
-export type CreateConnectionTemplateError = (Error);
+export type CreateConnectionTemplateError = Error;
 
 export type ListProjectConnectionTemplatesData = {
     path: {
@@ -1938,7 +1968,7 @@ export type ListProjectConnectionTemplatesData = {
     };
 };
 
-export type ListProjectConnectionTemplatesResponse = (EnvironmentSystemPage);
+export type ListProjectConnectionTemplatesResponse = EnvironmentSystemPage;
 
 export type ListProjectConnectionTemplatesError = unknown;
 
@@ -1950,9 +1980,9 @@ export type DeleteConnectionTemplateData = {
     };
 };
 
-export type DeleteConnectionTemplateResponse = (void);
+export type DeleteConnectionTemplateResponse = void;
 
-export type DeleteConnectionTemplateError = (Error);
+export type DeleteConnectionTemplateError = Error;
 
 export type UpdateConnectionTemplateData = {
     body?: UpdateConnectionTemplate;
@@ -1963,9 +1993,9 @@ export type UpdateConnectionTemplateData = {
     };
 };
 
-export type UpdateConnectionTemplateResponse = (ConnectionTemplate);
+export type UpdateConnectionTemplateResponse = ConnectionTemplate;
 
-export type UpdateConnectionTemplateError = (Error);
+export type UpdateConnectionTemplateError = Error;
 
 export type InitialiseOauth2ConnectionData = {
     body?: InitialiseOAuth2ConnectionRequest;
@@ -1975,6 +2005,6 @@ export type InitialiseOauth2ConnectionData = {
     };
 };
 
-export type InitialiseOauth2ConnectionResponse = (InitialiseOAuth2ConnectionResponse);
+export type InitialiseOauth2ConnectionResponse = InitialiseOAuth2ConnectionResponse;
 
-export type InitialiseOauth2ConnectionError = (Error);
+export type InitialiseOauth2ConnectionError = Error;

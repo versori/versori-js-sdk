@@ -1,4 +1,4 @@
-import {Flex, Grid } from '@radix-ui/themes';
+import { Flex, Grid } from '@radix-ui/themes';
 import cx from 'classnames';
 import { useCallback } from 'react';
 import { CommonComponentProps } from '../../types/CommonComponentProps';
@@ -6,8 +6,7 @@ import { IntegrationTile } from '../IntegrationTile/IntegrationTile';
 import { ProjectSummary } from '@versori/sdk/platform';
 import { UserProjectSummary } from '@versori/embed';
 
-export type IntegrationPageProps = {projects: UserProjectSummary[]} &
-    CommonComponentProps & {
+export type IntegrationPageProps = { projects: UserProjectSummary[] } & CommonComponentProps & {
         // hasPreviousPage: boolean;
         // onPreviousPage: (e: SyntheticEvent<HTMLButtonElement>) => void;
 

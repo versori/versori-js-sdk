@@ -10,12 +10,7 @@ import { useEmbeddedProjectPageQuery } from '../hooks/useEmbeddedIntegrationPage
 const debug = createDebug('versori:embed:renderer');
 
 export function VersoriEmbeddedRenderer() {
-    const {
-        isLoading,
-        error,
-        projects,
-        refresh,
-    } = useEmbeddedProjectPageQuery({});
+    const { isLoading, error, projects, refresh } = useEmbeddedProjectPageQuery({});
 
     const { onDisconnectIntegration } = useDisconnectActivation();
 
@@ -49,9 +44,7 @@ export function VersoriEmbeddedRenderer() {
         return <div>Error: {error.message}</div>;
     }
 
-    const activeProjectId = selectedState
-        ? (projects.find((p) => p.id === selectedState?.projectId)?.id ?? '')
-        : '';
+    const activeProjectId = selectedState ? (projects.find((p) => p.id === selectedState?.projectId)?.id ?? '') : '';
 
     return (
         <>
@@ -65,11 +58,7 @@ export function VersoriEmbeddedRenderer() {
             <Dialog.Root open={!!selectedState && !!activeProjectId} onOpenChange={onOpenChange}>
                 <DialogContent title="Connect" description="Activate this integration by connecting your account">
                     {selectedState?.method === 'connect' ? (
-                        <ConnectModalContent
-                            projectId={activeProjectId}
-                            onCancel={onCancel}
-                            onComplete={onComplete}
-                        />
+                        <ConnectModalContent projectId={activeProjectId} onCancel={onCancel} onComplete={onComplete} />
                     ) : null}
                 </DialogContent>
             </Dialog.Root>

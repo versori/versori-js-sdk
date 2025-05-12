@@ -38,7 +38,7 @@ export const Default: Story = {
                     },
                     clientOptions: {
                         oauth2CallbackOrigin: 'http://localhost:3000',
-                    }
+                    },
                 }}
             >
                 <Story />

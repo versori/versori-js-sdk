@@ -232,10 +232,7 @@ export class PlatformClient {
         return projectSummaries;
     }
 
-    async getConnectionTemplates(
-        projectId: string,
-        environmentId: string
-    ): Promise<ConnectionTemplate[]> {
+    async getConnectionTemplates(projectId: string, environmentId: string): Promise<ConnectionTemplate[]> {
         const { data } = await platformApi.listProjectConnectionTemplates({
             ...this.#defaultOptions(),
             path: {

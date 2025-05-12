@@ -55,10 +55,5 @@
     "typescript": "~5.4.2",
     "typescript-eslint": "^8.8.0"
   },
-  "workspaces": [
-    "examples/react-spa",
-    "packages/embed",
-    "packages/embed-react",
-    "packages/sdk"
-  ]
+  "workspaces": ["examples/react-spa", "packages/embed", "packages/embed-react", "packages/sdk"]
 }
