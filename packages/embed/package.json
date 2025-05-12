@@ -44,5 +44,8 @@
     "@hey-api/client-fetch": "^0.4.0",
     "@versori/sdk": "^2.0.0",
     "debug": "^4.3.7"
+  },
+  "optionalDependencies": {
+    "sass-embedded-linux-x64": "1.88.0"
   }
 }
