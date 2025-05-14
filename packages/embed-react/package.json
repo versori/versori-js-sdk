@@ -1,6 +1,6 @@
 {
   "name": "@versori/embed-react",
-  "version": "2.0.0",
+  "version": "2.0.0-rc.1",
   "publishConfig": {
     "access": "public"
   },
@@ -45,8 +45,8 @@
   "dependencies": {
     "@hey-api/client-fetch": "^0.4.0",
     "@radix-ui/react-label": "^2.1.0",
-    "@versori/embed": "^2.0.0",
-    "@versori/sdk": "^2.0.0",
+    "@versori/embed": "^2.0.0-rc.2",
+    "@versori/sdk": "^2.0.0-rc.1",
     "debug": "^4.3.7",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
