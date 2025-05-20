@@ -47,6 +47,7 @@ func CreateAndSignJWT(externalID string) (string, error) {
 		jwt.MapClaims{
 			"sub": externalID,
 			"iat": time.Now().Unix(),
+			"iss": fmt.Sprintf("https://versori.com/sk/%s", "01JTR0D0P5CBME0S1E0GQ7NPQX"), // ID is signing key id
 			"exp": time.Now().Add(time.Hour * 1).Unix(),
 		})
 

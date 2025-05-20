@@ -51,28 +51,6 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (repo *Repository) Redirect(w http.ResponseWriter, r *http.Request) {
-	user := GetUser(r)
-	if user == "" {
-		http.Error(w, "Invalid user", http.StatusUnauthorized)
-		return
-	}
-
-	token, err := users.CreateAndSignJWT(user)
-	if err != nil {
-		http.Error(w, "Error creating JWT", http.StatusInternalServerError)
-		return
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:  "versori-user-jwt",
-		Value: token,
-	})
-
-	w.Header().Add("HX-Redirect", "http://localhost:5173")
-	http.Redirect(w, r, "http://localhost:5173", http.StatusSeeOther)
-}
-
 func GetUser(r *http.Request) string {
 	cookie, err := r.Cookie("user")
 	if err != nil {

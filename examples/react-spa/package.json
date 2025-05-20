@@ -14,11 +14,13 @@
     "@versori/embed-react": "^2.0.0-rc.1",
     "invariant": "^2.2.4",
     "jose": "^5.9.4",
+    "js-cookie": "^3.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
