@@ -23,7 +23,6 @@ function App() {
                         type: 'auto',
                         generate: generateToken,
                     },
-
                 }}
             >
                 <div>Hello user {externalId}! With token {token}</div>

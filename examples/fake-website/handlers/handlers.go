@@ -51,6 +51,30 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func (repo *Repository) Signup(w http.ResponseWriter, r *http.Request) {
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+
+	if users.CheckUserExists(username) {
+		http.Error(w, "User already exists", http.StatusConflict)
+		return
+	}
+
+	err := users.CreateUser(username, password)
+	if err != nil {
+		http.Error(w, "Error creating user", http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:  "user",
+		Value: strings.ToLower(username),
+	})
+
+	w.Header().Add("HX-Refresh", "true")
+	w.WriteHeader(http.StatusOK)
+}
+
 func GetUser(r *http.Request) string {
 	cookie, err := r.Cookie("user")
 	if err != nil {

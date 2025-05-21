@@ -14,6 +14,7 @@ func main() {
 	mux.HandleFunc("GET /", handlers.Repo.Root)
 	mux.HandleFunc("GET /home", handlers.Repo.Home)
 	mux.HandleFunc("POST /login", handlers.Repo.Login)
+	mux.HandleFunc("POST /signup", handlers.Repo.Signup)
 
 	srv := &http.Server{
 		Addr:    ":8080",
