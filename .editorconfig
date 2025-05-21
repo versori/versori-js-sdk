@@ -14,7 +14,7 @@ indent_size = 4
 [{**.json,.prettierrc,**.yaml,**.yml}]
 indent_size = 2
 
-[{**.ts, **.tsx}]
+[{**.ts,**.tsx}]
 max_line_length = 120
 ij_typescript_spaces_within_object_literal_braces = true
 ij_typescript_spaces_within_object_type_braces = true

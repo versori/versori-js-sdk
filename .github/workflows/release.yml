@@ -3,43 +3,32 @@ on:
   push:
     branches:
       - main
+      - next
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
   id-token: write
-env:
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/511247202360/locations/global/workloadIdentityPools/github-actions/providers/github-actions-versori'
-  WORKLOAD_IDENTITY_SERVICE_ACCOUNT: 'gh-actions-versori@versori.iam.gserviceaccount.com'
 jobs:
-  publish:
+  semantic-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
-      - name: Setup Google Cloud Authentication
-        uses: google-github-actions/auth@v0
-        with:
-          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.WORKLOAD_IDENTITY_SERVICE_ACCOUNT }}
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+          node-version: 20
       - name: Install dependencies
         run: npm ci
       - name: Build
-        run: npm run build:sdk
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v3
-        id: semantic_release
+        run: npm run build
+      - uses: actions/create-github-app-token@v1
+        id: app-token
         with:
-          extra_plugins: |
-            @semantic-release/changelog@^6.0.3
-            @semantic-release/git@^10.0.1
+          app-id: ${{ vars.VERSORI_RELEASER_APP_ID }}
+          private-key: ${{ secrets.VERSORI_RELEASER_PRIVATE_KEY }}
+      - name: Release
+        run: npm run release
         env:
-          GITHUB_TOKEN: ${{ secrets.VERSORI_REPOS_PAT }}
-          HUSKY: 0
-      - name: Publish SDK
-        run: gcloud storage rsync ./packages/sdk/dist gs://versori-assets/hubs/sdk/${{ steps.semantic_release.outputs.new_release_version }}/ -r --delete-unmatched-destination-objects
-        if: steps.semantic_release.outputs.new_release_published == 'true'
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}

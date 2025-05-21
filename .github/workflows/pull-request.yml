@@ -3,36 +3,20 @@ on:
   pull_request:
     branches:
       - main
-permissions:
-  contents: write
-  id-token: write
-env:
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/511247202360/locations/global/workloadIdentityPools/github-actions/providers/github-actions-versori'
-  WORKLOAD_IDENTITY_SERVICE_ACCOUNT: 'gh-actions-versori@versori.iam.gserviceaccount.com'
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
-      # - name: Setup Google Cloud Authentication
-      #   uses: google-github-actions/auth@v0
-      #   with:
-      #     workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
-      #     service_account: ${{ env.WORKLOAD_IDENTITY_SERVICE_ACCOUNT }}
-      # - name: Set up Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0
-      # - name: NPM Login
-      #   run: npm run ar-login
+          node-version: 20
       - name: Install dependencies
         run: npm ci
       - name: Check Formatting
-        # TODO: use `check` once ESLint issues are resolved
-        run: npm run check:prettier
+        run: npm run lint
       # - name: Test
       #   run: npm run test
       - name: Build

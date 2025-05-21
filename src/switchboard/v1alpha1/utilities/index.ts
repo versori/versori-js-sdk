@@ -1,1 +1,0 @@
-export { openOAuthWindow } from './openOAuthWindow';
