@@ -25,17 +25,15 @@ function App() {
                     },
                 }}
             >
-                <div>Hello user {externalId}! With token {token}</div>
+                <div>
+                    Hello user {externalId}! With token {token}
+                </div>
                 <VersoriEmbeddedRenderer />
             </VersoriEmbeddedProvider>
         );
     }
 
-    return (
-        <>
-            {content}
-        </>
-    );
+    return <>{content}</>;
 }
 
 export default App;

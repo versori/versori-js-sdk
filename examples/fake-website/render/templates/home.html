@@ -3,17 +3,17 @@
         <p>Welcome to the client homepage {{index .StringMap "user"}}</p>
         <p>Login here:</p>
         <form>
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
+            <input type="text" name="username" placeholder="Username" />
+            <input type="password" name="password" placeholder="Password" />
             <button hx-post="/login" type="submit">Login</button>
         </form>
         <p>Or create a new user:</p>
         <form>
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
+            <input type="text" name="username" placeholder="Username" />
+            <input type="password" name="password" placeholder="Password" />
             <button hx-post="/signup" type="submit">Sign up</button>
         </form>
-    <p>Check out our cool integration page</p>
+        <p>Check out our cool integration page</p>
         <a href="http://localhost:5174">Integrations</a>
     </div>
 </body>

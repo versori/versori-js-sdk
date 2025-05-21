@@ -1,5 +1,5 @@
 import invariant from 'invariant';
-import { decodeJwt } from "jose";
+import { decodeJwt } from 'jose';
 import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 
@@ -23,7 +23,6 @@ export type UseEndUserTokenHookSuccess = {
 
 export type UseEndUserTokenHook = UseEndUserTokenHookLoading | UseEndUserTokenHookError | UseEndUserTokenHookSuccess;
 
-
 /**
  * Mock hook to generate an end user token using SigningKeys.
  *
@@ -35,11 +34,11 @@ export function useEndUserToken(privateKey?: string): UseEndUserTokenHook {
     const [externalId, setExternalId] = useState<string>('');
     const [token, setToken] = useState<string>('');
     const [error, setError] = useState<Error | undefined>(undefined);
-    const userJwt = Cookies.get("versori-user-jwt");
+    const userJwt = Cookies.get('versori-user-jwt');
 
     useEffect(() => {
         if (!userJwt) {
-            setError(new Error('userJwt not found'))
+            setError(new Error('userJwt not found'));
             return;
         }
 
@@ -48,7 +47,6 @@ export function useEndUserToken(privateKey?: string): UseEndUserTokenHook {
             const claims = decodeJwt(userJwt);
             setExternalId(claims.sub ?? '');
         }
-
     }, [externalId, userJwt]);
 
     invariant(privateKey ? token : true, 'token should be defined');
