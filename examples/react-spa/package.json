@@ -12,7 +12,6 @@
   "dependencies": {
     "@radix-ui/themes": "^3.1.4",
     "@versori/embed-react": "^2.0.0-rc.1",
-    "@versori/run": "^0.2.4-alpha.1",
     "invariant": "^2.2.4",
     "jose": "^5.9.4",
     "js-cookie": "^3.0.5",
