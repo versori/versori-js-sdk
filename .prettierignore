@@ -5,6 +5,7 @@
 /public
 /storybook-static
 /server/*.js
+/examples/fake-website
 
 .dockerignore
 .editorconfig
