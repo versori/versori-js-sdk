@@ -4,7 +4,6 @@ import (
 	"fakeclientwebsite/render"
 	"fakeclientwebsite/users"
 	"net/http"
-	"strings"
 )
 
 type Repository struct {
@@ -26,7 +25,7 @@ func (repo *Repository) Root(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	if err := repo.rdr.RenderTemplate(w, r, "home.html", &render.TemplateData{
 		StringMap: map[string]string{
-			"user": GetUser(r),
+			"user": users.GetUserFromRequest(r),
 		}}); err != nil {
 		panic(err)
 	}
@@ -42,9 +41,15 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	jwt, err := users.CreateAndSignJWT(username)
+	if err != nil {
+		http.Error(w, "Error creating JWT", http.StatusInternalServerError)
+		return
+	}
+
 	http.SetCookie(w, &http.Cookie{
-		Name:  "user",
-		Value: strings.ToLower(username),
+		Name:  "versori-user-jwt",
+		Value: jwt,
 	})
 	w.Header().Add("HX-Refresh", "true")
 
@@ -60,25 +65,17 @@ func (repo *Repository) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := users.CreateUser(username, password)
+	jwt, err := users.CreateUser(username, password)
 	if err != nil {
 		http.Error(w, "Error creating user", http.StatusInternalServerError)
 		return
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:  "user",
-		Value: strings.ToLower(username),
+		Name:  "versori-user-jwt",
+		Value: jwt,
 	})
 
 	w.Header().Add("HX-Refresh", "true")
 	w.WriteHeader(http.StatusOK)
-}
-
-func GetUser(r *http.Request) string {
-	cookie, err := r.Cookie("user")
-	if err != nil {
-		return ""
-	}
-	return cookie.Value
 }

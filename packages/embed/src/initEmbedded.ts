@@ -23,7 +23,7 @@ export async function initEmbedded(opts: InitOptions): Promise<PlatformClient> {
         client
     );
 
-    const userId = endUserAuth.type === 'api-key' ? endUserAuth.userId : parseJwtSub(endUserAuth.token);
+    const userId = parseJwtSub(endUserAuth.token);
 
     const platformClient = new PlatformClient(
         platformApi.client,

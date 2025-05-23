@@ -50,7 +50,7 @@ export class PlatformClient {
 
     readonly #client: Client;
     readonly #orgId: string;
-    readonly #primaryCredentialSource: CredentialSource;
+    readonly #primaryCredentialSource: CredentialSource | undefined;
 
     #endUser?: EndUser;
 
@@ -58,7 +58,7 @@ export class PlatformClient {
         client: Client,
         orgId: string,
         userExternalId: string,
-        primaryCredentialSource: CredentialSource,
+        primaryCredentialSource: CredentialSource | undefined,
         opts: PlatformClientOptions = {}
     ) {
         this.userExternalId = userExternalId;
@@ -75,7 +75,7 @@ export class PlatformClient {
         this.oauth2CallbackOrigin = opts.oauth2CallbackOrigin ? opts.oauth2CallbackOrigin : new URL(baseUrl).origin;
     }
 
-    get primaryCredentialSource(): CredentialSource {
+    get primaryCredentialSource(): CredentialSource | undefined {
         return this.#primaryCredentialSource;
     }
 

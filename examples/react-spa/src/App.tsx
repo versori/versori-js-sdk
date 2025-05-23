@@ -1,11 +1,11 @@
+import { Tabs } from '@radix-ui/themes';
 import { VersoriEmbeddedProvider, VersoriEmbeddedRenderer } from '@versori/embed-react';
 import { ReactNode } from 'react';
+import { Custom } from "./custom/Custom.tsx";
 import { useEndUserToken } from './useEndUserToken.ts';
-import { useGenerateAppCredential } from './useGenerateAppCredential.ts';
 
 function App() {
     const { error, token, externalId } = useEndUserToken();
-    const generateToken = useGenerateAppCredential(externalId);
 
     let content: ReactNode;
     if (error) {
@@ -18,17 +18,24 @@ function App() {
                     endUserAuth: {
                         type: 'jwt',
                         token,
-                    },
-                    primaryCredential: {
-                        type: 'auto',
-                        generate: generateToken,
-                    },
+                    }
                 }}
             >
                 <div>
-                    Hello user {externalId}! With token {token}
+                    Hello user: <em>{externalId}</em>!
                 </div>
-                <VersoriEmbeddedRenderer />
+                <Tabs.Root defaultValue="renderer" orientation="horizontal">
+                    <Tabs.List>
+                        <Tabs.Trigger value="renderer">Renderer</Tabs.Trigger>
+                        <Tabs.Trigger value="custom">Custom</Tabs.Trigger>
+                    </Tabs.List>
+                    <Tabs.Content value="renderer">
+                        <VersoriEmbeddedRenderer />
+                    </Tabs.Content>
+                    <Tabs.Content value="custom">
+                        <Custom />
+                    </Tabs.Content>
+                </Tabs.Root>
             </VersoriEmbeddedProvider>
         );
     }

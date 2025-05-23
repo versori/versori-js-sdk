@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
@@ -64,9 +65,9 @@ func CheckUserExists(externalID string) bool {
 	return false
 }
 
-func CreateUser(externalID, password string) error {
+func CreateUser(externalID, password string) (string, error) {
 	if CheckUserExists(externalID) {
-		return errors.New("user already exists")
+		return "", errors.New("user already exists")
 	}
 
 	Users = append(Users, User{
@@ -75,12 +76,12 @@ func CreateUser(externalID, password string) error {
 	})
 
 	// now need to create jwt and actually sign up the user to the platform.
-	err := createVersoriUser(externalID)
+	jwt, err := createVersoriUser(externalID)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return jwt, nil
 }
 
 func CreateAndSignJWT(externalID string) (string, error) {
@@ -136,11 +137,11 @@ func loadPrivateKey() (*rsa.PrivateKey, error) {
 	return k, nil
 }
 
-func createVersoriUser(username string) error {
+func createVersoriUser(username string) (string, error) {
 	jwt, err := CreateAndSignJWT(username)
 	if err != nil {
 		fmt.Println("Error creating JWT:", err)
-		return err
+		return "", err
 	}
 
 	data := map[string]string{
@@ -152,13 +153,13 @@ func createVersoriUser(username string) error {
 	err = json.NewEncoder(body).Encode(data)
 	if err != nil {
 		fmt.Println("Error encoding JSON:", err)
-		return err
+		return "", err
 	}
 
 	req, err := http.NewRequest("POST", fmt.Sprintf("https://platform.versori.com/api/v2/o/%s/users", OrgID), body)
 	if err != nil {
 		fmt.Println("Error creating request:", err)
-		return err
+		return "", err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -167,15 +168,49 @@ func createVersoriUser(username string) error {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Println("Error making request:", err)
-		return err
+		return "", err
 	}
 
 	resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
 		fmt.Println("Error creating user:", resp.Status)
-		return fmt.Errorf("error creating user: %s", resp.Status)
+		return "", fmt.Errorf("error creating user: %s", resp.Status)
 	}
 
-	return nil
+	return jwt, nil
+}
+
+func GetUserFromRequest(r *http.Request) string {
+	// Obviously you shoudln't do this and actually should verify the JWT with the public key and get the claims from there.
+
+	jwtCookie, err := r.Cookie("versori-user-jwt")
+	if err != nil {
+		return ""
+	}
+
+	tokenString := jwtCookie.Value
+
+	claimsString := strings.Split(tokenString, ".")[1]
+
+	claimsBytes, err := base64.RawStdEncoding.DecodeString(claimsString)
+	if err != nil {
+		fmt.Println("Error decoding claims:", err)
+		return ""
+	}
+
+	var claims map[string]any
+
+	err = json.Unmarshal(claimsBytes, &claims)
+	if err != nil {
+		fmt.Println("Error unmarshalling claims:", err)
+		return ""
+	}
+
+	username, ok := claims["sub"].(string)
+	if !ok {
+		return ""
+	}
+
+	return username
 }
