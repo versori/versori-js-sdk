@@ -2,8 +2,8 @@
   "name": "@versori/js-sdk-monorepo",
   "private": true,
   "engines": {
-    "node": ">=18",
-    "npm": ">=10.7.0"
+    "node": ">=22",
+    "npm": ">=10.9.0"
   },
   "scripts": {
     "clean": "rimraf packages/*/dist",
