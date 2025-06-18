@@ -6,9 +6,7 @@
   },
   "description": "Versori React Embedded SDK",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -24,12 +22,7 @@
     "url": "git+https://github.com/versori/versori-js-sdk.git",
     "directory": "packages/embed-react"
   },
-  "keywords": [
-    "ipaas",
-    "integrations",
-    "openapi",
-    "react"
-  ],
+  "keywords": ["ipaas", "integrations", "openapi", "react"],
   "author": "",
   "license": "MIT",
   "bugs": {

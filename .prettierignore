@@ -19,6 +19,7 @@
 .prettierignore
 .devcontainer
 *.env
+package-lock.json
 
 Dockerfile
 LICENSE
