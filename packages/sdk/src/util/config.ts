@@ -1,4 +1,4 @@
-import type { Config as FetchConfig } from '@hey-api/client-fetch';
+import type { Config } from '../connect/v1/generated/client/types.gen';
 import { ErrorType } from '../error';
 
 export const Production = 'https://platform.versori.com/api' as const;
@@ -47,7 +47,7 @@ export type ErrorHandlingOptions = {
     defaultError?: ErrorType;
 };
 
-export type SdkConfig = FetchConfig & {
+export type SdkConfig = Omit<Config, 'auth'> & {
     baseUrl?: typeof Production | string;
     auth?: SdkAuth;
     errorHandling?: ErrorHandlingOptions;

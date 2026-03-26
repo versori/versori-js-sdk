@@ -1,8 +1,8 @@
-import { Config } from '@hey-api/client-fetch';
 import { configureAuth } from '../../internal/configureAuth';
 import { configureErrorHandling } from '../../internal/configureErrorHandling';
 import { Production, SdkConfig } from '../../util';
-import { client as globalClient } from './generated';
+import type { Config } from './generated/client/types.gen';
+import { client as globalClient } from './generated/client.gen';
 
 export const PathPrefix = `/embedded/v1`;
 

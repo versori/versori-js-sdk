@@ -1,6 +1,7 @@
 /.idea
 /.husky
 /dist
+**/generated
 /patches
 /public
 /storybook-static

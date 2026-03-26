@@ -19,7 +19,7 @@ export default defineConfig({
         }),
     ],
     build: {
-        target: 'modules',
+        target: 'esnext',
         lib: {
             name: '@versori/embed-react',
             entry: path.resolve(__dirname, 'src/index.ts'),
@@ -28,7 +28,7 @@ export default defineConfig({
         },
         sourcemap: true,
         rollupOptions: {
-            treeshake: 'safest',
+            treeshake: true,
             external: ['react', '@radix-ui/themes'],
             output: {
                 globals: {

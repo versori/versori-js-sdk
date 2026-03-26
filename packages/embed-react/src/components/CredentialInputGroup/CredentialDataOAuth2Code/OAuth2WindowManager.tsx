@@ -53,7 +53,7 @@ export function OAuth2WindowManager({
     onCancel,
     callbackOrigin,
 }: OAuth2WindowManagerProps) {
-    const windowRef = useRef<Window | undefined>();
+    const windowRef = useRef<Window | undefined>(undefined);
 
     useEffect(() => {
         if (!open) {

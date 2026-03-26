@@ -1,4 +1,4 @@
-import { Client } from '@hey-api/client-fetch';
+import type { Client } from '@versori/sdk/platform';
 import { SdkConfig } from '@versori/sdk';
 import { PlatformClientOptions } from '../PlatformClient';
 import { CredentialSource } from './credential-source';

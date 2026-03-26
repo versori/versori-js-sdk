@@ -1,7 +1,7 @@
-import { Client } from '@hey-api/client-fetch';
 import { DEFAULT_SDK_AUTH_API_KEY_LOCATION, SdkAuth } from '../util';
+import type { VersoriHttpClient } from './versoriHttpClient';
 
-export function configureAuth(client: Client, auth: SdkAuth) {
+export function configureAuth(client: VersoriHttpClient, auth: SdkAuth) {
     switch (auth.type) {
         case 'api-key': {
             const location = auth.location ?? DEFAULT_SDK_AUTH_API_KEY_LOCATION;

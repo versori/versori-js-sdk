@@ -1,3 +1,3 @@
 export type * from './generated/types.gen';
-export * as embeddedApi from './generated/services.gen';
+export * as embeddedApi from './generated/sdk.gen';
 export * from './configureEmbeddedSdk';
