@@ -21,6 +21,7 @@
 .devcontainer
 *.env
 package-lock.json
+*.tsbuildinfo
 
 Dockerfile
 LICENSE
