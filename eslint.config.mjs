@@ -5,12 +5,12 @@ import pluginReact from 'eslint-plugin-react';
 
 export default [
     { files: ['**/*.{ts,tsx}'] },
-    { ignores: ['**/dist/**'] },
+    { ignores: ['**/dist/**', '**/generated/**'] },
     { languageOptions: { globals: globals.browser } },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     pluginReact.configs.flat.recommended,
-    { settings: { react: { version: '18.3.1' } } },
+    { settings: { react: { version: '19.2.4' } } },
     {
         rules: {
             'react/react-in-jsx-scope': 'off',

@@ -1,6 +1,7 @@
 /.idea
 /.husky
 /dist
+**/generated
 /patches
 /public
 /storybook-static
@@ -20,6 +21,7 @@
 .devcontainer
 *.env
 package-lock.json
+*.tsbuildinfo
 
 Dockerfile
 LICENSE

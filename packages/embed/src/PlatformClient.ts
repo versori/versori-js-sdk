@@ -1,4 +1,4 @@
-import { Client, Options } from '@hey-api/client-fetch';
+import type { Client } from '@versori/sdk/platform';
 import { ApiError, ErrorType, isErrorType } from '@versori/sdk';
 import {
     Activation,
@@ -79,11 +79,11 @@ export class PlatformClient {
         return this.#primaryCredentialSource;
     }
 
-    #defaultOptions<T = Record<string, unknown>>(): Options<T, true> {
+    #defaultOptions(): { client: Client; throwOnError: true } {
         return {
             client: this.#client,
             throwOnError: true,
-        } as Options<T, true>;
+        };
     }
 
     get endUser(): EndUser | undefined {
@@ -251,7 +251,7 @@ export class PlatformClient {
         systemId: string,
         body: InitialiseOAuth2ConnectionRequest
     ): Promise<InitialiseOAuth2ConnectionResponse> {
-        const { data } = await platformApi.initialiseOauth2Connection({
+        const { data } = await platformApi.initialiseOAuth2Connection({
             ...this.#defaultOptions(),
             path: {
                 organisation_id: this.#orgId,
