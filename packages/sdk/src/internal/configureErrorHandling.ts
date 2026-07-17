@@ -13,12 +13,12 @@ export function configureErrorHandling(client: VersoriHttpClient, errorHandlingO
             return error;
         }
 
-        if (typeof error !== 'object') {
+        if (typeof error !== 'object' || !request || !response) {
             return error;
         }
 
         const errorObj = isErrorType(error) ? error : errorHandlingOptions.defaultError || DEFAULT_ERROR_RESPONSE;
 
-        throw new ApiError(errorObj.message, request, response ?? new Response(), errorObj);
+        throw new ApiError(errorObj.message, request, response, errorObj);
     });
 }

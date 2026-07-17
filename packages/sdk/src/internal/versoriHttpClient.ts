@@ -12,9 +12,11 @@ export type VersoriHttpClient = {
             use: (
                 fn: (
                     error: unknown,
+                    /** response may be undefined due to a network error where no response object is produced */
                     response: Response | undefined,
-                    request: Request,
-                    opts: { throwOnError?: boolean }
+                    /** request may be undefined, because error may be from building the request object itself */
+                    request: Request | undefined,
+                    options: { throwOnError?: boolean }
                 ) => unknown | Promise<unknown>
             ) => unknown;
         };

@@ -1545,9 +1545,7 @@ export type ActionHttpCommon = {
  */
 export type ActionHttp = ActionBase & ActionHttpCommon;
 
-export type Action = {
-    type: 'http';
-} & ActionHttp;
+export type Action = ActionHttp;
 
 /**
  * ActionPage defines a paginated list of Actions.
@@ -1645,9 +1643,7 @@ export type ActionHttpCreate = ActionCommon & ActionHttpCommonCreate;
 /**
  * ActionCreate defines a new Action to be created.
  */
-export type ActionCreate = {
-    type: 'http';
-} & ActionHttpCreate;
+export type ActionCreate = ActionHttpCreate;
 
 /**
  * TriggerError is the payload returned when a Trigger fails validation
@@ -1835,9 +1831,7 @@ export type TriggerHttpCommon = {
  */
 export type TriggerHttp = TriggerBase & TriggerHttpCommon;
 
-export type Trigger = {
-    type: 'http';
-} & TriggerHttp;
+export type Trigger = TriggerHttp;
 
 /**
  * TriggerPage defines a paginated list of Triggers.
@@ -1909,9 +1903,7 @@ export type TriggerHttpCreate = TriggerCommon & TriggerHttpCommonCreate;
 /**
  * TriggerCreate defines a new Trigger to be created.
  */
-export type TriggerCreate = {
-    type: 'http';
-} & TriggerHttpCreate;
+export type TriggerCreate = TriggerHttpCreate;
 
 /**
  * DefinitionPage is a paginated list of Definitions.
