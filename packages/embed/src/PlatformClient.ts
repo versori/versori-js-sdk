@@ -104,8 +104,8 @@ export class PlatformClient {
             },
         });
 
-        if (!response.ok) {
-            if (response.status === 404) {
+        if (!response || !response.ok) {
+            if (response && response.status === 404) {
                 debug('End user does not exist, will create upon first activation');
 
                 return;
@@ -117,6 +117,15 @@ export class PlatformClient {
                       message: 'Unexpected response from GetEndUser',
                       code: '599999',
                   };
+
+            if (!request) {
+                throw new Error(
+                    'Unexpected error during call to GetEndUser, unable to create request')
+            }
+
+            if (!response) {
+                throw new Error('Failed to call GetEndUser, response is undefined')
+            }
 
             throw new ApiError('Unexpected response from GetEndUser', request, response, errorType);
         }
