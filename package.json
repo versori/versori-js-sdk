@@ -39,7 +39,7 @@
     "@storybook/addon-onboarding": "^8.6.18",
     "@storybook/blocks": "^8.6.18",
     "@storybook/react": "^8.6.18",
-    "@storybook/react-vite": "^8.6.18",
+    "@storybook/react-vite": "^10.5.0",
     "@storybook/test": "^8.6.18",
     "@types/semantic-release": "^21.1.0",
     "@typescript-eslint/eslint-plugin": "^8.57.2",
