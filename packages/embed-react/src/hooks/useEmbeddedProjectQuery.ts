@@ -31,9 +31,7 @@ type UseEmbeddedProjectQueryHookSuccess = {
 };
 
 export type UseEmbeddedProjectQueryHook =
-    | UseEmbeddedProjectQueryHookLoading
-    | UseEmbeddedProjectQueryHookError
-    | UseEmbeddedProjectQueryHookSuccess;
+    UseEmbeddedProjectQueryHookLoading | UseEmbeddedProjectQueryHookError | UseEmbeddedProjectQueryHookSuccess;
 
 export function useEmbeddedProjectQuery({ projectId }: UseEmbeddedProjectQueryParams): UseEmbeddedProjectQueryHook {
     const { client } = useVersoriEmbeddedContext();
