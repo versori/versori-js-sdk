@@ -119,12 +119,11 @@ export class PlatformClient {
                   };
 
             if (!request) {
-                throw new Error(
-                    'Unexpected error during call to GetEndUser, unable to create request')
+                throw new Error('Unexpected error during call to GetEndUser, unable to create request');
             }
 
             if (!response) {
-                throw new Error('Failed to call GetEndUser, response is undefined')
+                throw new Error('Failed to call GetEndUser, response is undefined');
             }
 
             throw new ApiError('Unexpected response from GetEndUser', request, response, errorType);
